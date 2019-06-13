@@ -1,0 +1,39 @@
+<div class="table-scrollable">
+  <table class="table table-hover table-frame form-horizontal">
+    <tbody>
+      <tr role="row">
+        <td>
+          <label class="control-label col-md-6">Set refill reminder:<span class="required" aria-required="true"> * </span></label>
+          <div class="col-md-6">
+            <div class="icheck-inline">
+              <label>
+                <input type="radio" name="refillReminder" checked="checked" class="icheck" id="refillYes" value="1" {% if isDisabled is defined and isDisabled %}disabled="disabled"{% endif %}> Yes </label>
+              <label>
+                <input type="radio" name="refillReminder" {% if refill is defined and refill.lengthOfSupply == 0 %} checked="checked" {% endif %} class="icheck" id="refillNo" value="0" {% if isDisabled is defined and isDisabled %}disabled="disabled"{% endif %}> No </label>
+            </div>
+          </div>
+        </td>
+        <td rowspan="2" class="col-md-8">
+            <div class="well-sm" style="border: 1px solid #c2cad8;background-color:white;">
+                Once activated, refill alert reminders will be sent out to doctor and patient. The alerts will be sent out some 14-20 days prior to the target date. This is to allow for the order to be processed and delivered.
+            </div>
+        </td>
+      </tr>
+      <tr role="row" id="rxPeriodContainer" {% if refill is defined and refill.lengthOfSupply == 0 %} style="display: none" {% endif %}>
+        <td>
+          <label class="control-label col-md-6">Length of supply:<span class="required" aria-required="true"> * </span></label>
+          <div class="col-md-6 form-inline">
+            <select id="lengthOfSupply" class="form-control select2 requiredItem" name="lengthOfSupply" {% if isDisabled is defined and isDisabled %}disabled="disabled"{% endif %} data-minimum-results-for-search="-1" data-placeholder="Select">
+                <option value=""></option>
+                <option value="30" {% if refill is defined and refill.lengthOfSupply == 30 %} selected="selected" {% endif %}>30</option>
+                <option value="60" {% if refill is defined and refill.lengthOfSupply == 60 %} selected="selected" {% endif %}>60</option>
+                <option value="90" {% if refill is defined and refill.lengthOfSupply == 90 %} selected="selected" {% endif %}>90</option>
+                <option value="180" {% if refill is defined and refill.lengthOfSupply == 180 %} selected="selected" {% endif %}>180</option>
+           </select>
+           <span class="form-control-static"> days </span>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

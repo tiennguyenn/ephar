@@ -1,0 +1,13 @@
+services:
+
+    gmeds.doctor_listener:
+        class: DoctorBundle\EventListener\DoctorListener
+        arguments: [@security.context, @router, @service_container, @gmeds.user_provider]
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelLoading }
+    doctor.twig_extension:
+        class: DoctorBundle\Twig\Extensions\TwigHelper
+        public: false
+        arguments: [@service_container, @doctrine.orm.entity_manager]
+        tags:
+            - { name: twig.extension }

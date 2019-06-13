@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title> Doctor invoice</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1" name="viewport" />
+<meta content="Preview page of Metronic Admin Theme #4 for blank page layout" name="description" />
+<meta content="" name="author" />
+
+<style>
+  @page {
+    margin: 60px 0 0 0;
+  }
+
+  @page :first {
+     margin: 0;
+  }
+
+  body { 
+    font-family: Arial,sans-serif;
+    font-size: 9px;
+    line-height: 1.42857;
+    color: #000; 
+    padding: 0;
+    margin: 0;
+  }
+  .txt-red {
+      color: #ed6b75!important;
+  }
+  .wrapper-content {
+    margin-bottom: 30px;
+  }
+  .container {
+    padding: 0 30px; 
+  }
+  
+  .header {
+    background-color: #daf2e3;
+    padding: 30px 0;
+  }
+  p {
+    margin: 0;
+  }
+  
+  .title {
+    font-size: 40px;
+    text-transform: uppercase;
+    color: #555555;
+    margin: 0;
+    font-weight: 400;
+    margin: 0 15px;
+  }
+  
+  .sub-title {
+    margin: 0 0 20px;
+    font-size: 16px;
+    text-transform: uppercase;
+    margin: 0 15px 10px; 
+  }
+  
+  .content {
+    margin-top: 50px;
+  }
+  
+  table {
+   border-collapse: collapse;
+    border: 0;
+    width: 100%; 
+    table-layout: fixed;
+  }
+  
+  table th,
+  table td {
+    padding: 3px 15px;
+  }
+
+  table td {
+    border: 0;
+  }
+  table th {
+    color: #555555;
+  }
+  table.table-subtitle {
+    margin: 20px 0;
+  }
+  
+  table.table-data .border-right {
+    border-right: 1px solid #9d9d9d;
+  }
+   table.table-data .border-bottom {
+    border-bottom: 1px solid #9d9d9d;
+  }
+
+   table.table-data .border-top {
+    border-top: 1px solid #9d9d9d;
+  }
+  
+  table.table-data th {
+    border: 0;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+
+  table.table-data th.border-bottom {
+    border-bottom: 1px solid #9d9d9d !important;
+  }
+  
+  table.table-data tbody tr:nth-child(odd) td {background-color: #f5f5f5}
+  table.table-data tbody tr.subtotal td {background-color: #ffffff;}
+  table.table-data tbody tr.subtotal-every td {background-color: #ffffff;}
+  
+  table.table-data.table-one-line {
+    border-bottom: 1px solid #9d9d9d;
+  }
+  table.table-data.table-one-line td {
+    background-color: #f5f5f5;
+  }
+  
+  table.table-data.table-one-line tbody tr:first-child td{
+    padding-top: 15px;
+  }
+  
+  table.table-data.table-one-line tbody tr:last-child td{
+    padding-bottom: 15px;
+  }
+  
+  table.table-data.table-multi-line td {
+    
+    padding-top: 15px;
+    padding-bottom: 15px;
+    background-color: #f5f5f5;
+  }
+  
+  table.table-data.table-multi-line .table-subdata td {
+    padding: 3px 15px; 
+  }
+  
+  table.table-data.table-multi-line .table-subdata tr:first-child td {
+    padding-top: 15px;
+  }
+  
+   table.table-data.table-multi-line .table-subdata tr:last-child td {
+    padding-bottom: 15px;
+  }
+  
+  
+  table.table-data.table-multi-line td.subdata-wrap {
+    padding: 0;
+    padding-top: 1px;
+  }
+ 
+ .align-right {
+   text-align: right;
+  }
+  
+  .mt-15 {
+    margin-top: 15px;
+  }
+  .breadcrumb{font-size: 11px; font-weight: normal; padding-left: 20px; list-style: none; margin-bottom: 35px; position:absolute; bottom:5px;}
+  .chinese {
+      font-family: DroidSansFallback, sans-serif;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+      text-align: justify-all !important;
+      font-weight: 400;
+  }
+
+  .font-chinese {
+      font-family: simsun;
+  }
+</style>
+</head>
+<body>
+  <div class="wrapper-content">
+    <div class="header">
+      <div class="container">
+        <table class="table-title">
+          <tr>
+            <td width="60%" valign="bottom"><h1 class="title">{% if hasTax %}Tax{% endif %} Invoice</h1></td>
+            {% set logoUrl = fromCommand is defined and fromCommand ? "web/bundles/admin/assets/pages/img/logo.png" : "bundles/admin/assets/pages/img/logo.png"  %}
+            <td width="30%" align="right"><img src="{{ logoUrl }}" alt=""> </td>
+          </tr>
+          <tr>
+            <td valign="top" width="50%">
+               <table class="table-subtitle" valign="top">
+                <tr>
+                  <th width="30%" align="left">Doctor's Name</th>
+                  <td width="70%">
+                      {% if checkChineseFont(doctor.fullName ) == 1 %}
+                          <span class="font-chinese" >{{ doctor.fullName }}</span>
+                      {% else %}
+                          {{ doctor.fullName }}
+                      {% endif %}
+                  </td>
+                 </tr>
+                 <tr>
+                  <th width="30%" align="left">Doctor's Code</th>
+                  <td width="70%">{{ doctor.doctorCode }}</td>
+                 </tr>
+                 <tr>
+                  <th width="30%" align="left">Clinic Name</th>
+                  <td width="70%">
+                      {% if checkChineseFont(doctor.clinicName ) == 1 %}
+                          <span class="font-chinese" >{{ doctor.clinicName }}</span>
+                      {% else %}
+                          {{ doctor.clinicName }}
+                      {% endif %}
+                  </td>
+                 </tr>
+                 <tr>
+                  <th width="30%" align="left">Clinic Address</th>
+                  <td width="70%">
+                      {% if checkChineseFont(doctor.address ) == 1 %}
+                          <span class="font-chinese" >{{ doctor.address }}</span>
+                      {% else %}
+                          {{ doctor.address }}
+                      {% endif %}
+                  </td>
+                 </tr>
+                 <tr>
+                  <th width="30%" align="left">Country</th>
+                  <td width="70%">{{ doctor.doctorCountry }}</td>
+                 </tr>
+              </table>   
+            </td>
+            <td valign="top" width="50%">
+               <table class="table-subtitle">
+                <tr>
+                  <th width="50%" align="left">GMEDES Pte Ltd</th>
+                  <td width="50%" align="right"></td>
+                 </tr>
+                 <tr>
+                  <th width="50%" align="left">UEN</th>
+                  <td width="50%" align="right">201703279N</td>
+                 </tr>
+                <tr>
+                  <th width="50%" align="left">Period</th>
+                  <td width="50%" align="right">{{ paymentInfo.statementPeriod }}</td>
+                 </tr>
+                 <tr>
+                  <th width="50%" align="left">{% if hasTax %}Tax{% endif %} Invoice Number</th>
+                  <td width="50%" align="right">{{ doctor.gmedesTaxInvoice }}</td>
+                 </tr>
+                 {% if hasTax %}
+                 <tr>
+                  <th width="50%" align="left">GST Registration Number</th>
+                  <td width="50%" align="right">
+                      {% if checkChineseFont(doctor.gstNo ) == 1 %}
+                          <span class="font-chinese" >{{ doctor.gstNo }}</span>
+                      {% else %}
+                          {{ doctor.gstNo }}
+                      {% endif %}
+                  </td>
+                 </tr>
+                 {% endif %}
+                 <tr>
+                  <th width="50%" align="left">Invoice Date</th>
+                  <td width="50%" align="right">{{ doctor.invoiceDate|date('d M Y') }}</td>
+                 </tr>
+                 <tr>
+                  <th width="50%" align="left">Amount</th>
+                  <td width="50%" align="right"><strong>{{ data.currencyCode }} {{ paymentInfo.amount|number_format(2, '.', ',') }}</strong></td>
+                 </tr>
+              </table>   
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>    
+
+    {% set template = '@Doctor/rx/reports/pdf/_invoice_detail.html.twig' %}
+    {% if hasTax %}
+    {% set template = '@Doctor/rx/reports/pdf/_tax_invoice_detail.html.twig' %}
+    {% endif %}
+
+    {% if data.local is defined %}
+      {% include template with {'data' : data.local, 'title' : 'Local Patients transaction history', 'type' : 'local', 'currencyCode' : data.currencyCode } %}
+    {% endif %}
+
+    {% if data.overSea is defined %}
+      {% include template with {'data' : data.overSea, 'title' : 'Overseas Patients transaction history','type': 'overSea', 'currencyCode' : data.currencyCode } %}
+    {% endif %}
+    <div class="content">
+      <div class="container">
+        <table class="table-data table-multi-line">
+          <tbody>
+            <tr class="subtotal">
+              <td class="border-bottom" width='38.5%'><strong>{{ paymentInfo.statementTxt }}</strong></td>
+              <td align="left" class="border-bottom"><strong>Amount to be paid ({{ data.currencyCode }})</strong></td>
+              <td align="right" class="border-bottom"><strong>{{ paymentInfo.amount|number_format(2, '.', ',')}}</strong></td>
+
+            </tr>
+          </tbody>
+        </table>
+       </div>
+    </div>
+    <div class="container">
+      <p class="align-right mt-15">Note: Amount is included in the statement. No payment required.</p>
+    </div>
+  </div>
+  <div class="breadcrumb"></div>
+</body>
+</html>

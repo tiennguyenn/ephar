@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+
+    <title>Patient notes</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="Preview page of GMEDES Htmlfor blank page layout" name="description" />
+    <meta content="" name="author" />
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.42857;
+            color: #000;
+            padding: 0;
+            margin: 0;
+        }
+        p {
+            margin: 0;
+        }
+        .wrapper-content {
+            background-color: #ffffff;
+        }
+
+        .bg-light-blue {
+            background-color: #f2f9ff;
+        }
+
+        .container {
+            padding: 0 10px;
+        }
+
+        .header {
+            padding: 10px 10px 0 10px;
+        }
+
+        .pt-0 {
+            padding-top: 0 !important;
+        }
+        .pb-0 {
+            padding-bottom: 0 !important;
+        }
+        table {
+            border-collapse: collapse;
+            border: 0;
+            width: 100%;
+        }
+        table td, th {
+            padding: 10px;
+            vertical-align: top;
+        }
+        table th {
+            text-align: left;
+        }
+        table.table-data td {
+            border: 0;
+        }
+        table.table-data th,
+        table.table-data td {
+            padding: 10px;
+        }
+        table.table-subdata td {
+            padding: 2px 0;
+        }
+
+        table.table-title {
+            border-bottom: 1px solid #c7cbce;
+        }
+
+        table.table-title table td {
+            padding: 0;
+        }
+
+        table.table-main th{
+            background-color: #f2f9ff;
+            border-bottom: 1px solid #d2d2d2;
+        }
+        table.table-main th,
+        table.table-main td {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+
+
+        table.table-right {
+            text-align: right;
+        }
+
+        table.table-footer {
+            border-top: 1px solid #9d9d9d;
+            margin-top: 50px;
+        }
+
+        .logo {
+            margin: 10px 0 0;
+        }
+        .logo img {
+            max-width: 62px;
+        }
+
+        .left-info {
+            margin-right: 10px;
+        }
+        .info-big {
+            font-weight: 700;
+            font-size: 20px;
+        }
+        .info-bigest {
+            font-size: 24px;
+        }
+        .info-medium {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .info-mediumest {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .info-small {
+            font-size: 12px;
+        }
+
+        .info-title {
+            padding: 20px 0 10px 10px;
+        }
+        .align-right {
+            text-align: right;
+        }
+
+        .valign-bottom {
+            vertical-align: bottom;
+        }
+        .text-transform {
+            text-transform: uppercase;
+        }
+        .text-gray {
+            color: #555;
+        }
+
+        .text-light-gray {
+            color: #a1a1a1;
+        }
+
+        .text-red {
+            color: #ed6b75;
+        }
+
+        .right-info .info-big {
+            font-weight: 600;
+        }
+        .patient-info {
+            margin-top: 10px;
+            border-right: 1px solid #e0e0e0;
+            padding-right: 10px;
+        }
+        .medication-note {
+            text-transform: uppercase;
+            margin-top: 25px;
+        }
+
+        .authorized-signature {
+            width: 215px;
+            padding: 3px;
+            border: 2px solid #7e7e7e;
+            text-align: left;
+            -webkit-border-radius: 2px;
+            -moz-border-radius: 2px;
+            border-radius: 2px;
+        }
+        .chinese {
+            font-family: DroidSansFallback, sans-serif;
+            word-break: break-word !important;
+            overflow-wrap: break-word !important;
+            text-align: justify-all !important;
+            font-weight: 400;
+        }
+        .font-chinese {
+            font-family: simsun;
+        }
+
+    </style>
+
+</head>
+<body>
+<div class="wrapper-content">
+
+
+    <div class="container bg-light-blue">
+        <div class="bg-light-blue">
+            <div class="container">
+                <p class="info-medium text-light-gray">Patient Details</p>
+            </div>
+        </div>
+        <table class="table-data">
+            <tbody>
+
+            <tr>
+                <td width="37%" class="text-gray"><strong>Patient Name:</strong></td>
+                <td width="63%">
+                    {% if checkChineseFont(patientInformation.name ) == 1 %}
+                        <span class="font-chinese" >{{ patientInformation.name }}</span>
+                    {% else %}
+                        {{ patientInformation.name }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td width="37%" class="text-gray"><strong>Patient Code:</strong></td>
+                <td width="63%">{{ patientInformation.globalId }}</td>
+            </tr>
+            <tr>
+                <td width="37%" class="text-gray"><strong>Age / Gender:</strong></td>
+                <td width="63%" class="font-chinese">{{ patientInformation.age }} / {{ patientInformation.gender }}</td>
+            </tr>
+
+            <tr>
+                <td width="37%" class="text-gray"><strong>Country:</strong></td>
+                <td width="63%">{{ patientInformation.address }}</td>
+            </tr>
+
+
+            <tr>
+                <td width="37%" class="text-gray text-red"><strong>Known Medication Allergies:</strong></td>
+                <td width="63%" class="text-red">
+                    {% if checkChineseFont(patientInformation.allergies ) == 1 %}
+                    <span class="font-chinese" >
+                         {{ patientInformation.allergies }}
+                    </span>
+                    {% else %}
+                    {{ patientInformation.allergies }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td width="37%" class="text-gray"><strong>Diagnosis:</strong></td>
+                <td width="63%"><strong>{{ patientInformation.diagnosis }}</strong></td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="content-detail">
+
+        <div class="bg-light-blue">
+            <div class="container">
+                <p class="info-medium text-light-gray">Patient Notes</p>
+            </div>
+        </div>
+
+        <table class="table-data table-main">
+
+            <tr>
+                <th width="30%">Date</th>
+                <th width="70%">Notes</th>
+            </tr>
+            {% for note in notes %}
+                <tr>
+                    <td width="30%">{{ note.time }}</td>
+                    <td width="70%">
+                        {% if checkChineseFont(note.note ) == 1 %}
+                            <span class="font-chinese" >
+                                {{ note.note|raw }}
+                            </span>
+                        {% else %}
+                            {{ note.note|raw }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+
+</div>
+</body>
+</html>

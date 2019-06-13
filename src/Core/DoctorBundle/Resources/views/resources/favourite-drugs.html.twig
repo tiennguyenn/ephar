@@ -1,0 +1,274 @@
+{% extends '@Admin/layout.html.twig' %}
+
+{% block stylesheets %}
+{% stylesheets
+    'bundles/admin/assets/global/plugins/bootstrap-editable/bootstrap-editable/css/bootstrap-editable.css'
+    'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+    'bundles/admin/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.css'
+    'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+    'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+    'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-editable/bootstrap-editable/css/bootstrap-editable.css'
+    'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+    'bundles/admin/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.css'
+    'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+    'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+    filter='cssrewrite'
+    debug=false
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+{% endstylesheets %}
+{% endblock %}
+
+{% block body %}
+
+{% if app.user.isMPA %}
+{% include '@Doctor/mpa/header.html.twig' %}
+{% else %}
+{% include '@Doctor/header.html.twig' %}
+{% endif %}
+
+<div class="page-container">
+  {% if app.user.isMPA %}
+  {% include '@Doctor/mpa/left-menu.html.twig' with { 'mainMenu': 'dashboard', 'subMenu': '' } %}
+  {% else %}
+  {% include '@Doctor/left-menu.html.twig' with { 'mainMenu': 'dashboard', 'subMenu': '' } %}
+  {% endif %}
+
+  <div class="page-content-wrapper">
+    <div class="page-content">
+      <!-- BEGIN PAGE HEAD-->
+      <div class="page-head">
+        <!-- BEGIN PAGE TITLE -->
+        <div class="page-title">
+          <h1>Custom Selling Prices For Medicine</h1>
+        </div>
+        <!-- END PAGE TITLE -->
+      </div>
+      <!-- END PAGE HEAD-->
+      <!-- BEGIN PAGE BREADCRUMB -->
+      <ul class="page-breadcrumb breadcrumb">
+        <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+        <li> <span class="active">Medicine</span> </li>
+      </ul>
+      <!-- END PAGE BREADCRUMB -->
+
+      <!-- BEGIN PAGE BASE CONTENT -->
+      <div class="row">
+        <div class="col-md-12">
+          <!-- Begin: life time stats -->
+          <div class="portlet light">
+            <div class="portlet-title">
+              <div class="caption"> 
+                <span class="caption-subject font-dark sbold">Favorite Medicines Price Lists</span><br>
+                <p class="mt-5 mb-10 small">Update the selling prices of your favorite medicines through this form. If the medicine you wish to update is not in this list, go to Resources > Medicines List and add the medicines to your favorites list.</p>
+              </div>
+            </div>
+            <div class="portlet-body">
+              <div id="wrapper" class="dataTables_wrapper no-footer">
+                 {{ render(controller( 'DoctorBundle:Resource:customSellingPricesList' )) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modal-GMEDS" class="modal fade modal-new" tabindex="-1" data-width="760">
+  <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title" id="price-title">Product 1 GMEDES Overseas Selling Price</h4>
+  </div>
+  <div class="modal-body text-center">
+    <form class="form-horizontal" id="price-form">
+      <div class="price-changing-square">
+        <div>
+          Old Value: <span class="value" id="old-price">12.00</span>
+        </div>
+        <i class="fa fa-long-arrow-right"></i>
+        <div class="new-value">
+          New Value: <span class="value" id="new-price">14.00</span>
+        </div>
+      </div>
+      
+      <div class="row col-md-offset-2">
+        <div class="form-group col-md col-md-9 mod-take-effect">
+          <label for="inputEmail1" class="col-md-5 control-label" style="padding-top: 0; margin-top: -2px;">Price change will take effect on:</label>
+          <div class="col-md-7">
+            <div class="datepicker-wrap">
+              <div class="wrap">
+                <div class="input-group date date-pickers bs-datetime">
+                  <input id="price-date" type="text" size="16" class="form-control">
+                  <span class="input-group-addon">
+                    <button class="btn default date-set mr-0" type="button">
+                      <i class="fa fa-calendar"></i>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <p id="price-description">This will change the cost price of Product 1.</p>
+      <p>Proceed?</p>
+      <p class="error"></p>
+      <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase btn-danger btn-sm" data-dismiss="modal">No</i></a>
+      <a href="javascript:;" id="price-yes" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm ml-15">Update</a>
+    </form>
+  </div>
+</div>
+
+<div id="modal-view-logs" class="modal fade modal-new" tabindex="-1" data-width="900">
+  <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title">View Logs</h4>
+  </div>
+  <div class="modal-body">    
+    <div class="portlet box white portlet-scroller">
+      <div class="portlet-title">
+        <div class="caption">
+          <span class="caption-subject uppercase sbold">Medicine List Logs</span>
+        </div>
+        <div class="actions">
+          <a href="{{ path('doctor_custom_selling_prices_logs') }}" target="_blank" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">Print<i class="fa fa-print"></i></a>
+        </div>
+      </div>
+      <div class="portlet-body">
+        <div class="scroller" style="height:280px" data-always-visible="1" data-rail-visible="1" data-rail-color="white" data-handle-color="green">
+          <div class="table-scrollable table-scrollable-borderless" id="list-logs">
+            <!-- logs -->
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <ul class="page-breadcrumb breadcrumb">
+        <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+        <li> <span class="active">Medicine List</span> </li>
+    </ul>
+    <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" data-dismiss="modal">Close</a>
+  </div>
+</div>
+
+<div id="modal-import" class="modal fade modal-new" tabindex="-1" data-width="900" style="display: none; width: 900px; margin-left: -449px; margin-top: 0px;" aria-hidden="true">
+  <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title">Selling Price Bulk Update</h4>
+  </div>
+  <div class="modal-body">    
+    <div class="portlet box portlet-scroller">
+  <div class="portlet-title" style="color:black;border:1px solid #e7ecf1">
+        <div class="caption">
+          <span class="caption-subject uppercase sbold">1. Download excel</span>
+        </div>            
+      </div>    
+      <div class="portlet-body">
+    <div style="width:100%; padding:20px 30px;">
+       Download your favorite medicine list and the corresponding prices by clicking on the button below.<br><br>
+       <a href="{{ path('doctor_custom_selling_prices_download_excel') }}" target="_blank" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">Download Favorite Medicine List</a>  
+    </div>                  
+      </div>
+      <div class="portlet-title" style="color:black;border:1px solid #e7ecf1">
+        <div class="caption">
+          <span class="caption-subject uppercase sbold">2. Update the prices on the medicine list</span>
+        </div>            
+      </div>    
+      <div class="portlet-body">
+    <div style="width:100%; padding:20px 30px;">
+    Change the selling prices - these are the columns highlighted in yellow.<br>
+      <img src="{{ asset('bundles/admin/assets/pages/img/excel.png') }}" width="100%">
+      Tips:<br>
+1. Please do not edit the PLU of the medicines. This serves as the unique identifier of the medicine.<br>
+2. Only the selling price to local patients and selling price to overseas patients will be updated when this file is uploaded. Changes made to other columns will be ignored.<br>
+3. Medicines that will not be updated may be deleted from the excel file.<br>
+    </div>                  
+      </div>
+    
+    <div class="portlet-title" style="color:black;border:1px solid #e7ecf1">
+        <div class="caption">
+          <span class="caption-subject uppercase sbold">3. Upload the medicine list with the latest selling price</span>
+        </div>            
+      </div>    
+      <div class="portlet-body">
+    <div style="width:50%; padding:10px 30px;">
+      <input type="file" class="form-control" id="medicineListFile">      
+    </div>                  
+      </div>
+    
+    <div class="portlet-title" style="color:black;border:1px solid #e7ecf1">
+        <div class="caption">
+          <span class="caption-subject uppercase sbold">4. Select the effective date</span>
+        </div>                 </div>       
+      <div class="portlet-body">
+    <div style="width:100%; padding:10px 30px 5px 30px;">
+    Select the date when the new selling prices will take effect. If A date is not selected, the prices will be updated at 12 midnight of the following day.
+    </div>    
+    <div style="width:50%; padding:0px 30px;" class="input-group date date-pickers bs-datetime">
+        <input type="text" size="16" class="form-control" id="takeEffectDate">
+        <span class="input-group-addon">
+          <button class="btn default date-set" type="button">
+            <i class="fa fa-calendar"></i>
+          </button>
+        </span>
+      </div>
+    
+      </div>
+    
+    </div>
+     
+   <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm ml-15" id="bulkUpdate">Bulk Update Selling Price</a>
+    <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" data-dismiss="modal">Cancel</a> 
+  </div>
+</div>
+
+<div class="blink-loader">
+  <div class="load1-wrap"><div class="load1"><div class="loader">Loading...</div></div></div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %} 
+    <input type="hidden" id="update_url" value="{{ path('doctor_custom_selling_prices_update_price') }}"/>
+    <input type="hidden" id="name_url" value="{{ path('drug_list_names', {'id': 1}) }}"/>
+    <input type="hidden" id="logs_url" value="{{ path('doctor_custom_selling_prices_list_logs') }}"/>
+    <input type="hidden" id="list_url" value="{{ path('doctor_custom_selling_prices_list') }}"/>
+    <input type="hidden" id="bulk_update_url" value="{{ path('doctor_custom_selling_prices_upload_favorite_drugs') }}">
+    {% javascripts
+      '@AdminBundle/Resources/public/assets/global/plugins/ladda/spin.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/ladda/ladda.min.js'
+      '@AdminBundle/Resources/public/assets/pages/scripts/ui-buttons-spinners.min.js'
+      '@AdminBundle/Resources/public/assets/pages/scripts/table-datatables-managed.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/lib/js/wysihtml5-0.3.0.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/jquery.mockjax.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/bootstrap-editable/js/bootstrap-editable.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/wysihtml5/wysihtml5.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+      '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/typeahead/typeahead.bundle.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/typeahead/handlebars.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/bootstrap-editable/js/bootstrap-editable.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/wysihtml5/wysihtml5.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/additional-methods.min.js'
+      '@DoctorBundle/Resources/public/js/custom-selling-prices.js'
+    %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

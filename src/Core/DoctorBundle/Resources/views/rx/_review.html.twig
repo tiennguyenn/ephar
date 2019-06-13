@@ -1,0 +1,51 @@
+<div class="portlet-title">
+  <div class="caption"><span class="badge badge-number">4</span>Review RX
+  </div>
+</div>
+<div class="portlet-body">
+  <div class="panel-group accordion" id="accordion3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+            <a class="accordion-toggle accordion-toggle-styled" data-toggle="collapse" data-parent="#accordion3" href="#reviewsTab"> Review medication and services </a>
+          </h4>
+      </div>
+      <div id="reviewsTab" class="panel-collapse in">
+        <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+          {% include '@Doctor/rx/_table-medications-and-services.html.twig' %}
+        </div>
+      </div>
+    </div>
+    {% if showProforma %}
+    <div class="panel panel-default">
+      <div class="panel-heading has-btn">
+        <h4 class="panel-title">
+          <a class="accordion-toggle accordion-toggle-styled" data-toggle="collapse" data-parent="#accordion3" href="#pdfProformaTab"> Proforma Invoice </a>
+          {#{% if browser is defined and browser != 'firefox' %}
+          <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right btn-right" id="printProformaPdfBtn">Print<i class="fa fa-print"></i></a>
+          {% endif %}#}
+        </h4>
+      </div>
+      <div id="pdfProformaTab" class="panel-collapse in">
+        <div class="panel-body align-center">
+          <iframe width="795" height="1120" id="iframeProforma" name="iframeProforma" src="about:blank" data-url="{{ path('pdf_rx', {'is-proforma': 1}) }}?watermark=true#toolbar=1&view=FitH&statusbar=0&messages=0&navpanes=0" type="application/pdf">
+          </iframe>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading has-btn">
+        <h4 class="panel-title">
+            <a class="accordion-toggle accordion-toggle-styled" data-toggle="collapse" data-parent="#accordion3" href="#pdfAdviceTab"> Review RX advice </a>
+            {#<a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right btn-right" id="printPdfBtn">Print<i class="fa fa-print"></i></a>#}
+          </h4>
+      </div>
+      <div id="pdfAdviceTab" class="panel-collapse in">
+        <div class="panel-body align-center">
+          <iframe width="795" height="1120" id="iframeOne" name="iframeOne" src="about:blank" data-url="{{ path('pdf_rx') }}?watermark=true#toolbar=1&view=FitH&statusbar=0&messages=0&navpanes=0" type="application/pdf">
+          </iframe>
+        </div>
+      </div>
+    </div>
+</div>

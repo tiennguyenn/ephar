@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title> Proforma invoice</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1" name="viewport" />
+<meta content="Preview page of Metronic Admin Theme #4 for blank page layout" name="description" />
+<meta content="" name="author" />
+
+<style>
+  @page {
+    margin: 70px 0 0 0;
+  }
+  @page :first {
+    margin: 0;
+  }
+  body {
+    font-family: sans-serif;
+    font-size: 12px;
+    line-height: 1.42857;
+    color: #000;
+    padding: 0;
+    margin: 0;
+  }
+  p {
+    margin: 0;
+  }
+  .wrapper-content {
+    background-color: #ffffff;
+  }
+
+  .bg-light-blue {
+    background-color: #f2f9ff;
+  }
+
+  .container {
+    padding: 0 10px;
+  }
+
+  .header {
+    padding: 10px 10px 0 10px;
+  }
+
+  .pt-0 {
+    padding-top: 0 !important;
+  }
+  .pb-0 {
+    padding-bottom: 0 !important;
+  }
+  table {
+   border-collapse: collapse;
+    border: 0;
+    width: 100%;
+    table-layout: fixed;
+  }
+  table td, th {
+    padding: 10px;
+    vertical-align: top;
+  }
+  table th {
+    text-align: left;
+  }
+  table.table-data td {
+    border: 0;
+  }
+  table.table-data th,
+  table.table-data td {
+    padding: 10px;
+  }
+  table.table-subdata td {
+    padding: 2px 0;
+  }
+  {% if isInvoice is defined %}
+  table.table-title {
+  margin-top: -70px;
+    border-bottom: 1px solid #c7cbce;
+  }
+  {% else %}
+  table.table-title {
+    border-bottom: 1px solid #c7cbce;
+  }
+  {% endif %}
+
+
+  table.table-title table td {
+    padding: 0;
+  }
+
+  table.table-main {
+    border-bottom: 1px solid #d2d2d2;
+  }
+
+  table.table-main th{
+    background-color: #f2f9ff;
+    border-bottom: 1px solid #d2d2d2;
+  }
+  table.table-main th,
+  table.table-main td {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  table.table-main th.pl20,
+  table.table-main td.pl20 {
+    padding-left: 20px;
+  }
+
+  table.table-main th:last-child,
+  table.table-main td:last-child {
+    padding-right: 20px;
+    text-align: right;
+  }
+
+  table.table-right {
+    text-align: right;
+  }
+
+  table.table-footer {
+    border-top: 1px solid #9d9d9d;
+  }
+
+  .logo {
+    margin: 10px 0 0;
+  }
+  .logo img {
+    max-width: 62px;
+  }
+  .info-big {
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .info-bigest {
+    font-size: 24px;
+  }
+  .info-medium {
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .info-mediumest {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .info-small {
+    font-size: 12px;
+  }
+
+  .info-title {
+    padding: 20px 0 10px 10px;
+  }
+  .align-right {
+    text-align: right;
+  }
+
+  .valign-bottom {
+    vertical-align: bottom;
+  }
+  .text-transform {
+    text-transform: uppercase;
+  }
+  .text-gray {
+    color: #555;
+  }
+
+  .text-light-gray {
+    color: #a1a1a1;
+  }
+
+  .right-info .info-big {
+    font-weight: 600;
+  }
+  .patient-info {
+    margin-top: 10px;
+    border-right: 1px solid #e0e0e0;
+    padding-right: 10px;
+  }
+  .medication-note {
+    text-transform: uppercase;
+    margin-top: 25px;
+  }
+
+  .has-paid-full {
+    position: relative;
+  }
+
+  .paid-full {
+    position: absolute;
+    top: 60px;
+    left: 130px;
+    width: 262px;
+    height: 90px;
+    color: #ca2826;
+    border: 5px solid #ca2826;
+    border-radius: 10px;
+    text-align: center;
+    padding: 20px 10px;
+  }
+
+  .paid-full .text-big {
+    font-weight: bolder;
+    text-transform: uppercase;
+    font-size: 36px;
+  }
+
+  .paid-full .text-small {
+    font-weight: 700;
+    font-size: 16px;
+    margin-top: 12px;
+  }
+
+  #footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  .mt-15 {
+    margin-top: 15px;
+  }
+
+  .mt-10 {
+    margin-top: 10px;
+  }
+  #watermark {
+    position: fixed;
+    top: 48%;
+    left: 70px;
+    transform: rotate(30deg);
+    transform-origin: 50% 50%;
+    opacity: 0.2;
+    font-size: 65px;
+    font-weight: 700;
+    letter-spacing: 10px;
+    color: #666;
+    width: 640px;
+    text-align: center;
+    text-transform: uppercase;
+    background-color: transparent;
+  }
+
+  .chinese {
+    font-family: DroidSansFallback, sans-serif;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    text-align: justify-all !important;
+    font-weight: 400;
+  }
+  .font-chinese {
+    font-family: simsun;
+  }
+</style>
+</head>
+<body>
+  <div id="watermark">Proforma<br>Invoice</div>
+  <div class="wrapper-content">
+    <div class="header bg-light-blue">
+      {% include '@Doctor/rx/_pdf_rx_header.html.twig' %}
+    </div>
+
+    <div class="container bg-light-blue">
+      <table class="table-data">
+        <tbody>
+          <tr>
+            <td width="55%"> <p class="info-bigest text-transform text-gray">PROFORMA INVOICE</p></td>
+            <td width="45%">
+              <table class="table-subdata">
+                <tr>
+                  <td width="42%" class="text-gray" align="right"><strong>Proforma Invoice No:</strong></td>
+                  <td width="58%" align="right">
+                    {% if checkChineseFont(rxInformation.proformaInvoiceNo ) == 1 %}
+                      <span class="font-chinese" >{{ rxInformation.proformaInvoiceNo }}</span>
+                    {% else %}
+                      {{ rxInformation.proformaInvoiceNo }}
+                    {% endif %}
+                    </td>
+                </tr>
+              {% if doctorInformation.hasTax %}
+                <tr>
+                  <td width="42%" class="text-gray" align="right"><strong>GST Reg. No.:</strong></td>
+                  <td width="58%" align="right">{{ doctorInformation.gstNo }}</td>
+                </tr>
+              {% endif %}
+                <tr>
+                  <td width="42%" class="text-gray" align="right"><strong>Date:</strong></td>
+                  <td width="58%" align="right">TBC</td>
+                </tr>
+                <tr>
+                  <td width="42%" class="text-gray" align="right"><strong>Order No:</strong></td>
+                  <td width="58%" align="right"><strong>{{ rxInformation.orderNo }}</strong></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="pt-0 pb-0"><p class="info-medium text-light-gray">Patient Details</p></td>
+          </tr>
+
+            <tr>
+            <td width="55%">
+               <table class="table-subdata">
+                <tr>
+                  <td width="37%" class="text-gray"><strong >Patient Name:</strong></td>
+                  <td width="63%"><strong>
+                      {% if checkChineseFont(patientInformation.name ) == 1 %}
+                        <span class="font-chinese" >{{ patientInformation.name }}</span>
+                      {% else %}
+                        {{ patientInformation.name }}
+                      {% endif %}
+                      </strong></td>
+                </tr>
+                <tr>
+                  <td width="37%" class="text-gray"><strong>Patient Code:</strong></td>
+                  <td width="63%"><strong>{{ patientInformation.globalId }}</strong></td>
+                </tr>
+                 <tr>
+                  <td width="37%" class="text-gray"><strong>Age / Gender:</strong></td>
+                  <td width="63%">{{ patientInformation.age }} years old, {{patientInformation.gender }}</td>
+                </tr>
+                 <tr>
+                  <td width="37%" class="text-gray"><strong>Patient ID:</strong></td>
+                  <td width="63%">
+                    {% if checkChineseFont(patientInformation.patientNumber ) == 1 %}
+                      <span class="font-chinese" >{{ patientInformation.patientNumber }}</span>
+                    {% else %}
+                      {{ patientInformation.patientNumber }}
+                    {% endif %}
+                    </td>
+                </tr>
+                 <tr>
+                  <td width="37%" class="text-gray"><strong>Country of Residence:</strong></td>
+                  <td width="63%">
+                    {% if checkChineseFont(patientInformation.address ) == 1 %}
+                      <span class="font-chinese" >{{ patientInformation.address }}</span>
+                    {% else %}
+                      {{ patientInformation.address }}
+                    {% endif %}
+                    </td>
+                </tr>
+                {% if patientInformation.allergies and patientInformation.allergies is not empty %}
+                 <tr>
+                  <td width="37%" class="text-gray"><strong>Drug Allergies:</strong></td>
+                  <td width="63%"><strong >
+                      {% if checkChineseFont(patientInformation.allergies ) == 1 %}
+                        <span class="font-chinese" >{{ patientInformation.allergies }}</span>
+                      {% else %}
+                          {{ patientInformation.allergies }}
+                      {% endif %}</strong>
+                  </td>
+                </tr>
+                {% else %}
+                 <tr>
+                  <td width="37%" class="text-gray"><strong>Drug Allergies:</strong></td>
+                  <td width="63%"><strong>No known drug allergies</strong></td>
+                </tr>
+                {% endif %}
+              </table>
+            </td>
+            <td width="45%" class="valign-bottom ">
+              <table class="table-subdata">
+                <tr>
+                  <td width="42%" class="text-gray"><strong>Estimated Delivery:</strong></td>
+                  <td width="58%" align="right">TBC</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="content-detail">
+      <div class="bg-light-blue">
+        <div class="container">
+          <p class="info-mediumest text-transform info-title">ORDER DETAILS & ADVICE</p>
+        </div>
+
+      </div>
+      <div class="has-paid-full">
+        {#<div class="paid-full">
+          <p class="text-big">Paid in full</p>
+          <p class="text-small">This is not a prescription</p>
+        </div>#}
+
+      {% set currencyCode = getCurrencyCode() %}
+      <table class="table-data table-main">
+      <tbody>
+        <tr>
+          <th width="10%" class="pl20">Item No.</th>
+          <th width="18%">Product or Service Name</th>
+          <th width="25%">Instructions</th>
+          <th width="12%" class="align-right">Unit Price* ({{ currencyCode }})</th>
+          <th width="11%" class="align-right">Qty/Unit</th>
+          {% if doctorInformation.hasTax %}
+            <th width="11%" class="align-right">GST Code</th>
+          {% endif %}
+          <th width="13%" class="align-right">Total ({{ currencyCode }})</th>
+        </tr>
+
+        {% for item in drugs %}
+        <tr>
+          <td class="pl20">{{ loop.index }}</td>
+          <td class="text-transform">
+            <strong>{{ item.name }}</strong>
+            {% if item.isColdChain %}
+            <img src="bundles/doctor/images/cold-chain-icon.png" alt="">
+            {% endif %}
+          <br>
+          {% if item.ingredients %}
+          {{ item.ingredients }}<br>
+          {% endif %}
+          {% if item.packingType|trim('s', 'right')|lower not in ['tablet', 'capsule'] %}
+              {{ item.packQuantity }} {{ item.doseUnit }} / {{ item.packingType }}<br>
+          {% endif %}
+          {{ item.manufacturer }}
+          </td>
+          <td class="text-light-gray">
+            {% if item.instructions and checkChineseFont(item.instructions ) == 1 %}
+            <div class="chinese" style="word-wrap: break-word;">
+            {% else %}
+            <div style="word-wrap: break-word;">
+            {% endif %}  
+              {{ item.sig }}<br>
+              {% if item.instructions %}<i>{{ item.instructions }}</i><br>{% endif %}
+              {% if item.drowsiness %}{{ item.drowsiness }}<br>{% endif %}
+              {% if item.complete %}{{ item.complete }}{% endif %}
+            </div>
+          </td>
+          <td class="align-right">{{ item.unitPrice|number_format(2, '.', ',') }}</td>
+          <td class="align-right">{{ item.qty }} {{ item.packingType }}</td>
+          {% if doctorInformation.hasTax %}
+            <td class="align-right">{{ hasZrsGST ? 'ZRS' : item.gstCode }}</td>
+          {% endif %}
+          <td class="align-right">{{ item.total|number_format(2, '.', ',') }}</td>
+        </tr>
+        {% endfor %}
+
+        {% if rxInformation.hasRxReviewFee %}
+        <tr>
+          <td class="pl20">{{ drugs|length + 1 }}</td>
+          <td>Doctor Fees <br> (Prescribing Fee)</td>
+          <td></td>
+          {% if platform_share_fee %}
+          <td class="align-right">{{ (doctorFee.unitPrice + doctorFee.adminServiceFee)|number_format(2) }}</td>
+          {% else %}
+          <td class="align-right">{{ doctorFee.unitPrice|number_format(2) }}</td>
+          {% endif %}
+          <td class="align-right">N/A</td>
+          {% if doctorInformation.hasTax %}
+          <td class="align-right">{{ doctorFee.gstCode }}</td>
+          {% endif %}
+          {% if platform_share_fee %}
+          <td class="align-right">{{ (doctorFee.total + doctorFee.adminServiceFee)|number_format(2) }}</td>
+          {% else %}
+          <td class="align-right">{{ doctorFee.total|number_format(2) }}</td>
+          {% endif %}
+        </tr>
+        {% endif %}
+
+      </tbody>
+    </table>
+
+    <div class="container" style="height: 345px">
+      <table class="table-data mt-15">
+        <tr>
+          <td width="35%">
+          </td>
+          <td width="65%">
+            {% if doctorInformation.hasTax %}
+            {% include '@Doctor/rx/pdf/_rx-proforma-invoice-gst-table.html.twig' %}
+            {% else %}
+            {% include '@Doctor/rx/pdf/_rx-proforma-invoice-table.html.twig' %}
+            {% endif %}
+          </td>
+        </tr>
+      </table>
+    </div>
+    </div>
+  </div>
+
+    <div class="container" id="footer" style="height: {{ doctorInformation.hasTax ? '170px' : '85px' }}">
+       <p>
+          *Medicine prices and GST codes are subject to change based on actual delivery address indicated by the patient upon payment.
+        </p>
+      <table class="table-data table-footer">
+        <tr>
+          <td width="70%">
+            <p>
+              If you have any questions, please contact patientshelp@gmedes.com
+            </p>
+           
+          </td>
+          <td width="30%">
+            {% if doctorInformation.hasTax %}
+            <table class="table-subdata">
+              <tr>
+                <td colspan="2"><p class="info-medium text-light-gray">GST Code</p></td>
+              </tr>
+              <tr>
+                <td class="text-gray" width="20%"><strong>SRS</strong></td>
+                <td width="80%">Standard-Rated Supplies </td>
+              </tr>
+              <tr>
+                <td class="text-gray" width="20%"><strong>ZRS</strong></td>
+                <td width="80%">Zero-Rated Supplies</td>
+              </tr>
+              <tr>
+                <td class="text-gray" width="20%"><strong>EXS</strong></td>
+                <td width="80%">Exempt</td>
+              </tr>
+              <tr>
+                <td class="text-gray" width="20%"><strong>OOS</strong></td>
+                <td width="80%">Out-of-scope</td>
+              </tr>
+            </table>
+            {% endif %}
+          </td>
+        </tr>
+      </table>
+      <table class="table-data">
+        <tr>
+          <td align="center">
+            <p class="collecting-agent">Collecting Agent: {{ clinicInformation.isMY ? 'GMEDES Sdn Bhd.' : 'GMEDES Pte Ltd.' }} &bull; Enquiries: patientshelp@gmedes.com</p>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{% extends '@Doctor/layout.html.twig' %}
+{% block javascripts %}
+  {{ parent () }}
+  {% javascripts  
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+    '@DoctorBundle/Resources/public/js/mpa.js'
+    debug=false
+    %}  
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+  {% endjavascripts %}
+{% endblock %}
+
+{% block body %}
+
+  {% include '@Doctor/mpa/header.html.twig' %}
+  <div class="page-container">
+  </div>
+
+{% endblock %}

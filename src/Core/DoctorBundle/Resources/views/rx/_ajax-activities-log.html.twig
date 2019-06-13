@@ -1,0 +1,55 @@
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr role="row">
+      <th>Timestamp</th>
+      <th>Activity</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for item in list %}
+    <tr role="row">
+      <td>{{ item['rx_status_log'].getCreatedOn()|date('d M y D H:i:s') }}</td>
+      <td>
+        {{ item['rx_status_log'].getNotes() }}
+        {% if item['rx_status_log'].getIssueNotes() %}
+          <br /><strong>Reason:</strong> {{ item['rx_status_log'].getIssueNotes() }}
+        {% endif %}
+        {% if item['log_detail']['old'] is defined %}
+            <br /><strong>Old Value:</strong>
+            <table class="table table-striped table-bordered">
+              <tr>
+                <td width="150">Drug Name</td>
+                <td width="50">Qty</td>
+                <td width="350">Instructions and warnings</td>
+              </tr>
+              {% for rxLog in item['log_detail']['old'] %}
+                  <tr>
+                    <td>{{ rxLog['drugName'] }}</td>
+                    <td>{{ rxLog['qty'] }}</td>
+                    <td>{{ rxLog['sig_preview']|raw }}</td>
+                  </tr>
+              {% endfor %}
+            </table>
+        {% endif %}
+        {% if item['log_detail']['new'] is defined %}
+            <br /><strong>New Value:</strong>
+            <table class="table table-striped">
+              <tr>
+                <td width="150">Drug Name</td>
+                <td width="50">Qty</td>
+                <td width="350">Instructions and warnings</td>
+              </tr>
+              {% for rxLog in item['log_detail']['new'] %}
+                  <tr>
+                    <td>{{ rxLog['drugName'] }}</td>
+                    <td>{{ rxLog['qty'] }}</td>
+                    <td>{{ rxLog['sig_preview']|raw }}</td>
+                  </tr>
+              {% endfor %}
+            </table>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>

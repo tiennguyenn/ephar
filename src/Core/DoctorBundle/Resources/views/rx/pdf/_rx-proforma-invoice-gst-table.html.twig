@@ -1,0 +1,76 @@
+<table class="table-subdata table-right">
+  <tr>
+    <td>
+      <p class="info-medium text-light-gray">Order Totals:</p>
+    </td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td class="text-gray" width="60%"><strong>Sub Total (Medication)*:</strong></td>
+    <td width="10%"></td>
+    <td class="text-gray" width="10%"><strong>{{ currencyCode }}</strong></td>
+    <td width="20%">{% if isCreditNote is defined %}({% endif %}{{ orderTotal.subTotalMedication|number_format(2, '.', ',') }}{% if isCreditNote is defined %}){% endif %}</td>
+  </tr>
+  {% if rxInformation.hasRxReviewFee %}
+  <tr>
+    <td class="text-gray" width="60%"><strong>Sub Total (Doctor Fees):</strong></td>
+    <td width="10%"></td>
+    <td class="text-gray" width="10%"><strong>{{ currencyCode }}</strong></td>
+    {% if platform_share_fee %}
+    <td width="20%">{% if isCreditNote is defined %}({% endif %}{{ (doctorFee.total + doctorFee.adminServiceFee)|number_format(2, '.', ',') }}{% if isCreditNote is defined %}){% endif %}</td>
+    {% else %}
+    <td width="20%">{% if isCreditNote is defined %}({% endif %}{{ doctorFee.total|number_format(2, '.', ',') }}{% if isCreditNote is defined %}){% endif %}</td>
+    {% endif %}
+  </tr>
+  {% endif %}
+  <tr>
+    <td class="text-gray" width="60%"><strong>Shipping and Handling:</strong></td>
+    <td class="text-gray" width="10%"><strong>{{rxInformation.shippingGSTCode}}</strong></td>
+    <td class="text-gray" width="10%"><strong>{{ currencyCode }}</strong></td>
+    <td width="20%">TBC</td>
+  </tr>
+  {% if ccAdminFee is defined and ccAdminFee != 0 %}
+  <tr>
+    <td class="text-gray" width="60%"><strong>Customs Clearance Admin Fee  - {{ country }}:</strong></td>
+    <td class="text-gray" width="10%"><strong>{{rxInformation.ccGSTCode}}</strong></td>
+    <td class="text-gray" width="10%"><strong>{{ currencyCode }}</strong></td>
+    <td width="20%">TBC</td>
+  </tr>
+  {% endif %}
+  {% if igPermitFee is defined and igPermitFee != 0 %}
+  <tr>
+    <td class="text-gray" width="60%"><strong>SG Customs IG Permit Fee:</strong></td>
+    <td width="10%"></td>
+    <td class="text-gray" width="10%"><strong>{{ currencyCode }}</strong></td>
+    <td width="20%">TBC</td>
+  </tr>
+  {% endif %}
+  <tr>
+    <td class="text-gray" width="60%"><strong>Total before GST:</strong></td>
+    <td width="10%"></td>
+    <td class="text-gray" width="10%"><strong>{{ currencyCode }}</strong></td>
+    <td width="20%">TBC</td>
+  </tr>
+  <tr>
+    <td class="text-gray" width="60%"><strong>Patient GST %:</strong></td>
+    <td width="10%"></td>
+    <td class="text-gray" width="10%"><strong>{{ currencyCode }}</strong></td>
+    <td width="20%">TBC</td>
+  </tr>
+ {% if importTaxFee is defined and importTaxFee != 0 %}
+  <tr>
+    <td class="text-gray" width="60%"><strong>Import TAX/VAT - {{ country }}:</strong></td>
+    <td width="10%"></td>
+    <td class="text-gray" width="10%"><strong>{{ currencyCode }}</strong></td>
+    <td width="20%">TBC</td>
+  </tr>
+  {% endif %}
+  <tr>
+    <td class="text-gray" width="60%"><strong>Total:</strong></td>
+    <td width="10%"></td>
+    <td class="text-gray" width="10%"><strong>{{ currencyCode }}</strong></td>
+    <td width="20%">TBC</td>
+  </tr>
+</table>

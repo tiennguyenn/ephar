@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>{{ title }}</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="Preview page of Metronic Admin Theme #4 for blank page layout" name="description" />
+        <meta content="" name="author" />
+        <style>
+            body {
+                color: #333;
+                padding: 0;
+                margin: 0;
+                font-size: 14px;
+                font-family: Arial, sans-serif;
+            }
+            .portlet-title {
+                border-left: 1px solid #e7ecf1;
+                border-right: 1px solid #e7ecf1;
+                border-top: 1px solid #e7ecf1;
+                min-height: 41px;
+                font-weight: 600;
+                font-size: 14px;
+                line-height: 18px;
+                padding: 10px;
+            }
+            table {
+                width: 100%;
+                border: 1px solid #e7ecf1;
+            }
+            th {
+                padding: 10px;
+                font-weight: 600;
+                vertical-align: bottom;
+            }
+            td {
+                border-top: 1px solid #e7ecf1;
+                padding: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="portlet">
+            <div class="portlet-title">
+                <div class="caption">{{ title }}</div>
+            </div>
+            <div class="portlet-body">
+                <table class="table table-hover table-light_">
+                    <thead>
+                        <tr class="uppercase">
+                            <th>Timestamp</th>
+                            <th>Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in list %}
+                            <tr role="row">
+                                <td>{{ item['rx_status_log'].getCreatedOn()|date('d M y D H:i:s') }}</td>
+                                <td>
+                                    {{ item['rx_status_log'].getNotes() }}
+                                    {% if item['rx_status_log'].getIssueNotes() %}
+                                        <br /><strong>Reason:</strong> {{ item['rx_status_log'].getIssueNotes() }}
+                                    {% endif %}
+                                    {% if item['log_detail']['old'] is defined %}
+                                        <br /><strong>Old Value:</strong>
+                                        <table class="table table-striped table-bordered">
+                                            <tr>
+                                                <td width="150">Drug Name</td>
+                                                <td width="50">Qty</td>
+                                                <td width="350">Instructions and warnings</td>
+                                            </tr>
+                                            {% for rxLog in item['log_detail']['old'] %}
+                                                <tr>
+                                                    <td>{{ rxLog['drugName'] }}</td>
+                                                    <td>{{ rxLog['qty'] }}</td>
+                                                    <td>{{ rxLog['sig_preview']|raw }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </table>
+                                    {% endif %}
+                                    {% if item['log_detail']['new'] is defined %}
+                                        <br /><strong>New Value:</strong>
+                                        <table class="table table-striped">
+                                            <tr>
+                                                <td width="150">Drug Name</td>
+                                                <td width="50">Qty</td>
+                                                <td width="350">Instructions and warnings</td>
+                                            </tr>
+                                            {% for rxLog in item['log_detail']['new'] %}
+                                                <tr>
+                                                    <td>{{ rxLog['drugName'] }}</td>
+                                                    <td>{{ rxLog['qty'] }}</td>
+                                                    <td>{{ rxLog['sig_preview']|raw }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </table>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

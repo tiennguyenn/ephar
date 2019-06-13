@@ -1,0 +1,61 @@
+{% set sortColumn = sortInfo is not empty ? sortInfo.column : '' %}
+{% set sortDirection = sortInfo is not empty ? sortInfo.direction : '' %}
+
+<div class="table-scrollable">
+  <table class="table table-hover table-bordered dataTable" id="sample_1" role="grid" aria-describedby="sample_1_info">
+    <thead>
+      <tr role="row">
+        <th class="sorting {% if 'rx.orderNumber' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" Order ID : activate to sort column descending" data-sort="rx.orderNumber">Order ID</th>
+        <th class="sorting {% if 'rx.createdOn' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="1" aria-label=" RX Issue Date : activate to sort column ascending" data-sort="rx.createdOn"> RX Issue Date </th>
+        <th class="sorting {% if 'p.patientCode' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="2" aria-label=" Payment Code : activate to sort column ascending" data-sort="p.patientCode"> Patient Code </th>
+        <th class="sorting {% if 'info.firstName' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="3" aria-label=" Payment Name : activate to sort column ascending" data-sort="info.firstName"> Patient Name </th>
+        <th class="sorting {% if 'reportDate' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Recalled Timestamp : activate to sort column ascending" data-sort="reportDate"> Report Issue Date </th>
+        <th class="sorting {% if 'rx.status' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Status : activate to sort column ascending" data-sort="rx.status"> State (On Hold) </th>
+        <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Actions : activate to sort column ascending"> Actions </th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in data %}
+      <tr role="row" class="{{ loop.index%2 ? 'odd' : 'even' }}  {% if item.isDoctorRead is not null and item.isDoctorRead == 0 %} highlight {%  endif %}">
+        <td>{{ item[0].orderNumber  }}</td>
+        <td>{{ item[0].createdOn ? item[0].createdOn|date('d M y') : '' }}</td>
+        <td>{{ item[0].patient.patientCode }}</td>
+        <td>{{ item.firstName ~ ' ' ~ item.lastName }}</td>
+        <td>{{ item.reportDate|date('d M y') }}</td>
+        {% if item[0].status in arrGreen %}
+        {% set statusColor = 'green' %}
+        {% elseif item[0].status in arrGray %}
+        {% set statusColor = 'default' %}
+        {% elseif item[0].status in arrBlue %}
+        {% set statusColor = 'blue' %}
+        {% elseif item[0].status in arrYellow %}
+        {% set statusColor = 'yellow' %}
+        {% else %}
+        {% set statusColor = 'danger' %}
+        {% endif %}
+        <td class="status {{ statusColor }}">{{ convertRXStatus(item[0].status) }}</td>
+        <td>
+        <a href="{{ path(constant('UtilBundle\\Utility\\Constant::RX_STATUS_DRAFT') == item[0].status ? 'edit_rx' : 'view_rx', {'rxId': item[0].id}) }}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right">View <i class="fa fa-arrow-right"></i></a>
+        <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-xs btn-icon-right activitieLink" data-url="{{ path('ajax_get_activities_log', {'rxId':item[0].id}) }}" data-ordernumber="{{ item[0].orderNumber }}" data-print="{{ path('doctor_rx_activities_print_logs', {'rxId':item[0].id}) }}">Activities Log</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if data|length > 0 %}
+    {% set fromRecord = currentPage > 0? currentPage*perPage: currentPage %}
+    {% set toRecored = fromRecord + perPage %}
+    <div class="row">
+        <div class="col-md-5 col-sm-12">
+            <div class="dataTables_info" role="status" aria-live="polite">Showing {{ fromRecord + 1 }} to {{ toRecored < totalResult? toRecored: totalResult }} of {{ totalResult }} entries</div>
+        </div>
+        <div class="col-md-7 col-sm-12">
+            <div class="dataTables_paginate paging_bootstrap_number ajax_paging">
+                {{ paginationHTML|raw }}
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="page" value="{{ currentPage }}">
+{% endif %}

@@ -1,0 +1,58 @@
+{% set sortColumn = sortInfo is not empty ? sortInfo.column : '' %}
+{% set sortDirection = sortInfo is not empty ? sortInfo.direction : '' %}
+<div class="table-scrollable">
+    <table class="table table-striped table-bordered table-hover dataTable no-footer dtr-inline" id="sample_1" role="grid" aria-describedby="sample_1_info" style="width: 1562px;">
+        <thead>
+          <tr role="row">
+            <th class="sorting {% if 'orderNumber' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="orderNumber" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending"># Order ID</th>
+
+            <th class="sorting {% if 'paidOn' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="paidOn" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Confirmed Order Date</th>
+
+            <th class="sorting {% if 'fullName' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="fullName" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Patient Name &amp; Code</th>
+
+            <th class="sorting {% if 'totalFee' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="totalFee" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Total Fee (SGD)</th>
+
+            <th class="sorting {% if 'doctorFee' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="doctorFee" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Doctor's Fee (SGD)</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+
+
+        {% if data %}
+            {% for order in data %}
+                  <tr role="row" class="row-item rowItem">
+                    <td>{{ order.orderNumber }}</td>
+                    <td>{{ order.paidOn|date("d M y") }}</td>
+                    <td>{{ order.fullName }}<br />{{ order.patientCode }}</td>
+                    <td class="text-right {% if order.totalFee < 0 %}txt-red{% endif %}">{{ order.totalFee|number_format(2, '.', ',') }}</td>
+                    <td class="text-right {% if order.doctorFee < 0 %}txt-red{% endif %}">{{ order.doctorFee|number_format(2, '.', ',') }}</td>
+                    <td>
+                        <a href="javascript:void(0);" data-rxid ="{{ order.rxId }}" data-url="{{ path('doctor_rx_transaction_history_detail', { rxId: encodeHex(order.rxId) }) }}" class="rowItemBtn rowItemBtnText"><span class="btn btn-circle green-seagreen btn-xs row-item-btn" href="javascript:;"><i class="fa fa-plus"></i></span> <span class="text">VIEW MORE</span></a>
+                    </td>
+                  </tr>
+                  {% include '@Doctor/rx/reports/_rx_detail.html.twig' with { 'rxId': "{{ order.rxId, 'order' : order }}", 'ccFee': ccFee, 'fpxFee': fpxFee, 'sgCountry': sgCountry } %}
+
+            {% endfor %}
+        {% else %}
+                <tr><td colspan="6">{{ generateMessage('msgNoData') }}</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+{% if data|length > 0 %}
+    {% set fromRecord = currentPage > 0? currentPage*perPage: currentPage %}
+    {% set toRecored = fromRecord + perPage %}
+    <div class="row">
+        <div class="col-md-5 col-sm-12">
+            <div class="dataTables_info" role="status" aria-live="polite">Showing {{ fromRecord + 1 }} to {{ toRecored < totalResult? toRecored: totalResult }} of {{ totalResult }} entries</div>
+        </div>
+        <div class="col-md-7 col-sm-12">
+            <div class="dataTables_paginate paging_bootstrap_number ajax_paging">
+                {{ paginationHTML|raw }}
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="ps_filter[page]" value="{{ currentPage }}">
+{% endif %}
+

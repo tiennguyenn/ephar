@@ -1,0 +1,256 @@
+{% extends '@Doctor/layout.html.twig' %}
+
+{% block body %}
+
+{% if app.user.isMPA %}
+{% include '@Doctor/mpa/header.html.twig' %}
+{% else %}
+{% include '@Doctor/header.html.twig' %}
+{% endif %}
+
+<div class="page-container">
+  {% set subMenu = 'list' %}
+  {% set breadcrumb = 'All RX' %}
+  {% if isDraft is defined %}
+    {% set subMenu = 'draft' %}
+    {% set breadcrumb = 'Draft RX' %}
+  {% elseif isFailed is defined %}
+    {% set subMenu = 'failed' %}
+    {% set breadcrumb = 'Failed RX Orders' %}
+  {% elseif isRecalled is defined %}
+    {% set subMenu = 'recalled' %}
+    {% set breadcrumb = 'Recalled RX Orders' %}
+  {% elseif isPending is defined %}
+    {% set subMenu = 'pending' %}
+    {% set breadcrumb = 'Pending RX Orders' %}
+  {% elseif isConfirmed is defined %}
+    {% set subMenu = 'confirmed' %}
+    {% set breadcrumb = 'Paid RX Orders' %}
+  {% elseif isReported is defined %}
+    {% set subMenu = 'reported' %}
+    {% set breadcrumb = 'RX Orders with Reported Issues' %}
+  {% elseif isScheduled is defined %}
+    {% set subMenu = 'scheduled' %}
+    {% set breadcrumb = 'Scheduled RX Orders' %}
+  {% elseif isDeletedCancelled is defined %}
+    {% set subMenu = 'deleted_cancelled' %}
+    {% set breadcrumb = 'Deleted and Cancelled RX Orders' %}
+  {% endif %}
+
+  {% if app.user.isMPA %}
+  {% include '@Doctor/mpa/left-menu.html.twig' with { 'mainMenu': 'rx', 'subMenu': subMenu } %}
+  {% else %}
+  {% include '@Doctor/left-menu.html.twig' with { 'mainMenu': 'rx', 'subMenu': subMenu } %}
+  {% endif %}
+
+  <div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+      <!-- BEGIN PAGE HEAD-->
+      <div class="page-head">
+        <!-- BEGIN PAGE TITLE -->
+        <div class="page-title">
+          <h1>{{ breadcrumb }}</h1>
+        </div>
+        <!-- END PAGE TITLE -->
+      </div>
+      <!-- END PAGE HEAD-->
+      <!-- BEGIN PAGE BREADCRUMB -->
+      <ul class="page-breadcrumb breadcrumb">
+        <li> <a href="{{ path('doctor_dashboard') }}">Home</a><i class="fa fa-circle"></i></li>
+        <li> <span class="active">{{ breadcrumb }}</span></li>
+      </ul>
+      <!-- END PAGE BREADCRUMB -->
+      <!-- BEGIN PAGE BASE CONTENT -->
+      {% if isSaveSuccessDraft is defined and isSaveSuccessDraft %}
+      <div class="alert alert-success">Your draft has been saved successfully.</div>
+      {% endif %}
+      <div class="row">
+        <div class="col-md-12">
+          <!-- Begin: life time stats -->
+          <div class="portlet light">
+            <div class="portlet-body form">
+              <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+                <form class="form-wizard" id="searchRXForm">
+                  <div class="row mb-20 mb-grid">
+                    <div class="col-lg-10 col-md-9">
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="input-icon right"> <i class="icon-magnifier"></i>
+                            <input type="text" class="form-control" placeholder="Search by Order ID" name="orderId">
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="input-icon right"> <i class="icon-magnifier"></i>
+                            <input type="text" class="form-control" placeholder="Search by Patient Name / Code" name="patientName">
+                          </div>
+                        </div>
+                        {% if isDraft is not defined %}
+                        <div class="col-md-4">
+                          <div class="input-group date date-picker bs-datetime">
+                                <input type="text" size="16" class="form-control" value="" name="issueDate" id="issueDate">
+                                <span class="input-group-addon">
+                                    <button class="btn default date-set" type="button">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        {% endif %}
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3">
+                     <div class="text-right">
+                        <label>
+                          <select name="perPage" aria-controls="sample_1" class="form-control input-sm input-xsmall input-inline" id="perPage">
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                          </select>
+                          entries</label>
+                      </div>
+                    </div>
+                  </div>
+                  {% if isAll is defined and isAll %}
+                  <div class="row show-grid">
+                    <div class="col-md-9">
+                    </div>
+
+                    <div class="col-md-3 text-right">
+					{% if app.user.permissions is empty or 'index_rx,create_rx' in app.user.permissions %}
+                      <a href="{{ path('index_rx') }}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-icon-right btn-sm">
+                     Create RX <i class="fa fa-plus"></i> </a>
+					 {% endif %}
+                    </div>
+                  </div>
+                  {% endif %}
+
+                {% if isDraft is defined %}
+                  <div class="row show-grid">
+                    <div class="col-md-9">
+                      <div class="mod-filter">
+                        <span class="filter-label">Filter by:</span>
+                        <div class="entry filter-changing primary">
+                          <a href="javascript:void(0);" class="rxStatus {{ tab is defined and tab ? '' : 'active' }}">All</a>
+                          <a href="javascript:void(0);" class="rxStatus" data-status="2">For Doctor's Review</a>
+                          <a href="javascript:void(0);" data-status="5" class="rxStatus {{ tab is defined and tab ? 'active' : '' }}">For Amendments</a>
+                          <a href="javascript:void(0);" data-status="1" class="rxStatus">Draft</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+
+                  {% set query = {} %}
+                  {% if isDraft is defined %}
+                  {% set query = {'isDraft': true} %}
+                  <input type="hidden" name="isDraft" value="true">
+                  {% if tab is defined and tab %}
+                  {% set query = {'isDraft': true, 'tab': 5} %}
+                  <input type="hidden" name="rxStatus[]" value="5">
+                  {% endif %}
+                  {% elseif isFailed is defined %}
+                  {% set query = {'isFailed': true} %}
+                  <input type="hidden" name="isFailed" value="true">
+                  {% elseif isRecalled is defined %}
+                  {% set query = {'isRecalled': true} %}
+                  <input type="hidden" name="isRecalled" value="true">
+                  {% elseif isPending is defined %}
+                  {% set query = {'isPending': true} %}
+                  <input type="hidden" name="isPending" value="true">
+                  {% elseif isConfirmed is defined %}
+                  {% set query = {'isConfirmed': true} %}
+                  <input type="hidden" name="isConfirmed" value="true">
+                  {% elseif isReported is defined %}
+                  {% set query = {'isReported': true} %}
+                  <input type="hidden" name="isReported" value="true">
+                  {% elseif isScheduled is defined %}
+                  {% set query = {'isScheduled': true} %}
+                  <input type="hidden" name="isScheduled" value="true">
+                  {% elseif isDeletedCancelled is defined %}
+                  {% set query = {'isDeletedCancelled': true} %}
+                  <input type="hidden" name="isDeletedCancelled" value="true">
+                  {% endif %}
+                  <input type="submit" name="" class="hide">
+                  <input type="hidden" name="sorting" id="sorting">
+                <div class="content-table" id="tableContainer">
+                {{ render(controller('DoctorBundle:Rx:ajaxGetListRX', {}, query)) }}
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<input type="hidden" id="ajaxListRXUrl" value="{{ path('ajax_get_list_rx') }}">
+</div>
+
+<div id="modal-view-logs" class="modal fade modal-new" tabindex="-1" data-width="900">
+  <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+    <h4 class="modal-title">Activities Log </h4><br>
+  </div>
+  <div class="modal-body">
+    <div class="portlet box white portlet-scroller" id="aaaa">
+      <div class="portlet-title">
+        <div class="caption">
+          <span class="caption-subject uppercase sbold" id="orderIdText"></span>
+        </div>
+        <div class="actions">
+          <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right" id="printBtn" target="_blank">Print<i class="fa fa-print"></i></a>
+        </div>
+      </div>
+      <div class="portlet-body">
+      <div class="scroller" style="height:280px" data-always-visible="1" data-rail-visible="1" data-rail-color="white" data-handle-color="green">
+          <div class="table-scrollable table-scrollable-borderless" id="activitiesContainer">
+          </div>
+        </div>
+      </div>
+    </div>
+    <ul class="page-breadcrumb breadcrumb">
+      <li> <a href="{{ path('doctor_dashboard') }}">Home</a><i class="fa fa-circle"></i></li>
+      <li> <span class="active">{{ breadcrumb }}</span></li>
+    </ul>
+    <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm" data-dismiss="modal" id="closeButton">Close <i class="fa fa-remove"></i></a>
+  </div>
+</div>
+
+{% include '@Doctor/rx/_delete-dialog.html.twig' %}
+
+{% include '@Doctor/rx/_recall-dialog.html.twig' %}
+
+<script id="statusTemplate" type="text/x-handlebars-template">
+  {% verbatim %}
+  <input type="hidden" name="rxStatus[]" value="{{value}}">
+  {% endverbatim %}
+</script>
+
+{% endblock %}
+
+{% block stylesheets %}
+{% stylesheets
+  'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+  'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+  'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+  'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+  'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+  'bundles/admin/assets/global/plugins/icheck/skins/minimal/_all.css' filter='cssrewrite' %}
+<link rel="stylesheet" href="{{ asset_url }}" />
+{% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+{% javascripts
+  '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/typeahead/handlebars.min.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+  '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/icheck/icheck.min.js'
+  '@DoctorBundle/Resources/public/js/rx-list.js' %}
+<script type="text/javascript" src="{{ asset_url }}"></script>
+{% endjavascripts %}
+{% endblock %}

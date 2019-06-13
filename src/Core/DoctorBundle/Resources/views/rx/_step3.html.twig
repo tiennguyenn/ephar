@@ -1,0 +1,34 @@
+<div class="portlet-body portlet-collapsed">
+  <div class="dataTables_wrapper no-footer">
+    <div class="table-scrollable">
+      <table class="table table-hover table-frame form-horizontal">
+        <tbody>
+          <tr role="row">
+            <td>
+              <div class="col-md-2">
+                <label class="control-label">Set Rx review fee:<span class="required" aria-required="true"> * </span></label>
+              </div>
+              <div class="col-md-10">
+                <div class="icheck-inline">
+                  <label style="display: none;">
+                    <input type="radio" name="chargeRXReviewFee" class="icheck requiredItem" id="chargeRXReviewFee" checked="checked" value="1"> Yes
+                  </label>
+                  <label style="display: none;">
+                    <input type="radio" name="chargeRXReviewFee" class="icheck requiredItem" value="0"> No
+                  </label>
+                  <div class="form-group" id="reviewFeeContainer">
+                   <div class="col-md-1" style="text-align:right; padding-top: 5px;">SGD</div>
+                   <div class="col-md-6">
+                     <input type="text" placeholder="RX review fee" class="form-control" value="{{ doctorFee.unitPrice|number_format(2, '.', ',') }}" name="rxReviewFee" id="rxReviewFee">
+                     <span>Note: Default fee is based on your prescribing fee settings on your profile page. {% if platform_share_fee %}G-MEDS Admin Service fee is SGD {{ doctorFee.adminServiceFee|number_format(2) }} per prescription. This is added onto your prescribing fee. {% endif %}</span>
+                   </div>
+                 </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

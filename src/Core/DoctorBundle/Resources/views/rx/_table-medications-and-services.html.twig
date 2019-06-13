@@ -1,0 +1,78 @@
+<div class="table-scrollable mt-0 mb-0">
+  <table class="table table-hover">
+  <thead>
+    <tr role="row"><td colspan="4">Date of Rx: {{ rxData.date }}</td> </tr>
+    <tr role="row">
+      <th> Medications and Services </th>
+      <th> Qty </th>
+      <th> Instructions and Warnings </th>
+      <th>Amount ({{ getCurrencyCode() }})</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in list %}
+    <tr>
+        <td>
+          <strong>{{ item.name }}</strong>
+          {% if item.isColdChain %}
+            <img src="{{ asset('bundles/admin/assets/layouts/layout4/img/cold-chain-icon.png') }}" alt="">
+          {% endif %}
+        <br>
+        {% if item.ingredients %}
+        {{ item.ingredients }}<br>
+        {% endif %}
+        {{ item.manufacturer }}<br>
+        {{ item.packQuantity }} {{ item.doseUnit }}
+        </td>
+        <td>{{ item.qty }} {{ item.packingType }}</td>
+        <td>{{ item.sig }}<br>
+            {% if item.drowsiness %}{{ item.drowsiness }}<br>{% endif %}
+            {% if item.complete %}{{ item.complete }}<br>{% endif %}
+            {% if item.instructions %}{{ item.instructions }}<br>{% endif %}
+        </td>
+        <td class="text-right">{{ item.total|number_format(2, '.', ',') }}</td>
+    </tr>
+    {% endfor %}
+    {% if rxData.hasRxReviewFee %}
+    <tr>
+        <td>Doctor Fees(Prescription Review)</td>
+        <td>N/A</td>
+        <td></td>
+        {% if platform_share_fee %}
+        <td class="text-right">{{ (reviewFee.total + reviewFee.adminServiceFee)|number_format(2, '.', ',') }}</td>
+        {% else %}
+        <td class="text-right">{{ reviewFee.total|number_format(2, '.', ',') }}</td>
+        {% endif %}
+    </tr>
+    {% endif %}
+    <tr>
+      <td colspan="4">
+        <div class="form-group form-horizontal clearfix">
+            <label class="control-label col-md-3">Set refill reminder:<span class="required" aria-required="true"> * </span></label>
+            <div class="col-md-9">
+              <div class="icheck-inline">
+                <label>
+                    <input type="radio" name="radio2" {% if rxData.refillDuration %} checked="checked" {% endif %} class="icheck" disabled> Yes </label>
+                <label>
+                    <input type="radio" name="radio2" {% if not rxData.refillDuration %} checked="checked" {% endif %} class="icheck" disabled> No </label>
+              </div>
+            </div>
+        </div>
+        {% if rxData.refillDuration %}
+        <div class="form-group form-horizontal clearfix">
+             <label class="control-label col-md-3">Length of supply:<span class="required" aria-required="true"> * </span></label>
+              <div class="col-md-9 form-inline">
+                <select id="single" class="form-control select2" disabled>
+                  <option value="30" {% if rxData.refillDuration == 30 %} selected="selected" {% endif %}>30</option>
+                  <option value="60" {% if rxData.refillDuration == 60 %} selected="selected" {% endif %}>60</option>
+                  <option value="90" {% if rxData.refillDuration == 90 %} selected="selected" {% endif %}>90</option>
+                  <option value="180" {% if rxData.refillDuration == 180 %} selected="selected" {% endif %}>180</option>
+                 </select>
+                 <span class="form-control-static"> days </span>
+              </div> 
+        </div>
+        {% endif %}
+      </td>
+  </tbody>
+</table>
+</div>

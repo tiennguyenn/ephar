@@ -1,0 +1,154 @@
+{% extends '@Doctor/layout.html.twig' %}
+
+{% block body %}
+
+{% if app.user.isMPA %}
+{% include '@Doctor/mpa/header.html.twig' %}
+{% else %}
+{% include '@Doctor/header.html.twig' %}
+{% endif %}
+
+<div class="page-container">
+
+  {% if app.user.isMPA %}
+  {% include '@Doctor/mpa/left-menu.html.twig' with { 'mainMenu': 'rx', 'subMenu': 'create' } %}
+  {% else %}
+  {% include '@Doctor/left-menu.html.twig' with { 'mainMenu': 'rx', 'subMenu': 'create' } %}
+  {% endif %}
+
+  <div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+      <!-- BEGIN PAGE HEAD-->
+      <div class="page-head">
+        <!-- BEGIN PAGE TITLE -->
+        <div class="page-title">
+          <h1>Create Rx</h1>
+        </div>
+        <!-- END PAGE TITLE -->
+      </div>
+      <!-- END PAGE HEAD-->
+      <!-- BEGIN PAGE BREADCRUMB -->
+      <ul class="page-breadcrumb breadcrumb">
+        <li> <a href="#">Home</a><i class="fa fa-circle"></i></li>
+        <li> <span class="active">Create Rx</span></li>
+      </ul>
+      <!-- END PAGE BREADCRUMB -->
+      <div class="row">
+        <div class="col-md-12">
+          <!-- Begin: life time stats -->
+          <div class="portlet light">
+            <div class="portlet-body">
+              <div class="row patient-top">
+                <div class="col-md-6">
+                </div>
+                <div class="col-md-6">
+                  <div class="mt-element-step element-step-step-sm">
+                    <div class="row step-line">
+                      <div class="col-md-3 mt-step-col first done">
+                        <div class="mt-step-number bg-white font-grey">1</div>
+                        <div class="mt-step-title uppercase font-grey">Select medication</div>
+                      </div>
+                      <div class="col-md-3 mt-step-col">
+                        <div class="mt-step-number bg-white font-grey">2</div>
+                        <div class="mt-step-title uppercase font-grey">Indicate dosage,
+                          <br> frequency and warnings</div>
+                      </div>
+                      <div class="col-md-3 mt-step-col">
+                        <div class="mt-step-number bg-white font-grey">3</div>
+                        <div class="mt-step-title uppercase font-grey">Set RX review fee</div>
+                      </div>
+                      <div class="col-md-3 mt-step-col last">
+                        <div class="mt-step-number bg-white font-grey">4</div>
+                        <div class="mt-step-title uppercase font-grey">Review RX</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="patient-step-details form">
+                <div class="portlet box portlet-step green-seagreen">
+                  <div class="portlet-title">
+                    <div class="caption"><span class="badge badge-number">1</span> Select medication </div>
+                  </div>
+                  <div class="portlet-body">
+                    <div class="panel-group accordion" id="accordion3">
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                                  <a class="accordion-toggle accordion-toggle-styled collapsed" data-toggle="collapse" data-parent="#accordion3" href="#collapse_3_1"> View patient's RX history </a>
+                              </h4>
+                        </div>
+                        <div id="collapse_3_1" class="panel-collapse collapse">
+                          <div class="panel-body">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title"><a class="accordion-toggle accordion-toggle-styled collapsed" data-toggle="collapse" data-parent="#accordion3" href="#collapse_3_2"> Medication search and lists</a></h4>
+                        </div>
+                        <div id="collapse_3_2" class="panel-collapse collapse">
+                          <div class="panel-body">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <div class="clearfix">
+                    <div class="pull-left">
+                      <a href="javascript:void(0);" class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm"> Save as Draft</a>
+                    </div>
+                    <div class="pull-right">
+                      <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm"> Continue<i class="fa fa-arrow-right"></i></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="modal-create-rx" class="modal modal-new fade" role="dialog" aria-hidden="true" data-backdrop="static">
+      <div class="modal-header">
+        <h4 class="modal-title">Create RX</h4>
+      </div>
+      <div class="modal-body">
+        <p class="mt-0">Search the patient you wish to create this prescription for. Can't find a patient? <span class="bold">You may register a new patient by clicking
+<a href="{{ path('patient_new') }}" class="txt-green-new">here</a></span></p>
+        <div class="form-group">
+          <label>Search Patient <span class="required" aria-required="true"> * </span></label>
+          <input type="text" id="patientNameInput" name="patientNameInput" class="form-control on-suggestion" placeholder="" />
+          <input type="hidden" id="patientUrl" value="{{ path('ajax_get_list_patient') }}">
+        </div>
+        <div class="mt-20">
+        <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" id="cancelBtn">Cancel</a>
+        <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm" id="createButton">Create</a></div>
+      </div>
+  </div>
+{% endblock %}
+
+{% block stylesheets %}
+{% stylesheets
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css' filter='cssrewrite'
+  %}
+  <link rel="stylesheet" href="{{ asset_url }}" />
+{% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+{% javascripts
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/typeahead/typeahead.bundle.min.js'
+    '@DoctorBundle/Resources/public/js/rx-index.js'
+%}
+<script type="text/javascript" src="{{ asset_url }}"></script>
+{% endjavascripts %}
+{% endblock %}

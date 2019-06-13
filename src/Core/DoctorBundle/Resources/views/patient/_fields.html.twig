@@ -1,0 +1,69 @@
+{% block utilbundle_personalinformation_widget %}
+
+<div class="form-group mb-grid">
+  <div class="col-md-2">
+    <label>Title<span class="required" aria-required="true"> * </span></label>
+    {{ form_widget(form.title) }}
+  </div>
+  <div class="col-md-4">
+    <label>First Name <span class="required" aria-required="true"> * </span></label>
+    {{ form_widget(form.firstName) }}
+  </div>
+  <div class="col-md-4">
+    <label>Last Name <span class="required" aria-required="true"> * </span></label>
+    {{ form_widget(form.lastName) }}
+  </div>
+  {% if isCaregiver is not defined %}
+  <div class="col-md-2 showHere">
+    <label>Gender <span class="required" aria-required="true"> * </span></label>
+    {{ form_widget(form.gender) }}
+  </div>
+  {% endif %}
+</div>
+{% endblock utilbundle_personalinformation_widget %}
+
+{%- block utilbundle_phone_widget -%}
+<div class="col-md-8">
+  <label>Mobile Number <span class="required" aria-required="true"> * </span></label>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-float clearfix">
+        <div class="col-md-5">
+          {{ form_widget(form.country) }}
+        </div>
+        <div class="col-md-7">
+          {{ form_widget(form.number) }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%- endblock utilbundle_phone_widget -%}
+
+{%- block choice_widget_expanded -%}
+    <div class="mt-radio-inline mt-radio-inline-grid">
+    {%- for child in form %}
+        <label class="mt-radio mt-radio-outline">{{- form_widget(child) -}}
+        {{ child.vars.label }}
+        <span></span>
+        </label>
+    {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded -%}
+
+{%- block utilbundle_patientmedicationallergy_widget -%}
+<div class="mt-repeater-item mt-overflow">
+    <div class="mt-repeater-cell">
+      {{ form_widget(form) }}
+      <a href="javascript:;" class="btn btn-danger mt-repeater-delete mt-repeater-del-right mt-repeater-btn-inline removeLink"><i class="fa fa-minus"></i></a>
+    </div>
+</div>
+{%- endblock utilbundle_patientmedicationallergy_widget -%}
+
+{%- block date_widget -%}
+    {{- date_pattern|replace({
+        '{{ year }}': '<div class="col-md-4">' ~ form_widget(form.year, {'attr': {'class':'form-control select2'}}) ~ '</div>',
+        '{{ month }}': '<div class="col-md-4">' ~ form_widget(form.month, {'attr': {'class':'form-control select2'}}) ~ '</div>',
+        '{{ day }}': '<div class="col-md-4">' ~ form_widget(form.day, {'attr': {'class':'form-control select2'}}) ~ '</div>',
+    })|raw -}}
+{%- endblock date_widget -%}

@@ -1,0 +1,109 @@
+<tr class="hide-item rowItemExpand">
+  <td colspan="3" class="text-right" id="col_1">
+    {% set str_zero = '0.00' %}
+    {% if order.shippingFee is not null and order.shippingFee != str_zero %}
+        <p><strong>Shipping and Handling</strong></p>
+    {% endif %}
+    {% if (order.customsClearancePlatformFee is not null and order.customsClearancePlatformFee != str_zero) or 
+            (order.customsClearanceDoctorFee is not null and order.customsClearanceDoctorFee != str_zero) %}
+        <p><strong>Custom Clearance Admin Fee - {{ order.countryCode|country_code_format }}</strong></p>
+    {% endif %}
+    {% if order.GST is not null and order.GST != str_zero %}
+        <p><strong>Good and Services Tax</strong></p>
+    {% endif %}
+    {% if order.taxIncome is not null or order.taxIncomeWithoutTax is not null %}
+      <p><strong>BM - Import Duty</strong></p>
+      <p><strong>PPN - VAT</strong></p>
+      {% if order.taxIncome is not null %}
+        <p><strong>PPH1 - Tax on Import (for individuals with TAX ID)</strong></p>
+      {% else %}
+        <p><strong>PPH2 - Tax on Import (for individuals without TAX ID)</strong></p>
+      {% endif %}
+    {% elseif order.customsTax is not null and order.customsTax != str_zero%}
+      <p><strong>Import Tax/VAT - {{ order.countryCode|country_code_format }}</strong></p>
+    {% endif %}
+    {% if sgCountry == order.shippingCountryId and order.igPermitFee is not null and order.igPermitFee != str_zero %}
+    <p><strong>SG IG Permit Fee</strong></p>
+    {% endif %}
+    {% if order.payMethod == 'CC' %}
+      <p><strong>Payment Gateway Variable</strong></p>
+      <p><strong>Payment Gateway Fixed</strong></p>
+    {% else %}
+      <p><strong>Payment Gateway Fee(Fixed - FPX)</strong></p>
+      <p><strong>Payment Gateway Fee(Fixed - GST)</strong></p>
+    {% endif %}
+    {# <p><strong>Payment Gateway Fee (Bank MDR - {{ printPaymentMethod(order.orderNumber) }})</strong></p>
+    <p><strong>Payment Gateway Fee (Bank GST)</strong></p>
+    <p><strong>Payment Gateway Fee (Variable)</strong></p>
+    <p><strong>Payment Gateway Fee (Fixed)</strong></p> #}
+
+
+  </td>
+  <td text-right id="col_2">
+    {# <p>{{ order.rxReviewFee }}</p> #}
+    {% if order.shippingFee is not null and order.shippingFee != str_zero %}
+        <p class="text-right {% if order.shippingFee < 0 %} txt-red {% endif %}">{{ order.shippingFee|number_format(2, '.', ',') }}</p>
+    {% endif %}
+    {% if order.customsClearancePlatformFee is not null and order.customsClearancePlatformFee != str_zero %}
+        <p class="text-right {% if order.customsClearancePlatformFee < 0 %} txt-red {% endif %}">{{ order.customsClearancePlatformFee|number_format(2, '.', ',') }}</p>
+    {% endif %}
+    {% if order.GST is not null and order.GST != str_zero %}
+    <p class="text-right {% if order.GST < 0 %} txt-red {% endif %}">{{ order.GST|number_format(2, '.', ',') }}</p>
+    {% endif %}
+    {% if order.taxIncome is not null or order.taxIncomeWithoutTax is not null %}
+      <p class="text-right" >{{ order.taxImportDuty }}</p>
+      <p class="text-right" >{{ order.taxVat }}</p>
+      {% if order.taxIncome is not null %}
+        <p class="text-right" >{{ order.taxIncome }}</p>
+      {% else %}
+        <p class="text-right" >{{ order.taxIncomeWithoutTax }}</p>
+      {% endif %}
+    {% elseif order.customsTax is not null and order.customsTax != str_zero%}
+      <p class="text-right {% if order.customsTax < 0 %} txt-red {% endif %}">{{ order.customsTax|number_format(2, '.', ',') }}</p>
+    {% endif %}
+
+    {% if sgCountry == order.shippingCountryId and order.igPermitFee is not null and order.igPermitFee != str_zero%}
+      <p class="text-right">{{ order.igPermitFee|number_format(2) }}</p>
+    {% endif %}
+    <p class="text-right">&nbsp;</p>
+    <p class="text-right">&nbsp;</p>
+  </td>
+  <td text-right id="col_3">
+    {% if order.shippingFee is not null and order.shippingFee != str_zero %}
+        <p class="text-right">&nbsp;</p>
+    {% endif %}
+    {% if order.customsClearanceDoctorFee is not null and order.customsClearanceDoctorFee != str_zero %}
+        <p class="text-right {% if order.customsClearanceDoctorFee < 0 %} txt-red {% endif %}">{{ order.customsClearanceDoctorFee|number_format(2, '.', ',') }}</p>
+    {% endif %}
+    {% if order.GST is not null and order.GST != str_zero %}
+        <p class="text-right {% if order.GST < 0 %} txt-red {% endif %}">{{ order.GST }}</p>
+    {% endif %}
+    {% if order.taxIncome is not null or order.taxIncomeWithoutTax is not null %}
+      <p class="text-right" >&nbsp;</p>
+      <p class="text-right" >&nbsp;</p>
+      {% if order.taxIncome is not null %}
+        <p class="text-right" >&nbsp;</p>
+      {% else %}
+        <p class="text-right" >&nbsp;</p>
+      {% endif %}
+    {% elseif order.customsTax is not null and order.customsTax != str_zero %}
+      <p class="text-right">&nbsp;</p>
+    {% endif %}
+
+    {% if sgCountry == order.shippingCountryId and order.igPermitFee is not null and order.igPermitFee != str_zero %}
+      <p class="text-right">&nbsp;</p>
+    {% endif %}
+    {% if order.payMethod == 'CC' %}
+      <p class="text-right {% if order.paymentGatewayFeeBankMdr < 0 %} txt-red {% endif %}">{{ order.paymentGatewayFeeVariable|number_format(2, '.', ',') }}</p>
+      <p class="text-right {% if order.paymentGatewayFeeBankMdr < 0 %} txt-red {% endif %}">{{ order.paymentGatewayFeeFixed|number_format(2, '.', ',') }}</p>
+    {% else %}
+      <p class="text-right {% if order.paymentGatewayFeeBankMdr < 0 %} txt-red {% endif %}">{{ order.paymentGatewayFeeFixed|number_format(2, '.', ',') }}</p>
+      <p class="text-right {% if order.paymentGatewayFeeBankMdr < 0 %} txt-red {% endif %}">{{ (order.paymentGatewayFeeFixed * fpxFee)|number_format(2, '.', ',') }}</p>
+    {% endif %}
+    {# <p class="text-right {% if order.paymentGatewayFeeBankMdr < 0 %} txt-red {% endif %}">{{ order.paymentGatewayFeeBankMdr|number_format(2, '.', ',') }}</p>
+    <p class="text-right {% if order.paymentGatewayFeeBankGst < 0 %} txt-red {% endif %}">{{ order.paymentGatewayFeeBankGst|number_format(2, '.', ',') }}</p>
+    <p class="text-right {% if order.paymentGatewayFeeVariable < 0 %} txt-red {% endif %}">{{ order.paymentGatewayFeeVariable|number_format(2, '.', ',') }}</p>
+    <p class="text-right {% if order.paymentGatewayFeeFixed < 0 %} txt-red {% endif %}">{{ order.paymentGatewayFeeFixed|number_format(2, '.', ',') }}</p> #}
+  </td>
+  <td class="valign-middle"></td>
+</tr>

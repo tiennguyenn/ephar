@@ -1,0 +1,208 @@
+{% extends '@Doctor/layout.html.twig' %}
+
+{% block body %}
+
+{% if app.user.isMPA %}
+{% include '@Doctor/mpa/header.html.twig' %}
+{% else %}
+{% include '@Doctor/header.html.twig' %}
+{% endif %}
+
+    {% set title = 'Create RX' %}
+    {% if isRefill is defined and isRefill %}
+        {% set title = 'Refill RX' %}
+    {% endif %}
+
+    <div class="page-container">
+        {% if app.user.isMPA %}
+        {% include '@Doctor/mpa/left-menu.html.twig' with { 'mainMenu': 'rx', 'subMenu': 'create' } %}
+        {% else %}
+        {% include '@Doctor/left-menu.html.twig' with { 'mainMenu': 'rx', 'subMenu': 'create' } %}
+        {% endif %}
+        <div class="page-content-wrapper">
+            <!-- BEGIN CONTENT BODY -->
+            <div class="page-content" id="pageContent">
+                <!-- BEGIN PAGE HEAD-->
+                <div class="page-head">
+                    <!-- BEGIN PAGE TITLE -->
+                    <div class="page-title">
+                        <h1>{{ title }}</h1>
+                    </div>
+                    <!-- END PAGE TITLE -->
+                </div>
+                <!-- END PAGE HEAD-->
+                <!-- BEGIN PAGE BREADCRUMB -->
+                <ul class="page-breadcrumb breadcrumb">
+                    <li> <a href="{{ path('doctor_dashboard') }}">Home</a><i class="fa fa-circle"></i></li>
+                    <li> <span class="active">{{ title }}</span> </li>
+                </ul>
+                <!-- END PAGE BREADCRUMB -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="portlet light">
+                            <div class="portlet-body">
+                                <div class="patient-top-content">
+                                    <div class="patient-top">
+                                        <div class="row patient-top-wrap">
+                                            <div class="col-md-6">
+                                                <div class="patient-info">
+                                                    <div class="info-item">
+                                                        <span>Patient Name:</span>
+                                                        <span class="bold">{{ patientInformation.name }} ({{ patientInformation.globalId }})</span>
+                                                    </div>
+                                                    <div class="info-group">
+                                                        <div class="info-item"><span>Gender:</span> <span class="bold">{{ patientInformation.gender }}</span></div>
+                                                        <div class="info-item"><span>Age:</span> <span class="bold">{{ patientInformation.age }}</span></div>
+                                                        <div class="info-item"><span>Country:</span> <span class="bold">{{ patientInformation.address }}</span></div>
+                                                    </div>
+                                                    {% if patientInformation.allergies and patientInformation.allergies is not empty %}
+                                                        <div class="info-item patient-medication-allergies">
+                                                            <span>Known Medication Allergies: {{ patientInformation.allergies }}</span>
+                                                        </div>
+                                                    {% else %}
+                                                        <div class="info-item patient-medication-allergies">
+                                                            <span>Known Medication Allergies: No known drug allergies</span>
+                                                        </div>
+                                                    {% endif %}
+                                                    <div>
+                                                        <strong>Diagnosis: {{ patientInformation.diagnosis }}</strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mt-element-step element-step-step-sm">
+                                                    <div class="row step-line">
+                                                        <div class="col-md-3 mt-step-col first done">
+                                                            <div class="mt-step-number bg-white font-grey">1</div>
+                                                            <div class="mt-step-title uppercase font-grey">Select medication</div>
+                                                        </div>
+                                                        <div class="col-md-3 mt-step-col">
+                                                            <div class="mt-step-number bg-white font-grey">2</div>
+                                                            <div class="mt-step-title uppercase font-grey">Indicate dosage,
+                                                                <br> frequency and warnings</div>
+                                                        </div>
+                                                        <div class="col-md-3 mt-step-col">
+                                                            <div class="mt-step-number bg-white font-grey">3</div>
+                                                            <div class="mt-step-title uppercase font-grey">Set RX review fee</div>
+                                                        </div>
+                                                        <div class="col-md-3 mt-step-col last">
+                                                            <div class="mt-step-number bg-white font-grey">4</div>
+                                                            <div class="mt-step-title uppercase font-grey">Review RX</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="patient-step-details form">
+                                    <div class="portlet box portlet-step portlet-collapse green-seagreen unselected" disabled id="stepOne">
+                                        <div class="portlet-title" >
+                                            <div class="caption"><span class="badge badge-number">1</span> Select medication </div>
+                                        </div>
+                                    </div>
+                                    <form name="rxForm" id="rxForm" method="POST" data-action="{{ path('confirm_rx') }}">
+                                        <div class="portlet box portlet-step portlet-collapse green-seagreen expanded " id="stepTwo">
+                                            <div class="portlet-title" id="step2Link" data-url="{{ path('ajax_get_step2_content') }}">
+                                                <div class="caption"><span class="badge badge-number">2</span> Indicate dosage, frequency and warnings <span id="medicineCounter"></span> </div>
+                                            </div>
+                                            <div class="portlet-body portlet-collapsed" id="step2Container">
+                                                <div class="table-scrollable" id="listOfDrugs">
+                                                </div>
+                                                {% include '@Doctor/rx/_refill-reminder.html.twig' %}
+                                            </div>
+                                        </div>
+                                        <div class="portlet box portlet-step portlet-collapse green-seagreen unselected" id="stepThree">
+                                            <div class="portlet-title" id="step3Link">
+                                                <div class="caption"><span class="badge badge-number">3</span>Set RX review fee
+                                                </div>
+                                            </div>
+                                            {% include '@Doctor/rx/_step3.html.twig' %}
+                                        </div>
+
+                                        <input type="hidden" name="mesageId" id="mesageId" value="{{ mesageId is defined ? mesageId : '' }}">
+                                        <input type="hidden" name="rxDrugIds" id="rxDrugIds" value="{{ rxDrugs is defined ? rxDrugs : '' }}">
+                                        <input type="hidden" id="extIds" value="{{ drugIds is defined ? drugIds : '' }}">
+                                        <input type="hidden" name="drugIds" id="drugIds" value="{{ drugIds is defined ? drugIds : '' }}">
+                                        <input type="hidden" name="patientId" value="{{ patientId }}" id="patientId">
+                                        <input type="hidden" name="rxId" id="rxId" value="{{ rxData is defined ? rxData.id : '' }}">
+                                        <input type="hidden" name="orderNumber" value="{{ orderNumber }}">
+                                        <input type="hidden" id="isBack">
+                                        {% if replacement is defined and replacement == true %}
+                                            <input type="hidden" id="parentId" name="parentId" value="{{ parentId }}">
+                                        {% endif %}
+                                    </form>
+                                    <div class="portlet box portlet-step green-seagreen" id="stepFour" style="display: none">
+                                    </div>
+                                    <div class="form-actions">
+                                        <div class="align-center" id="saveContainer">
+                                            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm " id="reviewBtn" data-url="{{ path('review_rx') }}" > Review RX
+                                                <i class="fa fa-arrow-right"></i>
+                                            </a>
+
+                                        </div>
+                                        <div class="clearfix" style="display: none" id="confirmContainer">
+                                            <div class="pull-left">
+                                                <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" id="buttonBack"> Back </a>
+                                            </div>
+                                            <div class="pull-right">
+                                                <a href="javascript:void(0);" class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm saveAsDraft" data-url="{{ path('ajax_save_update_rx') }}"> Save</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include '@Doctor/rx/_delete-dialog.html.twig' %}
+    {% include '@Doctor/rx/_delete-rx-dialog.html.twig' %}
+
+    <script id="medicineCounterTemplate" type="text/x-handlebars-template">
+        {% verbatim %}
+  <span>({{value}} medicine{{#if plural}}s{{/if}} added)</span>
+  {% endverbatim %}
+    </script>
+
+    <script id="addedBtnTemplate" type="text/x-handlebars-template">
+        <span class="txt-green-new addedBtn"><i class="fa fa-check bold"></i> Added</span>
+    </script>
+
+{% endblock %}
+
+    {% block stylesheets %}
+        {% stylesheets
+            'bundles/admin/assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.css'
+            'bundles/admin/assets/global/plugins/icheck/skins/minimal/_all.css'
+            'bundles/admin/assets/global/plugins/icheck/skins/polaris/polaris.css'
+            'bundles/admin/assets/global/plugins/icheck/skins/futurico/futurico.css'
+            'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+            'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+            'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+            'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css' filter='cssrewrite'
+        %}
+            <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
+
+    {% block javascripts %}
+        {% javascripts
+            '@AdminBundle/Resources/public/assets/global/plugins/typeahead/handlebars.min.js'
+            '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+            '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+            '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+            '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/additional-methods.min.js'
+            '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.js'
+            '@AdminBundle/Resources/public/assets/global/plugins/icheck/icheck.min.js'
+            '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+            '@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+            '@DoctorBundle/Resources/public/js/rx-update.js'
+        %}
+            <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
+    {% endblock %}

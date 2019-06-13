@@ -1,0 +1,753 @@
+{% extends '@Doctor/layout.html.twig' %}
+
+{% block body %}
+
+{% if app.user.isMPA %}
+{% include '@Doctor/mpa/header.html.twig' %}
+{% else %}
+{% include '@Doctor/header.html.twig' %}
+{% endif %}
+
+{% set title = 'Create RX' %}
+{% if isRefill is defined and isRefill %}
+{% set title = 'Refill RX' %}
+{% endif %}
+
+<div class="page-container">
+
+  {% if app.user.isMPA %}
+  {% include '@Doctor/mpa/left-menu.html.twig' with { 'mainMenu': 'rx', 'subMenu': 'create' } %}
+  {% else %}
+  {% include '@Doctor/left-menu.html.twig' with { 'mainMenu': 'rx', 'subMenu': 'create' } %}
+  {% endif %}
+
+  <div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content" id="pageContent">
+      <!-- BEGIN PAGE HEAD-->
+      <div class="page-head">
+        <!-- BEGIN PAGE TITLE -->
+        <div class="page-title">
+          <h1>{{ title }}</h1>
+        </div>
+        <!-- END PAGE TITLE -->
+      </div>
+      <!-- END PAGE HEAD-->
+      <!-- BEGIN PAGE BREADCRUMB -->
+      <ul class="page-breadcrumb breadcrumb">
+        <li> <a href="{{ path('doctor_dashboard') }}">Home</a><i class="fa fa-circle"></i></li>
+        <li> <span class="active">{{ title }}</span> </li>
+      </ul>
+      <!-- END PAGE BREADCRUMB -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="portlet light">
+            <div class="portlet-body">
+              <div class="patient-top-content">
+              <div class="patient-top">
+              <div class="row patient-top-wrap">
+                <div class="col-md-6">
+                  <div class="patient-info">
+                    <div class="info-item">
+                      <span>Patient Name:</span>
+                      <span class="bold">{{ patientInformation.name }} ({{ patientInformation.globalId }})</span>
+                    </div>
+                    <div class="info-group">
+                      <div class="info-item"><span>Gender:</span> <span class="bold">{{ patientInformation.gender }}</span></div>
+                      <div class="info-item"><span>Age:</span> <span class="bold">{{ patientInformation.age }}</span></div>
+                      <div class="info-item"><span>Country:</span> <span class="bold">{{ patientInformation.address }}</span></div>
+                    </div>
+                    {% if patientInformation.allergies and patientInformation.allergies is not empty %}
+                    <div class="info-item patient-medication-allergies">
+                      <span>Known Medication Allergies: {{ patientInformation.allergies }}</span>
+                    </div>
+					{% else %}
+                    <div class="info-item patient-medication-allergies">
+                      <span>Known Medication Allergies: No known drug allergies</span>
+                    </div>
+                    {% endif %}
+                    <div>
+                      <strong>Diagnosis: {{ patientInformation.diagnosis }}</strong>
+                    </div>
+                  </div>
+                </div>
+
+
+
+                <div class="col-md-6">
+                  <div class="mt-element-step element-step-step-sm">
+                    <div class="row step-line">
+                      <div class="col-md-3 mt-step-col first done">
+                        <div class="mt-step-number bg-white font-grey">1</div>
+                        <div class="mt-step-title uppercase font-grey">Select medication</div>
+                      </div>
+                      <div class="col-md-3 mt-step-col">
+                        <div class="mt-step-number bg-white font-grey">2</div>
+                        <div class="mt-step-title uppercase font-grey">Indicate dosage,
+                          <br> frequency and warnings</div>
+                      </div>
+                      <div class="col-md-3 mt-step-col">
+                        <div class="mt-step-number bg-white font-grey">3</div>
+                        <div class="mt-step-title uppercase font-grey">Set RX review fee</div>
+                      </div>
+                      <div class="col-md-3 mt-step-col last">
+                        <div class="mt-step-number bg-white font-grey">4</div>
+                        <div class="mt-step-title uppercase font-grey">Review RX</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </div>
+              </div>
+              <div class="row show-grid mb-grid">
+                <div class="col-md-12">
+                  <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit" id="btn-patient-note"> View or add patient notes </a>
+                  {% if showRequestAmend is defined %}
+                  <a href="#modal-request-assistant" class="btn btn-ahalf-circle text-uppercase btn-outline green-seagreen btn-icon-right btn-sm button-submit requestAmend" data-toggle="modal"> Request assistant to amend rx </a>
+                  {% endif %}
+                  <input type="hidden" value="{{ encodeHex(patientId) }}" id="current-patient-id" />
+                </div>
+              </div>
+              <div class="patient-step-details form">
+                <div class="portlet box portlet-step portlet-collapse green-seagreen expanded" id="stepOne">
+                  <div class="portlet-title" id="step1Link">
+                    <div class="caption"><span class="badge badge-number">1</span> Select medication </div>
+                  </div>
+                  <div class="portlet-body">
+                    <div class="panel-group accordion" id="accordion3">
+                      <div class="panel panel-default limit-height h400">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            <a class="accordion-toggle accordion-toggle-styled collapsed" data-toggle="collapse" data-parent="#accordion3" href="#collapse_3_1"> View patient's RX history</a>
+                          </h4>
+                        </div>
+                        <div id="collapse_3_1" class="panel-collapse collapse">
+                          <div class="panel-body">
+                            <div class="tabbable-multiline green-seagreen">
+                              {% if dateTabs|length > 0 %}
+                              <ul class="nav nav-tabs" id="dateTabs">
+                                {% for item in dateTabs %}
+                                <li><a href="#dateTabContent-{{ encodeHex(item.id) }}" class="dateTab" data-url="{{ path('ajax_get_rx_drug', {'rxId': item.id}) }}" data-toggle="tab" data-id="{{ encodeHex(item.id) }}">{{ item.date }}</a></li>
+                                {% endfor %}
+                              </ul>
+                              {% endif %}
+                              <div class="tab-content" id="tabContainer">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="panel panel-default limit-height h400">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            <a class="accordion-toggle accordion-toggle-styled collapsed" data-toggle="collapse" data-parent="#accordion3" href="#collapse_3_2"> Medication search and lists </a>
+                          </h4>
+                        </div>
+                        <div id="collapse_3_2" class="panel-collapse collapse">
+                          <div class="panel-body">
+                            <div class="tabbable-multiline green-seagreen">
+                              <ul class="nav nav-tabs ">
+                                <li class="active">
+                                  <a href="#searchTab" data-toggle="tab"> Search </a>
+                                </li>
+                                <li>
+                                  <a href="#myFavoritesTabContent" data-toggle="tab" data-url="{{ path('ajax_get_favorites') }}" id="favoriteTab"> My Favorites </a>
+                                </li>
+                                <li>
+                                  <a href="#top30TabContent" data-toggle="tab" id="top30Tab" data-url="{{ path('ajax_get_top30') }}"> My Top 30 / Most Prescribed </a>
+                                </li>
+                              </ul>
+                              <div class="tab-content" id="drugContainer">
+                                <div class="tab-pane active" id="searchTab">
+                                  <div class="row show-grid mt-20">
+                                    <div class="col-md-12">
+                                      <div id="sample_1_filter">
+                                        <div class="input-icon right"> <i class="icon-magnifier"></i>
+                                          <input type="text" class="form-control" placeholder="Search" name="drugSearchInput" id="drugSearchInput" data-url="{{ path('ajax_get_drug') }}">
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div id="searchTabContent" class="dataTables_wrapper no-footer">
+                                  </div>
+                                </div>
+                                <div class="tab-pane" id="myFavoritesTabContent"></div>
+                                <div class="tab-pane" id="top30TabContent">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <form name="rxForm" id="rxForm" method="POST" data-action="{{ path('confirm_rx') }}">
+                  <div class="portlet box portlet-step portlet-collapse green-seagreen unselected" id="stepTwo">
+                    <div class="portlet-title" id="step2Link" data-url="{{ path('ajax_get_step2_content') }}">
+                      <div class="caption"><span class="badge badge-number">2</span> Indicate dosage, frequency and warnings <span id="medicineCounter"></span> </div>
+                    </div>
+                    <div class="portlet-body portlet-collapsed" id="step2Container">
+                      <div class="table-scrollable" id="listOfDrugs" style="overflow-x: hidden">
+                      </div>
+                      {% include '@Doctor/rx/_refill-reminder.html.twig' %}
+                    </div>
+                  </div>
+                  <div class="portlet box portlet-step portlet-collapse green-seagreen unselected" id="stepThree">
+                    <div class="portlet-title" id="step3Link">
+                      <div class="caption"><span class="badge badge-number">3</span>Set RX review fee
+                      </div>
+                    </div>
+                    {% include '@Doctor/rx/_step3.html.twig' %}
+                  </div>
+                  <input type="hidden" name="rxDrugIds" id="rxDrugIds" value="{{ rxDrugs is defined ? rxDrugs : '' }}">
+                  <input type="hidden" id="extIds" value="{{ drugIds is defined ? drugIds : '' }}">
+                  <input type="hidden" name="drugIds" id="drugIds" value="{{ drugIds is defined ? drugIds : '' }}">
+                  <input type="hidden" name="patientId" value="{{ patientId }}">
+                  <input type="hidden" value="{{ encodeHex(patientId) }}" id="patientId">
+                  <input type="hidden" name="rxId" id="rxId" value="{{ rxData is defined ? rxData.id : '' }}">
+                  <input type="hidden" name="orderNumber" value="{{ orderNumber }}">
+                  <input type="hidden" name="proformaInvoiceNo" value="{{ proformaInvoiceNo }}">
+                  <input type="hidden" id="isBack">
+                  {% if isRefill is defined and isRefill and refill.refillId is defined %}
+                  <input type="hidden" name="refillId" value="{{ refill.refillId }}">
+                  {% endif %}
+                  {% if replacement is defined and replacement == true %}
+                      <input type="hidden" id="parentId" name="parentId" value="{{ parentId }}">
+                  {% endif %}
+                  <input type="hidden" id="isCreate" name="isCreate" value="{{ isCreate is defined ? isCreate : 'false' }}">
+                  <input type="hidden" id="ajaxSaveAsDraft" name="ajaxSaveAsDraft" value="{{ path('ajax_save_as_draft') }}">
+                  <input type="hidden" id="isScheduledRx" name="isScheduledRx" value="{{ rxData.isScheduledRx }}" />
+                  <input type="hidden" id="scheduledSendDate" name="scheduledSendDate" />
+                  <input type="hidden" id="isDoctorReview" value="{{ rxData.status == constant('UtilBundle\\Utility\\Constant::RX_STATUS_FOR_DOCTOR_REVIEW') ? true : false }}" />
+                  <input type="hidden" id="isDraftRX" name="isDraftRX" {% if (rxData.status == constant('UtilBundle\\Utility\\Constant::RX_STATUS_DRAFT')) %}value="1"{% else %}value="0"{% endif %}>
+                  <input type="hidden" id="isOneClickEnabled" value="{{ is_one_click_enabled }}">
+                </form>
+                <div class="portlet box portlet-step green-seagreen" id="stepFour" style="display: none">
+                </div>
+                <div class="form-actions">
+                  <div class="align-center" id="saveContainer">
+                    {% if showSaveAsDraft %}
+                     <a href="javascript:void(0);" class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm saveAsDraft" data-url="{{ path('ajax_save_as_draft') }}"> Save as Draft</a>
+                    {% endif %}
+                      <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase default btn-icon-right btn-sm disabled" id="reviewBtn" data-url="{{ path('review_rx') }}" > Review RX
+                          <i class="fa fa-arrow-right"></i>
+                      </a>
+                      {% if rxData is defined and rxData.id and rxData.status == constant('UtilBundle\\Utility\\Constant::RX_STATUS_DRAFT') %}
+                      <a href="#modal-delete" class="btn btn-ahalf-circle text-uppercase default btn-icon-right btn-sm red" id="deleteBtn" data-url="{{ path('delete_rx', {'rxId':rxData.id}) }}" data-ordernumber="{{ rxData.orderNumber }}" data-toggle="modal" data-target="#modal-delete" > Delete Draft RX
+                      </a>
+                      {% endif %}
+                  </div>
+                  <div class="clearfix" style="display: none" id="confirmContainer">
+                    <div class="pull-left">
+                      {#===Before: mustHave:rxData=>justEdit display well, create's not==#}
+                      {#{% if app.user.isMPA and rxData is defined %}#}
+                      {#<a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" id="buttonBack"><i class="fa fa-arrow-left"></i> Edit Rx </a>#}
+                      {#{% else %}#}
+                      {#<a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" id="buttonBack"> Back </a>#}
+                      {#{% endif %}#}
+                      {% if app.user.isMPA is defined %}
+                          {# {% if rxData.status == constant('UtilBundle\\Utility\\Constant::RX_STATUS_FOR_DOCTOR_REVIEW') %}
+                            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" id="buttonBack" style="height: 48px;line-height: 35px;"><i class="fa fa-arrow-left"></i> Back </a>
+                          {% else %}
+                            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" id="buttonBack" style="height: 48px;line-height: 35px;"><i class="fa fa-arrow-left"></i> Edit Rx </a>
+                          {% endif %} #}
+                          <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" id="buttonBack" style="height: 48px;line-height: 35px;background-color: #F68F5A;"><i class="fa fa-arrow-left"></i> Back / Edit RX </a>
+                      {% endif %}
+                    </div>
+                    <div class="pull-right">
+                      {% if showSaveAsDraft %}
+                      <a href="javascript:void(0);" class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm saveAsDraft" data-url="{{ path('ajax_save_as_draft') }}" style="height: 48px;line-height: 35px;"> Save as Draft</a>
+                      {% endif %}
+                      {% if showRequestAmend is defined %}
+                      <a href="#modal-request-assistant" class="btn btn-ahalf-circle text-uppercase btn-outline green-seagreen btn-icon-right btn-sm button-submit requestAmend" data-toggle="modal"> Request assistant to amend rx </a>
+                      {% endif %}
+                      {% if rxData.isScheduledRx and rxData.status != constant('UtilBundle\\Utility\\Constant::RX_STATUS_DRAFT') %}
+                        <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm {% if rxData.status == constant('UtilBundle\\Utility\\Constant::RX_STATUS_FOR_DOCTOR_REVIEW') %}hidden{% endif %}" id="scheduleRxBtn" style="height: 48px;line-height: 35px;">Edit Send Date<i class="fa fa-arrow-right"></i></a>
+                      {% else %}
+                        {% if 'list_scheduled_rx' in app.user.permissions %}
+                            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm" id="scheduleRxBtn" style="height: 48px;line-height: 35px;">Schedule RX Order<i class="fa fa-arrow-right"></i></a>
+                        {% endif %}
+                      {% endif %}
+                      {% if showConfirmRx is defined and showConfirmRx %}
+                        {% if activeDoctor is defined and activeDoctor %}
+                          {% if rxData.isScheduledRx and rxData.status == constant('UtilBundle\\Utility\\Constant::RX_STATUS_FOR_DOCTOR_REVIEW') %}
+                            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm pr-2" id="save-scheduled-rx" style="padding-right: 30px;position: relative;">
+                              Confirm Scheduled RX Order <i class="fa fa-arrow-right d-absolute" style="position: absolute;right: 10px;top: calc(50% - 7px);"></i></a>
+                          {% else %}
+                            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm pr-2" id="confirmBtn" style="padding-right: 30px;position: relative;">
+                              I have reviewed and approved this prescription.<br> Send to patient now.<i class="fa fa-arrow-right d-absolute" style="position: absolute;right: 10px;top: calc(50% - 7px);"></i></a>
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                      {% if showForwardRx is defined and showForwardRx %}
+                        {% if activeDoctor is defined and activeDoctor %}
+                            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm" id="confirmBtn">Forward Rx Order To Doctor<i class="fa fa-arrow-right"></i></a>
+                        {% endif %}
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="align-center mt-10 mb-15 font-green-seagreen" id="saved-draft-notification" style="display: none;">
+                    <strong><span id="saving-draft-notification"></span></strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <input type="hidden" id="check-drug-url" value="{{ path('ajax_get_check_stock') }}">
+  <div id="modal-notify-drug" class="modal fade modal-new" tabindex="-1" data-width="760">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title">Delays in fulfillment</h4>
+    </div>
+    <div class="modal-body">
+      <div>The delivery dates for this prescription order will be longer due to the lead times required to dispense the following medicines:</div>
+      <div class="delay-medicines drug-list"  style="padding-left: 110px;">
+
+      </div>
+      <p>Would you like to proceed?</p>
+      <div class="delay-btns text-center mt-30 mb-15">
+        <a href="#" class="btn btn-ahalf-circle text-uppercase green-seagreen two-lines btn-xs mr-10" id="notify-drug-accept" style="
+    padding-left:  15px;
+    padding-right: 15px;
+    font-size: 15px;
+" > <span> Yes </span></a>
+        <a href="#" class="btn btn-ahalf-circle text-uppercase btn-outline red two-lines btn-xs" data-dismiss="modal" style="
+    padding-left:  15px;
+    padding-right: 15px;
+    font-size: 15px;
+"> <span > No, I would like to replace these medicines</span></a>
+      </div>
+    </div>
+  </div>
+
+  <input type="hidden" id="load-patient-url" value="{{ path('patient_ajax_get_info') }}">
+
+  <input type="hidden" id="export-patient-url" value="{{ path('patient_ajax_get_info_note_list',{patientId: patientId}) }}">
+
+
+  {% if 'list_draft_rx' in app.user.permissions %}
+      <input type="hidden" id="draft-rx-url" value="{{ url('list_draft_rx') }}" />
+  {% else %}
+      <input type="hidden" id="draft-rx-url" value="{{ url('doctor_dashboard') }}" />
+  {% endif %}
+  <div id="modal-patient-note" class="modal fade modal-new" tabindex="-1" data-width="900">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title">Patient Notes</h4>
+    </div>
+    <div class="modal-body">
+      <div class="notes-patient-info patient-info bg-light-blue">
+
+      </div>
+      <div class="form mb-30">
+        <div class="mb-5"><strong>Add a new note:</strong></div>
+        <div class="form-group">
+          <textarea rows="5" class="form-control" id="note-content" placeholder="Add notes about this patient"></textarea>
+        </div>
+        <div class="form-action text-right">
+          <a href="javascript:;" id="btn-add-note" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right">Add Notes<i class="fa fa-plus"></i></a>
+        </div>
+      </div>
+
+      <div class="mb-5"><strong>Previous Notes</strong></div>
+      <div class="portlet box white portlet-scroller">
+        <div class="portlet-body">
+          <div class="scroller" style="height:280px" data-always-visible="1" data-rail-visible="1" data-rail-color="white" data-handle-color="green">
+            <div class="table-scrollable table-scrollable-borderless">
+              <div class="list-notes">
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="clearfix">
+        <div class="pull-left"><a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right" id="export-patient-note">Print<i class="fa fa-print"></i></a></div>
+        <div class="pull-right"><a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right" data-dismiss="modal">Close Patient Notes<i class="fa fa-close"></i></a></div>
+      </div>
+
+    </div>
+  </div>
+  <div id="modalDrugsLimit" class="modal fade modal-new" tabindex="-1" data-backdrop="static">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+        <h4 class="modal-title">Warning</h4>
+    </div>
+    <div class="modal-body">
+      <div class="text-center mt-20">
+        <i class="fa fa-exclamation-circle icon-check-lg txt-red"></i>
+        <p id="limit-error-msg"></p>
+        <div>
+          <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10" data-dismiss="modal">Ok</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="modalReportToPharmacy" class="modal fade modal-new" tabindex="-1" data-backdrop="static">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title">Warning</h4>
+    </div>
+    <div class="modal-body">
+      <div class="text-center mt-20">
+        <p class="mb-15"><strong>Report to Pharmacy to re-stock drug?</strong></p>
+        <form action="{{ path('doctor_message_compose') }}" method="POST" id="reportPharmacyForm" target="_blank">
+          <input type="hidden" name="drugId" value="">
+        </form>
+        <div>
+          <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm mr-10" id="composeMessageToPharmacy"> Yes </a>
+          <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10" data-dismiss="modal">No</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="modalScheduleRxOrder" class="modal fade modal-new" tabindex="-1" data-backdrop="static" data-width="600">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      {% if rxData.isScheduledRx and rxData.status != constant('UtilBundle\\Utility\\Constant::RX_STATUS_DRAFT') %}
+        <h4 class="modal-title">Edit Send Date of RX Order</h4>
+      {% else %}
+        <h4 class="modal-title">Select Send Date of RX Order</h4>
+      {% endif %}
+    </div>
+    <div class="modal-body" style="padding-top: 0">
+      <p><b>Note:</b> Select a date 14-20 days before the patient's medicines run out.</p>
+      <div class="align-center">
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label for="scheduled_send_data" class="col-md-4 control-label">Date to send RX Order: </label>
+            <div class="col-md-5">
+              <div class="input-group">
+                <input type="text" class="form-control input-medium" id="scheduled_send_date" {% if rxData.isScheduledRx %}value="{{ rxData.scheduledSendDate|date('Y-m-d') }}"{% endif %} />
+                <div class="input-group-addon"><span class="fa fa-calendar" id="calendar-icon"></span></div>
+              </div>
+              <div class="col-md-12" style="text-align: left;"><small id="scheduled_send_date_error" style="color: red; display: none;"></small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-15">
+        {% if rxData.status == constant('UtilBundle\\Utility\\Constant::RX_STATUS_FOR_DOCTOR_REVIEW') %}
+          <a href="javascript:void(0)" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm ml-10" id="confirm-schedule-date">Confirm Schedule Date <span class="fa fa-arrow-right"></span></a>
+        {% else %}
+          <a href="javascript:void(0)" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm ml-10" id="save-scheduled-rx">Save <span class="fa fa-arrow-right"></span></a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% include '@Doctor/rx/_delete-dialog.html.twig' %}
+{% include '@Doctor/rx/_delete-rx-dialog.html.twig' %}
+
+{% if showRequestAmend is defined and rxData is defined %}
+
+<div id="modal-request-assistant" class="modal fade modal-new" tabindex="-1" data-width="860">
+  <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title">Request assistant to Amend RX</h4>
+  </div>
+  <div class="modal-body">
+   
+    <div class="patient-info bg-light-blue pa-10">
+          <div class="info-item"><span>Patient Name:</span> <span class="bold">{{ patientInformation.name }} ({{ patientInformation.globalId }})</span></div>
+          <div class="info-group">
+            <div class="info-item"><span>Gender:</span> <span class="bold">{{ patientInformation.gender }}</span></div>
+            <div class="info-item"><span>Age:</span> <span class="bold">{{ patientInformation.age }}</span></div>
+            <div class="info-item"><span>Country:</span> <span class="bold">{{ patientInformation.address }}</span></div>
+          </div>
+          {% if patientInformation.allergies and patientInformation.allergies is not empty %}
+          <div class="patient-medication-allergies">
+              <div class="info-item"><span>Known Medication Allergies: {{ patientInformation.allergies }}</span></div>
+          </div>
+          {% else %}
+          <div class="info-item patient-medication-allergies">
+            <span>Known Medication Allergies: No known drug allergies</span>
+          </div>
+          {% endif %}
+          <div><strong>Diagnosis: {{ patientInformation.diagnosis }}</strong></div>
+      </div>  
+      
+      <form id="requestAssistantForm" action="{{ path('doctor_rx_request_assistant_amend_rx') }}">
+      <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+          <div class="table-scrollable mt-0 mb-0">
+
+            <table class="table table-hover">
+              <thead>
+                <tr role="row">
+                  <th> Medications and Services </th>
+                  <th> Qty </th>
+                  <th> Instructions and Warnings </th>
+                  <th>Amendment</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in list %}
+                <tr role="row">
+                  <td>
+                    <strong>{{ item.name }}</strong>
+                    {% if item.isColdChain %}
+                      <img src="{{ asset('bundles/admin/assets/layouts/layout4/img/cold-chain-icon.png') }}" alt="">
+                    {% endif %}
+                    <br>
+                    {% if item.ingredients %}
+                    {{ item.ingredients }}<br>
+                    {% endif %}
+                    {{ item.manufacturer }}<br>
+                    {{ item.packQuantity }} {{ item.doseUnit }}
+                  </td>
+                  <td><strong>{{ item.qty }} {{ item.packingType }}</strong></td>
+                  <td>
+                    {{ item.sig }}<br>
+                    {% if item.drowsiness %}
+                    {{ item.drowsiness }}<br>
+                    {% endif %}
+                    {% if item.complete %}
+                    {{ item.complete }}<br>
+                    {% endif %}
+                    {% if item.instructions %}
+                    {{ item.instructions }}<br>
+                    {% endif %}
+                  </td>
+                  <td>
+                      <textarea class="form-control height70" name="rxLineAmendment[{{ item.id }}]" placeholder="Input comments">{{ item.rxLineAmendment ? item.rxLineAmendment.amendment : '' }}</textarea>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      
+        <div class="mt-30">
+            <div class="row mb-5">
+                <div class="col-md-3 text-right">Refill Reminder:</div>
+                <div class="col-md-9">{{ refill is defined and refill.lengthOfSupply ? 'Yes' : 'No' }}</div>
+            </div>
+            <div class="row mb-5">
+                <div class="col-md-3 text-right">Length of supply:</div>
+                <div class="col-md-9">{{ refill is defined and refill.lengthOfSupply ? refill.lengthOfSupply : 0 }} days</div>
+            </div>
+             <div class="row mb-5">
+                <div class="col-md-3 text-right">RX Review Fee:</div>
+                <div class="col-md-9">SGD {{ doctorFee.unitPrice|number_format(2) }}</div>
+            </div>
+        </div>
+      
+       <div class="mt-30">
+           <lable class="display-block mb-5">Other Notes:</lable>
+           <textarea class="form-control height70" name="rxNote" placeholder="Input comments">{{ rxNote ? rxNote.note : '' }}</textarea>
+       </div>
+      <input type="hidden" name="rxId" value="{{ rxData.id }}">
+      </form>
+    
+    <div class="text-right mt-30 mb-15">
+        <a href="#" class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm mr-10" data-dismiss="modal" aria-hidden="true"> Cancel </a>
+        <a href="javascript:;" id="sendToAssistant" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right">Send to Assistant</a>
+    </div>
+  </div>
+</div>
+    
+<div id="modal-request-assistant-success" class="modal fade modal-new" tabindex="-1" data-width="860">
+  <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title">Request assistant to Amend RX</h4>
+  </div>
+  <div class="modal-body">
+    <div class="message-content bg-light-blue">
+        <div class="text-view">Success!</div>
+        <div class="mt-10">Your request to amend the patient's RX order has been forwarded to your clinic assistant successfully:</div>
+        <div class="mt-30 mb-30">
+            <div class="row">
+                <div class="col-md-3 text-right">Patient Name:</div>
+                <div class="col-md-9"><strong>{{ patientInformation.name }} ({{ patientInformation.globalId }})</strong></div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 text-right">Order ID:</div>
+                <div class="col-md-9"><strong>{{ orderNumber }}</strong></div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 text-right">Date:</div>
+                <div class="col-md-9"><strong>{{ 'now'|date('d M y') }}</strong></div>
+            </div>
+        </div>
+        <div class="mt-10">The updated RX will be available on your Dashboard after the amendments are completed and resubmitted.</div>
+    </div>
+    
+    <div class="text-center mt-30 mb-15">
+        <a href="#" class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm" data-dismiss="modal" aria-hidden="true"> Close </a>
+    </div>
+  </div>
+</div>
+    
+<div id="modal-request-assistant-failed" class="modal fade modal-new" tabindex="-1" data-width="860">
+  <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title">Request assistant to Amend RX</h4>
+  </div>
+  <div class="modal-body">
+    <div class="message-content bg-light-blue">
+        <div class="text-view failed">Oops!</div>
+        <div class="mt-10">There were issues forwarding your request to clinic assistant. Please try again later.</div>
+        <div class="mt-10">If the issue persists, please contact <a href="#">{{ app.user.email }}</a></div>
+    </div>
+    
+    <div class="text-center mt-30 mb-15">
+        <a href="#" class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm" data-dismiss="modal" aria-hidden="true"> Close </a>
+    </div>
+  </div>
+</div>
+
+{% endif %}
+
+{% if app.user.isMPA %}
+  {% if rxAmendments is defined %}
+  <div class="popup_notification">
+    <li class="pn_header" data-toggle="collapse" data-target="#popup_notification" onclick="RXCreate.rotateIcon()">THIS RX ORDER MUST BE AMENDED
+      <i class="fa fa-chevron-circle-down" id="pin_icon"></i>
+    </li>
+    <li id="popup_notification" style="max-width:300px" class="collapse in">
+      <ul class="notes small">
+      {% for item in rxAmendments %}
+        <li>
+          <p>{{ item.createdOn|date('d M Y') }}</p>
+          <p>Doctor request:</p>
+        </li>
+        {% for element in item.amendment %}
+          <li><p class="bold">{{ element.drugName }}</p></li>
+          <li><p class="text-muted">{{ element.text|nl2br }}</p></li>
+        {% endfor %}
+        <li><p class="bold">Others</p></li>
+        <li><p class="text-muted">{{ item.rxNote|nl2br }}</p></li>
+      {% endfor %}
+      </ul>
+    </li>
+  </div>
+  {% endif %}
+
+  {% if showForwardRx is defined and showForwardRx %}
+  <input type="hidden" id="forwardRxToDoctor" value="{{ path('doctor_rx_forward_rx_to_doctor') }}">
+  {% endif %}
+
+  <div id="modal-forward-success" class="modal fade modal-new" tabindex="-1" data-width="760">
+  <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title">Forward RX Order to Doctor</h4>
+  </div>
+  <div class="modal-body">
+    <div class="message-content bg-light-blue">
+        <div class="text-view">Success!</div>
+        <div class="mt-10">The RX Order has been forwarded to the doctor for review.</div>
+    </div>     
+    
+    <div class="text-center mt-30 mb-15">
+        <a href="#" class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm" data-dismiss="modal" aria-hidden="true"> Close </a>        
+    </div>
+  </div>
+</div>
+    
+<div id="modal-forward-failed" class="modal fade modal-new" tabindex="-1" data-width="760">
+  <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title">Forward RX Order to Doctor</h4>
+  </div>
+  <div class="modal-body">
+    <div class="message-content bg-light-blue">
+        <div class="text-view failed">Oops!</div>
+        <div class="mt-10">The RX Order cannot be forwarded to the doctor at this time. Please try again later.</div>
+        <div class="mt-10">If the issue persists, please contact <a href="">{{ app.user.doctorEmail is defined ? app.user.doctorEmail : '' }}</a></div>
+    </div>
+    
+    <div class="text-center mt-30 mb-15">
+        <a href="#" class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm" data-dismiss="modal" aria-hidden="true"> Close </a>        
+    </div>
+  </div>
+</div>
+
+{% endif %}
+
+{%  if (app.user.isMPA or 'Doctor' in app.user.roles )  %}
+  <script type="text/javascript">
+      var checkEditRxSessionUrl = "{{path('check_edit_rx_session')}}";
+      var curUserType = '{{ constant('UtilBundle\\Utility\\Constant::TYPE_DOCTOR_NAME') }}';
+      {% if app.user.isMPA %}
+        var curUserType = '{{ constant('UtilBundle\\Utility\\Constant::TYPE_MPA') }}';
+      {%  endif %}
+      var curUser = {{ app.user.loggedUser.id }};
+  </script>
+
+  <div id="modal-locking-edit" class="modal fade" tabindex="-1" data-width="760" data-url="{{ url('doctor_dashboard') }}">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <p class="modal-title">This RX Order is locked for editing.</p>
+    </div>
+
+    <div class="modal-body">
+      <div class="mbRemove">
+        <p>The RX order is being edited by <span id="currentEdit"></span>. Please wait until they are done before making changes to this RX Order.</p>
+        <p>You will now be redirected to the dashboard.</p>
+      </div>
+      <div class="form-actions text-center">
+        <button  data-dismiss="modal" class="btn btn-ahalf-circle">CLOSE</button>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+
+<script id="medicineCounterTemplate" type="text/x-handlebars-template">
+  {% verbatim %}
+  <span>({{value}} medicine{{#if plural}}s{{/if}} added)</span>
+  {% endverbatim %}
+</script>
+
+<script id="addedBtnTemplate" type="text/x-handlebars-template">
+  <span class="txt-green-new addedBtn"><i class="fa fa-check bold"></i> Added</span>
+</script>
+
+{% endblock %} 
+
+{% block stylesheets %}
+{% stylesheets
+        'bundles/admin/assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+        'bundles/admin/assets/global/plugins/icheck/skins/minimal/_all.css'
+        'bundles/admin/assets/global/plugins/icheck/skins/polaris/polaris.css'
+        'bundles/admin/assets/global/plugins/icheck/skins/futurico/futurico.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css' filter='cssrewrite'
+  %}
+  <link rel="stylesheet" href="{{ asset_url }}" />
+{% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %} 
+{% javascripts
+  '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/typeahead/handlebars.min.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/additional-methods.min.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-touchspin/bootstrap.touchspin.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/icheck/icheck.min.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+  '@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+  '@PatientBundle/Resources/public/js/patient-common.js'
+  '@DoctorBundle/Resources/public/js/rx-create.js'
+%}
+<script type="text/javascript" src="{{ asset_url }}"></script>
+{% endjavascripts %}
+
+{% endblock %}

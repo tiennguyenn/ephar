@@ -1,0 +1,60 @@
+{% set sortColumn = sortInfo is not empty ? sortInfo.column : '' %}
+{% set sortDirection = sortInfo is not empty ? sortInfo.direction : '' %}
+
+<div class="table-scrollable">
+  <table class="table table-hover table-bordered dataTable" id="sample_1" role="grid" aria-describedby="sample_1_info">
+    <thead>
+      <tr role="row">
+        <th class="sorting {% if 'info.firstName' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" Patient Name & Code : activate to sort column descending" data-sort="info.firstName">Patient Name
+          <br> & Code</th>
+        <th class="sorting {% if 'country.name' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="2" aria-label=" Country of Residence : activate to sort column ascending" data-sort="country.name"> Country of <br>Residence</th>
+        <th class="sorting {% if 'p.createdOn' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Date Registered : activate to sort column ascending" data-sort="p.createdOn"> Date <br>Registered </th>
+        <th class="sorting {% if 'noOfRX' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" No. of RX : activate to sort column ascending" data-sort="noOfRX"> No. of RX</th>
+        <th class="sorting {% if 'dateOfLastRX' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Date of Last RX : activate to sort column ascending" data-sort="dateOfLastRX"> Date of <br>Last RX</th>
+        <th class="sorting {% if 'p.useCaregiver' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Caregiver : activate to sort column ascending" data-sort="p.useCaregiver">Caregiver </th>
+        <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Actions : activate to sort column ascending"> Actions </th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in data %}
+      <tr role="row" class="{{ loop.index%2 ? 'odd' : 'even' }}">
+        <td><a href="{{ path('patient_edit', {id:item[0].id}) }}">{{ item[0].personalInformation.firstName }}
+            {{ item[0].personalInformation.lastName }}
+          <br>{{ item[0].patientCode }}</a></td>
+        <td>{{ item.countryName }}</td>
+        <td>{{ item[0].createdOn|date('d M y') }}</td>
+        <td>{{ item.noOfRX }}</td>
+        <td>{{ item.dateOfLastRX ? item.dateOfLastRX|date('d M y') : '' }}</td>
+        <td class="status {{ item[0].useCaregiver ? 'green' : 'danger' }}">{{ item[0].useCaregiver ? 'Yes' : 'No' }}</td>
+        <td>
+            <a href="{{ path('patient_edit', {id:item[0].id}) }}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right">Patient Info <i class="fa fa-edit"></i></a>
+            {% if app.user.permissions is empty or 'create_rx' in app.user.permissions %}
+            <a href="{{ path('create_rx', {'patientId': item[0].id}) }}"  class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right">New RX <i class="fa fa-arrow-right"></i></a>
+            {% endif %}
+            <span data-hexid= "{{ encodeHex(item[0].id)}}"" data-id="{{ item[0].id  }}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right btn-patient-note">Patient Notes <i class="fa fa-arrow-right"></i></span>
+            <a href="{{ path('patient_list_rx_history', {'patientId': item[0].id}) }}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right {% if not item.noOfRX %}disabled{% endif %}">RX History <i class="fa fa-arrow-right"></i></a>
+            {% if not item[0].deletedOn %}
+            <a href="#modal-delete" data-toggle="modal" data-target="#modal-delete" class="btn btn-ahalf-circle text-uppercase red btn-xs deleteBtn" data-url="{{ path('patient_delete', {'patientId': item[0].id}) }}">Delete </a>
+            {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if data|length > 0 %}
+    {% set fromRecord = currentPage > 0? currentPage*perPage: currentPage %}
+    {% set toRecored = fromRecord + perPage %}
+    <div class="row">
+        <div class="col-md-5 col-sm-12">
+            <div class="dataTables_info" role="status" aria-live="polite">Showing {{ fromRecord + 1 }} to {{ toRecored < totalResult? toRecored: totalResult }} of {{ totalResult }} entries</div>
+        </div>
+        <div class="col-md-7 col-sm-12">
+            <div class="dataTables_paginate paging_bootstrap_number ajax_paging">
+                {{ paginationHTML|raw }}
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="page" value="{{ currentPage }}">
+{% endif %}

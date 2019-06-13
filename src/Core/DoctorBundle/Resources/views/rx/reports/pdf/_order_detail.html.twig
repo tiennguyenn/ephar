@@ -1,0 +1,206 @@
+<div class="content">
+  <div class="container">
+    <h2 class="sub-title">{{ title }}</h2>
+    <table class="table-data table-multi-line">
+      <thead>
+        <tr>
+            <th align="left" valign="bottom" width="12%" class="has-border">
+              <div class="border-bottom">No</div>
+            </th>
+            <th align="left" valign="bottom" width="12%" class="has-border">
+              <div class="border-bottom">Date <br> of Transaction</div>
+            </th>
+            <th align="left" valign="bottom" width="15%" class="has-border">
+              <div class="border-bottom">Order ID and Patient Details</div>
+            </th>
+            <th align="left" valign="bottom" class="border-right has-border" width="25%">
+              <div class="border-bottom">Prescription Details</div>
+            </th>
+            <th align="right" valign="bottom" class="border-right has-border" width="10%">
+              <div class="border-bottom">Total Charged to Patient <br> ({{ getCurrencyCode() }})</div>
+            </th>
+            <th align="right" valign="bottom" class="border-right has-border" width="10%">
+              <div class="border-bottom">*G-MEDS <br> Product Service and Fees <br> ({{ getCurrencyCode() }})</div>
+            </th>
+            <th align="right" valign="bottom" width="10%" class="has-border">
+              <div class="border-bottom">Total Due <br> to/(from) <br> Doctor ({{ getCurrencyCode() }})</div>
+            </th>
+        </tr>
+      </thead>
+      <tbody>
+      {% if data is defined %}
+          {% set col1SubtotalArea = 0 %}
+          {% set col2SubtotalArea = 0 %}
+          {% set col3SubtotalArea = 0 %}
+          {% for key,item in data %}
+            <tr>
+              <td valign="top" width="12%">{{key + 1}}</td>
+              <td valign="top" width="15%">{{ item.rx.createdOn|date('d M Y') }}</td>
+              <td valign="top" width="18%">{{ item.rx.orderNumber }}<br>
+                  {% if checkChineseFont(item.rx.fullName ) == 1 %}
+                      <span class="font-chinese" >{{ item.rx.fullName }}</span>
+                  {% else %}
+                      {{ item.rx.fullName }}
+                  {% endif %}
+                  <br>{{ item.rx.patientCode }}</td>
+              <td colspan="4" class="subdata-wrap">
+                <table class="table-subdata">
+                    {% set col1SubTotal = 0 %}
+                    {% set col2SubTotal = 0 %}
+                    {% set col3SubTotal = 0 %}
+                    {% for rxLine in item.presDetail %}
+                          {% if rxLine.lineType == 2 and rxLine.hasRxReviewFee == true %}
+                            <tr>
+                                <td class="border-right" width="45.4%">Doctor's Fees (Prescribing Fee)</td>
+                                <td class="border-right" width="18.2%" align="right">{{ rxLine.listPrice|number_format(2, '.', ',') }}</td>
+                                {% set val = rxLine.listPrice - rxLine.doctorServiceFee  %}
+                                <td class="border-right {% if val < 0 %}txt-red{% endif %}" width="18.2%" align="right">{{ val|number_format(2, '.', ',') }}</td>
+                                <td width="18.2%" align="right" {% if rxLine.doctorServiceFee < 0 %}class="txt-red"{% endif %}>{{ rxLine.doctorServiceFee|number_format(2, '.', ',') }}</td>
+
+                                {% set col1SubTotal = col1SubTotal + rxLine.listPrice %}
+                                {% set col2SubTotal = col2SubTotal + val %}
+                                {% set col3SubTotal = col3SubTotal + rxLine.doctorServiceFee %}
+                            </tr>
+
+                          {% elseif rxLine.lineType == 100 %}
+                            <tr>
+                              <td class="border-right" width="45.4%">GMEDES Service Fee</td>
+                              <td class="border-right" width="18.2%" align="right"></td>
+                              <td class="border-right {% if rxLine.values[1] < 0 %}txt-red{% endif %}" width="18.2%" align="right">{{ rxLine.values[1]|number_format(2, '.', ',') }}</td>
+                              <td width="18.2%" align="right" {% if rxLine.values[2] < 0 %}class="txt-red"{% endif %}>{{ rxLine.values[2]|number_format(2, '.', ',') }}</td>
+
+                              {% set col2SubTotal = col2SubTotal + rxLine.values[1] %}
+                              {% set col3SubTotal = col3SubTotal + rxLine.values[2] %}
+                            </tr>
+                          {% elseif rxLine.lineType == 1 %}
+                            <tr>
+                                <td class="border-right" width="45.4%">{{ rxLine.name }}</td>
+                                <td class="border-right" width="18.2%" align="right">{{ rxLine.listPrice|number_format(2, '.', ',') }}</td>
+                                {% set val = rxLine.listPrice -rxLine.doctorMedicineFee %}
+                                <td class="border-right {% if val < 0 %}txt-red{% endif %}" width="18.2%" align="right">{{ val|number_format(2, '.', ',') }}</td>
+
+                                <td width="18.2%" align="right" {% if rxLine.doctorMedicineFee < 0 %}class="txt-red"{% endif %}>{{ rxLine.doctorMedicineFee|number_format(2, '.', ',') }}</td>
+
+                                {% set col1SubTotal = col1SubTotal + rxLine.listPrice %}
+                                {% set col2SubTotal = col2SubTotal + val %}
+                                {% set col3SubTotal = col3SubTotal + rxLine.doctorMedicineFee %}
+                            </tr>
+                          {% endif %}
+                     {% endfor %}
+
+
+                     <tr>
+                        <td class="border-right" width="45.4%">Shiping and Handling</td>
+                        <td class="border-right" width="18.2%" align="right">{{ item.rx.shippingList[0]|number_format(2, '.', ',') }}</td>
+                        <td class="border-right" width="18.2%" align="right">{{ item.rx.shippingList[1] }}</td>
+                        <td width="18.2%" align="right" {% if item.rx.shippingList[2] < 0 %}class="txt-red"{% endif %}>{{ item.rx.shippingList[2]|number_format(2, '.', ',') }}</td>
+
+                       {% set col1SubTotal = col1SubTotal + item.rx.shippingList[0] %}
+                       {% set col2SubTotal = col2SubTotal + item.rx.shippingList[1] %}
+                       {% set col3SubTotal = col3SubTotal + item.rx.shippingList[2] %}
+
+                     </tr>
+
+                     {% if type == 'overSea' %}
+                       <tr>
+                          <td class="border-right" width="45.4%">Custom Clearance Admin Fee - {{item.rx.countryCode}}</td>
+                          <td class="border-right" width="18.2%" align="right">{{ item.rx.customCAF[0]|number_format(2, '.', ',') }}</td>
+                          <td class="border-right" width="18.2%" align="right">{{ item.rx.customCAF[1] }}</td>
+                          <td width="18.2%" align="right" {% if item.rx.customCAF[2] < 0 %}class="txt-red"{% endif %}>{{ item.rx.customCAF[2]|number_format(2, '.', ',') }}</td>
+                       </tr>
+                       {% set col1SubTotal = col1SubTotal + item.rx.customCAF[0] %}
+                       {% set col2SubTotal = col2SubTotal + item.rx.customCAF[1] %}
+                       {% set col3SubTotal = col3SubTotal + item.rx.customCAF[2] %}
+                    {% endif %}
+
+                     <tr>
+                        <td class="border-right" width="45.4%">Patient GST</td>
+                        <td class="border-right" width="18.2%" align="right">{{ item.rx.feeGst[0]|number_format(2, '.', ',') }}</td>
+                        <td class="border-right" width="18.2%" align="right">{{ item.rx.feeGst[1]|number_format(2, '.', ',') }}</td>
+                        <td width="18.2%" align="right" {% if item.rx.feeGst[2] < 0 %}class="txt-red"{% endif %}>{{ item.rx.feeGst[2]|number_format(2, '.', ',') }}</td>
+
+                       {% set col1SubTotal = col1SubTotal + item.rx.feeGst[0] %}
+                       {% set col2SubTotal = col2SubTotal + item.rx.feeGst[1] %}
+                       {% set col3SubTotal = col3SubTotal + item.rx.feeGst[2] %}
+                     </tr>
+                     {% if type == 'overSea'%}
+                       <tr>
+                          <td class="border-right" width="45.4%">{{ item.rx.customsTaxName }}</td>
+                          <td class="border-right" width="18.2%" align="right">{{ item.rx.customsTax[0]|number_format(2, '.', ',') }}</td>
+                          <td class="border-right" width="18.2%" align="right">{{ item.rx.customsTax[1]|number_format(2, '.', ',') }}</td>
+                          <td width="18.2%" align="right" {% if item.rx.customsTax[2] < 0 %}class="txt-red"{% endif %}>{{ item.rx.customsTax[2]|number_format(2, '.', ',') }}</td>
+                       </tr>
+                       {% set col1SubTotal = col1SubTotal + item.rx.customsTax[0] %}
+                       {% set col2SubTotal = col2SubTotal + item.rx.customsTax[1] %}
+                       {% set col3SubTotal = col3SubTotal + item.rx.customsTax[2] %}
+                    {% endif %}
+                     <tr>
+                        <td class="border-right" width="45.4%">Payment Gateway Fee (Bank MDR)</td>
+                        <td class="border-right" width="18.2%" align="right"></td>
+                        <td class="border-right" width="18.2%" align="right">{{ item.rx.paymentGatewayFeeBankMdr[1]|number_format(2, '.', ',') }}</td>
+                        <td width="18.2%" align="right" {% if item.rx.paymentGatewayFeeBankMdr[2] < 0 %}class="txt-red"{% endif %}>{{ item.rx.paymentGatewayFeeBankMdr[2]|number_format(2, '.', ',') }}</td>
+
+                       {% set col2SubTotal = col2SubTotal + item.rx.paymentGatewayFeeBankMdr[1] %}
+                       {% set col3SubTotal = col3SubTotal + item.rx.paymentGatewayFeeBankMdr[2] %}
+                     </tr>
+
+                     <tr>
+                        <td class="border-right" width="45.4%">Payment Gateway Fee (Variable)</td>
+                        <td class="border-right" width="18.2%" align="right"></td>
+                        <td class="border-right" width="18.2%" align="right">{{ item.rx.paymentGatewayFeeVariable[1]|number_format(2, '.', ',') }}</td>
+                        <td width="18.2%" align="right" {% if item.rx.paymentGatewayFeeVariable[2] < 0 %}class="txt-red"{% endif %}>{{ item.rx.paymentGatewayFeeVariable[2] }}</td>
+
+                       {% set col2SubTotal = col2SubTotal + item.rx.paymentGatewayFeeVariable[1] %}
+                       {% set col3SubTotal = col3SubTotal + item.rx.paymentGatewayFeeVariable[2] %}
+
+                     </tr>
+                     <tr>
+                        <td class="border-right" width="45.4%">Payment Gateway Fee (Fixed)</td>
+                        <td class="border-right" width="18.2%" align="right"></td>
+                        <td class="border-right" width="18.2%" align="right">{{ item.rx.paymentGatewayFeeFixed[1]|number_format(2, '.', ',') }}</td>
+                        <td width="18.2%" align="right" {% if item.rx.paymentGatewayFeeFixed[2] < 0 %}class="txt-red"{% endif %}>{{ item.rx.paymentGatewayFeeFixed[2]|number_format(2, '.', ',') }}</td>
+
+                       {% set col2SubTotal = col2SubTotal + item.rx.paymentGatewayFeeFixed[1] %}
+                       {% set col3SubTotal = col3SubTotal + item.rx.paymentGatewayFeeFixed[2] %}
+                     </tr>
+                     <!-- <tr>
+                        <td class="border-right" width="45.4%">Doctor GST</td>
+                        <td class="border-right" width="18.2%" align="right"></td>
+                        <td class="border-right" width="18.2%" align="right"></td>
+                        <td width="18.2%" align="right"></td>
+                     </tr> -->
+
+                    {% set col1SubtotalArea = col1SubtotalArea + col1SubTotal %}
+                    {% set col2SubtotalArea = col2SubtotalArea + col2SubTotal %}
+                    {% set col3SubtotalArea = col3SubtotalArea + col3SubTotal %}
+                </table>
+              </td>
+            </tr>
+
+            <tr class="subtotal-every">
+              <td valign="top" class="border-bottom" width="12%"></td>
+              <td valign="top" class="border-bottom" class="border-bottom" width="15%"></td>
+              <td valign="top" class="border-bottom" width="18%"></td>
+              <td valign="top" class="border-right border-bottom" width="25%"><strong>Order total</strong></td>
+              <td valign="top" align="right" class="border-right border-bottom {% if col1SubTotal < 0 %}txt-red {% endif %}" width="10%"><strong>{{ col1SubTotal|number_format(2, '.', ',') }}</strong></td>
+              <td valign="top" align="right" class="border-right border-bottom {% if col2SubTotal < 0 %}txt-red {% endif %}" width="10%"><strong>{{ col2SubTotal|number_format(2, '.', ',') }}</strong></td>
+              <td valign="top" align="right" class="border-bottom {% if col3SubTotal < 0 %}txt-red {% endif %}" width="10%"><strong>{{ col3SubTotal|number_format(2, '.', ',') }}</strong></td>
+            </tr>
+          {% endfor %}
+            <tr class="subtotal">
+              <td valign="top" class="border-bottom" width="12%"></td>
+              <td valign="top" class="border-bottom" class="border-bottom" width="15%"></td>
+              <td valign="top" class="border-bottom" width="18%"></td>
+              <td valign="top" class="border-bottom" width="25%"><strong>Subtotal({{ type == 'local' ? 'Local Patients' : 'Overseas Patients' }}   )</strong></td>
+              <td valign="top" align="right" class="border-bottom {% if col1SubtotalArea < 0 %}txt-red {% endif %}" width="10%"><strong>{{ col1SubtotalArea |number_format(2, '.', ',')}}</strong></td>
+              <td valign="top" align="right" class="border-bottom {% if col2SubtotalArea < 0 %}txt-red {% endif %}" width="10%"><strong>{{ col2SubtotalArea |number_format(2, '.', ',')}}</strong></td>
+              <td valign="top" align="right" class="border-bottom {% if col3SubtotalArea < 0 %}txt-red {% endif %}" width="10%"><strong>{{ col3SubtotalArea |number_format(2, '.', ',')}}</strong></td>
+            </tr>
+      {% else %}
+        <tr><td>Nil</td></tr>
+      {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+</div>

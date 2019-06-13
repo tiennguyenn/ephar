@@ -1,0 +1,444 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block body %}
+
+{% include '@Doctor/header.html.twig' %}
+
+<div class="page-container">
+  {% include '@Doctor/left-menu.html.twig' with { 'mainMenu': 'profile', 'subMenu': 'personal-info' } %}
+  <div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+      <!-- BEGIN BUTTON EDIT HEAD -->
+      <div style="position:relative;">
+          <a href="{{ path('doctor_profile')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-edit top">Edit Profile</a>
+      </div>
+      <!-- END BUTTON EDIT HEAD -->
+      <!-- BEGIN PAGE HEAD-->
+      <div class="page-head">
+          <!-- BEGIN PAGE TITLE -->
+          <div class="page-title">
+          <h1>Personal Information</h1>
+          </div>
+          <!-- END PAGE TITLE -->
+      </div>
+      <!-- END PAGE HEAD-->
+      <!-- BEGIN PAGE BREADCRUMB -->
+      <ul class="page-breadcrumb breadcrumb">
+          <li> <a href="{{ path('doctor_dashboard')}}">Home</a> <i class="fa fa-circle"></i> </li>
+          <li> <span class="active">Profile</span> </li>
+      </ul>
+      <!-- END PAGE BREADCRUMB -->
+      <!-- BEGIN PAGE BASE CONTENT -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="portlet light bordered">
+            <div class="portlet-body">
+              <div class="row personal-information">
+                <div class="col-md-6">
+                    <h4 class="block">Doctor's Personal Information</h4>
+                    <div class="personal-information-wrap">
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Doctor's Title:</span></div>
+                            <div class="col-md-6  col-xs-6"><span class="info-name">{{titleList[doctorInfo.title]}}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">First Name:</span></div>
+                            <div class="col-md-6  col-xs-6"><span class="info-name">{{doctorInfo.firstname}}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Last Name:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{doctorInfo.lastname}}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Gender:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ gender[doctorInfo.gender]}}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Display Name:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{doctor.displayName}}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Email:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ doctorInfo.email }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Mobile Number:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">+{{ phoneCode[doctorInfo.phoneLocation] ~ ' ' ~ doctorInfo.phoneArea ~ ' ' ~ doctorInfo.phoneNumber}}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Local Medical Licence No:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ doctorInfo.medicalNumber }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Local Medical Country of Issue:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ country[doctorInfo.medicalCountry] }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Local Medical Date of Issue:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ doctorInfo.medicalIssueDate|default('-') }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Local ID / Passport:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ doctorInfo.passportNum|default('-') }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Local Country of Issue:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ country[doctorInfo.passportCountry]|default('-') }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Local Date of Issue:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ doctorInfo.passportdate|default('-') }}</span></div>
+                        </div>
+                    </div>
+
+                    <div class="personal-information-wrap">
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Doctor Specialization:</span></div>
+                            <div class="col-md-6 col-xs-6">
+
+                                {% if doctorInfo.spec|length >0 %}
+                                    {% for curspec in doctorInfo.spec %}
+                                        <div>
+                                            <span class="info-name">{{ curspec }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="personal-information-wrap">
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Bank Name:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ doctorInfo.bankName }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Account Number:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ doctorInfo.accountNum }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Account Name:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ doctorInfo.accountName }}</span></div>
+                        </div>
+
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Bank Swift Code:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ doctorInfo.bankcode }}</span></div>
+                        </div>
+
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Bank Country:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ country[doctorInfo.bankCountry] }}</span></div>
+                        </div>
+
+                    </div>
+                    <div class="personal-information-wrap">
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Prescription Review Fee (Local Patients):</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">SGD {{ doctorInfo.rxReviewFeeLocal|number_format(2, '.', ',') }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Prescription Review Fee (Overseas Patients):</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">SGD {{ doctorInfo.rxReviewFeeInternational|number_format(2, '.', ',') }} </span></div>
+                        </div>
+                    </div>
+
+                    <div class="personal-information-wrap">
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Profile image:</span></div>
+                            <div class="col-md-6 col-xs-6"><img src="{{ asset(doctor.getProfilePhotoUrl()) }}&{{ date().timestamp }}" class="img-responsive pic-bordered" alt="profile" id="main-logo-preview-profile"></div>
+                        </div>
+
+                    </div>
+                    <div class="personal-information-wrap">
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">E-Signature:</span></div>
+                            <div class="col-md-6 col-xs-6"><img src="{{ asset(doctor.getSignatureUrl()) }}&{{ date().timestamp }}" class="img-responsive pic-bordered" alt="signature" id="main-logo-preview-signature"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h4 class="block">Doctor's Main Clinic Details</h4>
+                    <div class="personal-information-wrap">
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Clinic Name:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.clinicName }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Email:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.clinicEmail }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Clinic Telephone number:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">+{{ phoneCode[clinic.mainLocation] ~ ' ' ~ clinic.mainArea ~ ' ' ~ clinic.mainNumber }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Address Line 1:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.mainLine1 }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Address Line 2:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.mainLine2|default('-') }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Address Line 3:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.mainLine3|default('-') }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Country:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ country[clinic.clinicCountry]}}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">State/Province:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{% if clinic.clinicState != '' %} {{ clinic.clinicState }} {% else %} - {% endif %}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">City:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.clinicCity }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Zip / Postal code:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.mainZipCode }}</span></div>
+                        </div>
+
+                    </div>
+
+                    <div class="personal-information-wrap">
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">GST Registered:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{{ gst[clinic.clinicSetting] }}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">GST Registration No:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name"> {% if clinic.gstNo is defined %} {{ clinic.gstNo }} {% else %} - {% endif %}</span></div>
+                        </div>
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">GST Effective Date:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">{% if clinic.gstDate is defined %} {{ clinic.gstDate }} {% else %} - {% endif %}</span></div>
+                        </div>
+                    </div>
+
+                    <div class="personal-information-wrap">
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">GST Medicine Local Code:</span></div>
+                            <div class="col-md-6 col-xs-6"><span class="info-name">Based on Medicine GST Code</span></div>
+                        </div>
+                    </div>
+                    {% if clinic.clinicSetting != 0 %}
+                    {% if clinic.applyGstReviewLocal is defined and clinic.gstCodeReviewLocal != ''   %}
+                        <div class="personal-information-wrap">
+                            <div class="row personal-information-item">
+                                <div class="col-md-6 col-xs-6"><span class="info-title">GST Review Local Registration No:</span></div>
+                                <div class="col-md-6 col-xs-6"><span class="info-name">{{ listGstCode[clinic.gstCodeReviewLocal.getId()]}}</span></div>
+                            </div>
+                            <div class="row personal-information-item">
+                                <div class="col-md-6 col-xs-6"><span class="info-title">GST Review Local Effective Date:</span></div>
+                                <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.reviewLocalDate}}</span></div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if clinic.applyGstConsultLocal is defined and clinic.gstCodeConsultLocal != '' and clinic.clinicSetting != 0 %}
+                        <div class="personal-information-wrap">
+                            <div class="row personal-information-item">
+                                <div class="col-md-6 col-xs-6"><span class="info-title">GST Consult Local Registration No:</span></div>
+                                <div class="col-md-6 col-xs-6"><span class="info-name">{{ listGstCode[clinic.gstCodeConsultLocal.getId()]}}</span></div>
+                            </div>
+                            <div class="row personal-information-item">
+                                <div class="col-md-6 col-xs-6"><span class="info-title">GST Consult Local Effective Date:</span></div>
+                                <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.consultLocalDate}}</span></div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if clinic.gstCodeMedicineInternational != '' %}
+                        <div class="personal-information-wrap">
+                            <div class="row personal-information-item">
+                                <div class="col-md-6 col-xs-6"><span class="info-title">GST Medicine International Code:</span></div>
+                                <div class="col-md-6 col-xs-6"><span class="info-name">{{ listGstCode[clinic.gstCodeMedicineInternational.getId()]}}</span></div>
+                            </div>
+                            <div class="row personal-information-item">
+                                <div class="col-md-6 col-xs-6"><span class="info-title">GST Medicine International Effective Date:</span></div>
+                                <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.medicineInternationalDate|default('')}}<span></div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if clinic.applyGstReviewInternational is defined and clinic.gstCodeReviewInternational != '' %}
+                        <div class="personal-information-wrap">
+                            <div class="row personal-information-item">
+                                <div class="col-md-6 col-xs-6"><span class="info-title">GST Review International Registration No:</span></div>
+                                <div class="col-md-6 col-xs-6"><span class="info-name">{{ listGstCode[clinic.gstCodeReviewInternational.getId()]}}</span></div>
+                            </div>
+                            <div class="row personal-information-item">
+                                <div class="col-md-6 col-xs-6"><span class="info-title">GST Review International Effective Date:</span></div>
+                                <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.reviewInternationalDate}}</span></div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if clinic.applyGstConsultInternational is defined and clinic.gstCodeConsultInternational != ''  %}
+                        <div class="personal-information-wrap">
+                            <div class="row personal-information-item">
+                                <div class="col-md-6 col-xs-6"><span class="info-title">GST Consult International Registration No:</span></div>
+                                <div class="col-md-6 col-xs-6"><span class="info-name">{{ listGstCode[clinic.gstCodeConsultInternational.getId()]}}</span></div>
+                            </div>
+                            <div class="row personal-information-item">
+                                <div class="col-md-6 col-xs-6"><span class="info-title">GST Consult International Effective Date:</span></div>
+                                <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.consultInternationalDate}}</span></div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% endif %}
+                    <div class="personal-information-wrap">
+                        <div class="row personal-information-item">
+                            <div class="col-md-6 col-xs-6"><span class="info-title">Clinic Logo:</span></div>
+                            <div class="col-md-6 col-xs-6">
+                                <img src="{{ asset(clinic.clinicLogo) }}&{{ date().timestamp }}" class="img-responsive pic-bordered" alt="" id="main-logo-preview">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {% if  subClinics|length %}
+                        {% for index, clinic in subClinics %}
+                            <h4 class="block"> Sub Doctor’s Clinic Details {{ "#" ~ (index + 1) }}</h4>
+                            <div class="personal-information-wrap">
+                                <div class="row personal-information-item">
+                                    <div class="col-md-6 col-xs-6"><span class="info-title">Clinic Name:</span></div>
+                                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.name }}</span></div>
+                                </div>
+                                <div class="row personal-information-item">
+                                    <div class="col-md-6 col-xs-6"><span class="info-title">Email:</span></div>
+                                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.email }}</span></div>
+                                </div>
+                                <div class="row personal-information-item">
+                                    <div class="col-md-6 col-xs-6"><span class="info-title">Clinic Telephone number:</span></div>
+                                    <div class="col-md-6 col-xs-6"><span class="info-name">+{{ phoneCode[clinic.phoneLocation] ~ ' ' ~ clinic.phoneArea ~ ' ' ~ clinic.phoneNumber }}</span></div>
+                                </div>
+                                <div class="row personal-information-item">
+                                    <div class="col-md-6 col-xs-6"><span class="info-title">Address Line 1:</span></div>
+                                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.line1 }}</span></div>
+                                </div>
+                                <div class="row personal-information-item">
+                                    <div class="col-md-6 col-xs-6"><span class="info-title">Address Line 2:</span></div>
+                                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.line2|default('-') }}</span></div>
+                                </div>
+                                <div class="row personal-information-item">
+                                    <div class="col-md-6 col-xs-6"><span class="info-title">Address Line 3:</span></div>
+                                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.line3|default('-') }}</span></div>
+                                </div>
+                                <div class="row personal-information-item">
+                                    <div class="col-md-6 col-xs-6"><span class="info-title">Country:</span></div>
+                                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ country[clinic.country]}}</span></div>
+                                </div>
+                                <div class="row personal-information-item">
+                                    <div class="col-md-6 col-xs-6"><span class="info-title">State/Province:</span></div>
+                                    <div class="col-md-6 col-xs-6"><span class="info-name">{{state[clinic.state]}}</span></div>
+                                </div>
+                                <div class="row personal-information-item">
+                                    <div class="col-md-6 col-xs-6"><span class="info-title">City:</span></div>
+                                    <div class="col-md-6 col-xs-6"><span class="info-name">{{city[clinic.city]}}</span></div>
+                                </div>
+                                <div class="row personal-information-item">
+                                    <div class="col-md-6 col-xs-6"><span class="info-title">Zip / Postal code:</span></div>
+                                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.zipCode }}</span></div>
+                                </div>
+
+                            </div>
+
+                            <div class="personal-information-wrap">
+                                <div class="row personal-information-item">
+                                    <div class="col-md-6 col-xs-6"><span class="info-title">Clinic Logo:</span></div>
+                                    <div class="col-md-6 col-xs-6">
+                                        <img src="{{ asset(clinic.logo) }}&{{ date().timestamp }}" class="img-responsive pic-bordered" alt="image" id="main-logo-preview-{{index}}">
+                                    </div>
+                                </div>
+
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="button-edit-container">
+              <a href="{{ path('doctor_profile')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm">Edit Profile</a>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END PAGE BASE CONTENT -->
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts
+
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-select/js/bootstrap-select.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/clockface/js/clockface.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/icheck/icheck.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-multi-select.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/form-icheck.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+        debug=false
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block stylesheets %}
+    {% stylesheets
+        'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+        'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+        'bundles/admin/assets/global/plugins/bootstrap-select/css/bootstrap-select.css'
+        'bundles/admin/assets/global/plugins/jquery-multi-select/css/multi-select.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+        'bundles/admin/assets/global/plugins/icheck/skins/all.css'
+        'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+        'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+    filter='cssrewrite'
+    debug=false
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    <!-- do not move it into stylesheet block -->
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+    <style type="text/css">
+        .button-edit.top {
+          position: absolute;
+          right: 0;
+        }
+        .button-edit-container {
+          margin-top: 20px;
+          border-top: 1.5px solid #e9ecf3;
+          border-top-style: double;
+          padding-top: 20px;
+        }
+        @media only screen and (max-width: 414px) {
+          .button-edit.top {
+            position: unset;
+          }
+        }
+    </style>
+{% endblock %}

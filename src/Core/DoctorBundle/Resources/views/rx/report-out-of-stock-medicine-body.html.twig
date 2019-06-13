@@ -1,0 +1,12 @@
+Dear GMEDS Pharmacist, <br><br>
+
+Please re-stock the following medicine: <br>
+
+<b>{{ drugName }}</b><br>
+{{ activeIngredients }}<br>
+{{ manufacturer }}<br>
+{{ packingQuantity }} {{ packingQuantity > 1 ? packingType ~ 's' : packingType }}<br><br><br>
+
+
+Thank you,<br>
+Doctor {{ doctorName|trim }}

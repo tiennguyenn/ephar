@@ -1,0 +1,101 @@
+{% set sortColumn = sortInfo is not empty ? sortInfo.column : '' %}
+{% set sortDirection = sortInfo is not empty ? sortInfo.direction : '' %}
+
+<style>
+    #sample_1 tbody td{
+        vertical-align: middle;
+    }
+</style>
+
+<div class="table-scrollable">
+  <table class="table table-hover table-bordered dataTable" id="sample_1" role="grid" aria-describedby="sample_1_info">
+    <thead>
+      <tr role="row">
+        <th class="sorting {% if 'rx.orderNumber' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" Order ID : activate to sort column descending" data-sort="rx.orderNumber">Order ID</th>
+        <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="3" aria-label=" Payment Name : activate to sort column ascending"> Patient Name and Code </th>
+        <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="3" aria-label=" Payment Name : activate to sort column ascending"> RX Details </th>
+        <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="3" aria-label=" Payment Name : activate to sort column ascending"> Lastest Updates To RX </th>
+        <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="3" aria-label=" Payment Name : activate to sort column ascending"> Date of Last Update </th>
+        <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Actions : activate to sort column ascending"> Actions </th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in data %}
+      <tr role="row" class="{{ loop.index%2 ? 'odd' : 'even' }} {% if item.isDoctorRead is not null and item.isDoctorRead == 0 %} highlight {%  endif %}">
+        <td>{% if item[0].isScheduledRx %}<span class="fa fa-calendar font-green-seagreen"></span>{% endif %} {{ item[0].orderNumber }}</td>
+        <td>{{ item[0].patient.patientCode }} <br>{{ item.firstName ~ ' ' ~ item.lastName }}</td>
+        <td>
+          {% for line in item[0].getRxLines() %}
+            {% if line.detail is defined %}
+              {{ line.detail.quantity == 1 ? line.detail.packQuantity * line.detail.quantity * line.detail.minimumOrderQty : line.detail.quantity * line.detail.packQuantity }} {{ line.detail.shortDoseUnit }} {{ line.detail.name }} <br>
+            {% endif %}
+          {% endfor %}
+          Refill: {{ item[0].refill.lengthOfSupply ? 'Yes' : 'No' }} <br>
+          RX Review Fee: SGD {{ item[0].doctorFee is defined ? item[0].doctorFee : 0 }}
+        </td>
+        <td>
+          {% if item[0].draft is defined %}
+            N/A (Draft)
+          {% elseif item[0].forDoctorReview is defined %}
+            {{ item[0].updatedOn|date('d M y') }} <br>
+            Forwarded by {{ item[0].lastUpdatedBy }} for doctor's review
+          {% else %}
+          {% for amend in item[0].rxAmendments %}
+            {{ amend.createdOn|date('d M Y') }} <br>
+            Doctor request: <br><br>
+            {% for element in amend.amendment %}
+              <strong>{{ element.drugName }} </strong><br>
+              {{ element.text|nl2br }} <br>
+            {% endfor %}
+            <strong>Others</strong><br>
+            {{ amend.rxNote|nl2br }}
+          {% endfor %}
+          {% endif %}
+        </td>
+        <td>
+          {{ item[0].lastUpdatedBy }}<br>
+          {{ (item[0].updatedOn ? item[0].updatedOn|date('d M y') : item[0].createdOn|date('d M y')) }}
+        </td>
+        <td>
+            {% if app.user.isMPA %}
+                {% if item[0].status != constant('UtilBundle\\Utility\\Constant::RX_STATUS_FOR_DOCTOR_REVIEW') %}
+                    <a href="{{ path('edit_rx', {'rxId': item[0].id}) }}"
+                       class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right">Edit & Send RX<i
+                                class="fa fa-edit"></i></a>
+                {% endif %}
+            {% else %}
+                {% if item[0].status != constant('UtilBundle\\Utility\\Constant::RX_STATUS_FOR_AMENDMENT') %}
+                    <a href="{{ path('edit_rx', {'rxId': item[0].id}) }}"
+                       class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right">Edit & Send RX<i
+                                class="fa fa-edit"></i></a>
+                {% endif %}
+            {% endif %}
+
+            {% if item[0].draft is defined %}
+                <a href="#modal-delete"
+                   class="btn btn-ahalf-circle text-uppercase red btn-outline btn-xs btn-icon-right deleteBtn"
+                   data-url="{{ path('delete_rx', {'rxId':item[0].id}) }}" data-ordernumber="{{ item[0].orderNumber }}"
+                   data-toggle="modal" data-target="#modal-delete">Delete <i class="fa fa-trash"></i></a>
+            {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if data|length > 0 %}
+    {% set fromRecord = currentPage > 0? currentPage*perPage: currentPage %}
+    {% set toRecored = fromRecord + perPage %}
+    <div class="row">
+        <div class="col-md-5 col-sm-12">
+            <div class="dataTables_info" role="status" aria-live="polite">Showing {{ fromRecord + 1 }} to {{ toRecored < totalResult? toRecored: totalResult }} of {{ totalResult }} entries</div>
+        </div>
+        <div class="col-md-7 col-sm-12">
+            <div class="dataTables_paginate paging_bootstrap_number ajax_paging">
+                {{ paginationHTML|raw }}
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="page" value="{{ currentPage }}">
+{% endif %}

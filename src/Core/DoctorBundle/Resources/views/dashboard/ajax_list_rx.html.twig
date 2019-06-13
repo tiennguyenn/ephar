@@ -1,0 +1,112 @@
+{% set arr_sorting = sorting|split('_') %}
+<div class="table-scrollable">
+  <table class="table table-striped table-bordered table-hover order-column dataTable no-footer table-grey" id="sample_1" role="grid" aria-describedby="sample_1_info" style="width: 1562px;">
+    <thead>
+      <tr role="row">
+
+        <th class="sorting {% if 'createdOn' in arr_sorting|default([]) %}sorting_{{ arr_sorting[1]|default('') }}{% endif %}" tabindex="0" data-colname="createdOn" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="0"aria-sort="ascending" aria-label=" Date : activate to sort column descending" style="min-width: 100px"> Date</th>
+        <th class="sorting {% if 'fullName' in arr_sorting|default([]) %}sorting_{{ arr_sorting[1]|default('') }}{% endif %}" tabindex="0" data-colname="fullName" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="1" aria-label=" Patient Name : activate to sort column ascending" style="min-width: 130px"> Patient Name </th>
+        <th class="sorting {% if 'patientCode' in arr_sorting|default([]) %}sorting_{{ arr_sorting[1]|default('') }}{% endif %}" tabindex="0" data-colname="patientCode" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="2" aria-label=" Patient Code : activate to sort column ascending" style="min-width: 130px"> Patient Code </th>
+        <th class="sorting {% if 'isDraft' in arr_sorting|default([]) %}sorting_{{ arr_sorting[1]|default('') }}{% endif %}" tabindex="0" data-colname="isDraft" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="3" aria-label=" Request : activate to sort column ascending"> Request </th>
+        <th> Action </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if data|length > 0 %}
+        {% for rx in data %}
+        {% set rxType = rx.type|lower %}
+        <tr role="row">
+
+          <td>{{rx.createdOn|date('d M y')}}</td>
+          <td>{{rx.fullName}}</td>
+          <td>{{rx.patientCode}}</td>
+          <td>
+            {% if rx.isDraft %}
+              {{constant('UtilBundle\\Utility\\Constant::MSG_RX_DRAFT')}}
+            {% else %}
+              {% if rxType == constant('UtilBundle\\Utility\\Constant::MSG_TYPE_MAYBE') %}
+                {{constant('UtilBundle\\Utility\\Constant::MSG_RX_REFILL_MAYBE')}}
+              {% elseif rxType == constant('UtilBundle\\Utility\\Constant::MSG_TYPE_YES') %}
+                {{constant('UtilBundle\\Utility\\Constant::MSG_RX_REFILL_YES')}}
+              {% elseif rxType == constant('UtilBundle\\Utility\\Constant::MSG_TYPE_NOTIFICATION') or rxType == constant('UtilBundle\\Utility\\Constant::MSG_TYPE_REPLACEMENT_ORDER') or rxType == constant('UtilBundle\\Utility\\Constant::MSG_TYPE_DOCTOR_ISSUE')  %}
+                {{ rx.body|raw }}
+              {% elseif rxType == constant('UtilBundle\\Utility\\Constant::MESSAGE_CONTENT_TYPE_DOCTOR_REVIEW') %}
+                {% if rx.is_scheduled_rx %}
+                    {{ rx.senderName }} generated an RX order {{ rx.order_number }}. Please set a date to schedule this RX order.
+                {% else %}
+                    {{ rx.senderName }} generated an RX order {{ rx.order_number }}. Please review and send to patient.
+                {% endif %}
+              {% elseif rxType == constant('UtilBundle\\Utility\\Constant::MESSAGE_CONTENT_TYPE_AMENDMENTS') %}
+                {{ rx.senderName }} amended the RX order {{ rx.order_number }}. Please review and send RX order to patient.
+              {% else %}
+                {{constant('UtilBundle\\Utility\\Constant::MSG_RX_REFILL')}}
+              {% endif %}
+            {% endif %}
+          </td>
+          <td>  
+                {% if rx.isDraft %}
+                    <a href="{{path('edit_rx',{rxId: rx.id})}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs">
+                    View RX <i class="fa fa-edit"></i> </a>
+                {% elseif rxType == constant('UtilBundle\\Utility\\Constant::MSG_TYPE_NOTIFICATION') or rxType == constant('UtilBundle\\Utility\\Constant::MSG_TYPE_REPLACEMENT_ORDER') %}
+                      {% if rxType == constant('UtilBundle\\Utility\\Constant::MSG_TYPE_REPLACEMENT_ORDER') %}
+                            <a href="{{path('view_rx',{rxId: rx.id})}}?replacement=true" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs">View RX <i class="fa fa-edit"></i> </a>
+                      {% else %}
+                            <a href="{{path('view_rx',{rxId: rx.id})}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs">View RX <i class="fa fa-edit"></i> </a>
+                      {% endif %}
+                      {% if rxType == constant('UtilBundle\\Utility\\Constant::MSG_TYPE_REPLACEMENT_ORDER') %}
+                            <a href="{{ path('copy_rx', {'rxId': rx.id}) }}?replacement=true" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs">Issue Replacement RX Order <i class="fa fa-edit"></i> </a>
+                      {% else %}
+                        <a href="#modal-close" data-toggle="modal" data-target="#modal-close" data-rrid="{{ rx.msgId }}" data-notification="1" class="btn btn-ahalf-circle text-uppercase red btn-icon-right btn-xs close-refill-reminder">Close</a>
+                      {% endif %}
+
+                {% elseif rxType == constant('UtilBundle\\Utility\\Constant::MSG_TYPE_DOCTOR_ISSUE')%}
+                      <a href="{{path('update_rx',{rxId: rx.id,messageId:rx.msgId})}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs">
+                      Edit RX <i class="fa fa-edit"></i> </a>
+                      <a href="{{path('view_rx',{rxId: rx.id})}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right">View RX<i class="fa fa-arrow-right"></i></a>
+                      <a href="#modal-close" data-toggle="modal" data-target="#modal-close" data-rrid="{{ rx.msgId }}" data-notification="1" class="btn btn-ahalf-circle text-uppercase red btn-icon-right btn-xs close-refill-reminder">Close</a>
+                {% elseif rxType == constant('UtilBundle\\Utility\\Constant::MESSAGE_CONTENT_TYPE_DOCTOR_REVIEW') or rxType == constant('UtilBundle\\Utility\\Constant::MESSAGE_CONTENT_TYPE_AMENDMENTS') %}
+                     <a href="{{path('edit_rx',{rxId: rx.id})}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs">
+                    View and Edit RX <i class="fa fa-edit"></i> </a>
+                    <a href="#modal-close" data-toggle="modal" data-target="#modal-close" data-rrid="{{ rx.msgId }}" data-notification="1" class="btn btn-ahalf-circle text-uppercase red btn-icon-right btn-xs close-refill-reminder">Close</a>
+                {% else %}
+                      <!-- <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs">
+                      View Message <i class="fa fa-arrow-right"></i> </a> -->
+                      <a href="{{path('patient_list_rx_history',{patientId: rx.patientId})}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs">
+                      View RX History <i class="fa fa-arrow-right"></i> </a>
+                      <a href="#modal-close" data-toggle="modal" data-target="#modal-close" data-rrid="{{ rx.msgId ? rx.msgId : rx.rrId }}" data-notification="{{ rx.msgId ? 1 : 0 }}" class="btn btn-ahalf-circle text-uppercase red btn-icon-right btn-xs close-refill-reminder">Close</a>
+
+                {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="5">No items found.</td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+{% if data|length > 0 %}
+    {% set fromRecord = currentPage > 0? currentPage*perPage: currentPage %}
+    {% set toRecored = fromRecord + perPage %}
+    <div class="row">
+        <div class="col-md-5 col-sm-12">
+            <div class="dataTables_info" role="status" aria-live="polite">Showing {{ fromRecord + 1 }} to {{ toRecored < totalResult? toRecored: totalResult }} of {{ totalResult }} entries</div>
+        </div>
+        <div class="col-md-7 col-sm-12">
+            <div class="dataTables_paginate paging_bootstrap_number ajax_paging" id="sample_1_paginate">
+                {{ paginationHTML|raw }}
+            </div>
+            <a href="javascript:;" id="vcmLink" style="position: absolute; right: 10px; top: 0">View closed messages</a>
+        </div>
+    </div>
+    <input type="hidden" name="ps_filter[page]" value="{{ currentPage }}">
+{% else %}
+<div class="row">
+  <div class="col-sm-12">
+    <a href="javascript:;" id="vcmLink" style="position: absolute; right: 10px; top: 0">View closed messages</a>
+  </div>
+</div>
+{% endif %}

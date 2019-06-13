@@ -1,0 +1,293 @@
+{% extends '@Doctor/layout.html.twig' %}
+{% block javascripts %}
+  {{ parent () }}
+  {% javascripts  
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+    '@DoctorBundle/Resources/public/js/dashboard.js'
+    debug=false
+    %}  
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+  {% endjavascripts %}
+{% endblock %}
+
+{% block body %}
+  {% if app.user.isMPA %}
+  {% include '@Doctor/mpa/header.html.twig' %}
+  {% else %}
+  {% include '@Doctor/header.html.twig' %}
+  {% endif %}
+  <div class="page-container">
+    {% if app.user.isMPA %}
+    {% include '@Doctor/mpa/left-menu.html.twig' with { 'mainMenu': 'dashboard', 'subMenu': '' } %}
+    {% else %}
+    {% include '@Doctor/left-menu.html.twig' with { 'mainMenu': 'dashboard', 'subMenu': '' } %}
+    {% endif %}
+  <div class="page-content-wrapper">
+
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+      <!-- BEGIN PAGE HEAD-->
+      <div class="page-head">
+        <!-- BEGIN PAGE TITLE -->
+        <div class="page-title">
+          <h1>DOCTORS DASHBOARD</h1>
+        </div>
+        <!-- END PAGE TITLE -->
+      </div>
+      <!-- END PAGE HEAD-->
+      <!-- BEGIN PAGE BREADCRUMB -->
+      <ul class="page-breadcrumb breadcrumb">
+        <li> <a href="{{ path('doctor_dashboard') }}">HOME</a><i class="fa fa-circle"></i></li>
+        <li><span class="active">DASHBOARD</span></li>
+      </ul>
+      <!-- END PAGE BREADCRUMB -->
+    <!-- BEGIN PAGE BASE CONTENT -->
+      <div class="row">
+        <div class="col-md-12"> 
+          
+
+          <div class="portlet light">
+            
+            <div class="portlet-title">
+              <div class="caption"><span class="font-dark">Hello, <strong>{{ app.user.doctorName ? app.user.doctorName : fullName }}.</strong> The following requires your attention:</span></div>
+              <div class="caption pull-right">
+                <span>{{totalResult}} Item{% if totalResult > 1 %}s{% endif %}</span>
+              </div>
+            </div>
+
+            <div class="portlet-body ">
+              <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+                <form id="frm-rx-filter">
+                  {{ display_messages()|raw }}
+                  <input type="hidden" name="ps_filter[sorting]" value="">
+                  <input type="hidden" id="url_ajax_list_rx" value="{{ path('ajax_list_rx') }}">
+                  <div id="sample_1_length">
+                    <label>
+                      <select name="ps_filter[perPage]" id="ps_filter_per_page" aria-controls="sample_1" class="form-control input-sm input-xsmall input-inline">
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20">20</option>
+                      </select>
+                      entries</label>
+                  </div>
+                  <div class="content-table rx-container">
+                    {{ render(controller( 'DoctorBundle:Dashboard:ajaxListRx')) }}
+                  </div>
+                </form>
+              </div>  
+            </div>
+
+          {% if not app.user.isMPA %}
+            <div class="portlet light">
+              <div class="portlet-title">
+                <div class="caption"> <span class="caption-subject font-dark sbold uppercase">HIGHLIGHTS</span> </div>
+              </div>
+              <div class="portlet-body">
+                <div class="row">
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="dashboard-stat2 bordered">
+                      <div class="display">
+                        <div class="number">
+                          <small>Total Fees for current month</small>
+                          <h3>
+                            <span data-counter="counterup" data-value="{{currMonthFee|number_format(2,'.',',')}}">SGD {{currMonthFee|number_format(2,'.',',')}}</span>
+                          </h3>
+                        </div>
+                        <div class="actions">
+                          <a href="{{path('doctor_report_monthly_statement')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs"> View Statements
+                            <i class="fa fa-arrow-right"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="dashboard-stat2 bordered">
+                      <div class="display">
+                        <div class="number">
+                          <small>Cumulative Fees</small>
+                          <h3>
+                            <span data-counter="counterup" data-value="{{totalFee|number_format(2,'.',',')}}">SGD {{totalFee|number_format(2,'.',',')}}</span>
+                          </h3>
+                        </div>
+                        <div class="actions">
+                          <a href="{{path('doctor_report_transaction_history')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs"> View all transactions
+                            <i class="fa fa-arrow-right"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="dashboard-stat2 bordered">
+                      <div class="display">
+                        <div class="number">
+                          <small>Patients <i class="icon-doctor-sm"></i></small>
+                          <h3>
+                            <span data-counter="counterup" data-value="{{totalPatient}}">{{totalPatient}}</span>
+                          </h3>
+                        </div>
+                        <div class="actions">
+                          <a href="{{path('patient_index')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs"> View all patients
+                            <i class="fa fa-arrow-right"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                    <div class="dashboard-stat2 bordered">
+                      <div class="display">
+                        <div class="number">
+                          <small>Paid Orders<i class="fa fa-file-text"></i></small>
+                          <h3>
+                            <span data-counter="counterup" data-value="{{totalConfirmed}}">{{totalConfirmed}}</span>
+                          </h3>
+                        </div>
+                        <div class="actions">
+                          <a href="{{path('list_rx')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs"> View ALL RX
+                            <i class="fa fa-arrow-right"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
+                      <div class="dashboard-stat2 bordered links">
+                        <div class="list-entry two-entries clearfix">
+                          <div class="each-entry">
+                             <a href="{{path('list_draft_rx')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-link two-lines btn-xs"> <span> {{totalDraft}} Draft RX </span></a> 
+                          </div>
+                          <div class="each-entry">
+                             <a href="{{path('doctor_message')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-link two-lines btn-xs"> <span> {% if get_message_total(true) > 0 %}{{ get_message_total(true) }}{% else %}0{% endif %} unread <br> message{% if get_message_total(true) > 0 %}s{% endif %} </span></a> 
+                          </div>
+                          <div class="each-entry">
+                             <a href="{{path('list_failed_rx')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-link two-lines btn-xs"> <span> {{totalFailed}} Failed <br> Order{% if totalFailed > 1 %}s{% endif %} </span></a> 
+                          </div>
+                          <div class="each-entry">
+                             <a href="{{path('list_pending_rx')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-link two-lines btn-xs"> <span> {{totalPending}} Pending <br> Order{% if totalPending > 1 %}s{% endif %} </span></a> 
+                          </div>
+                        </div>
+                          
+                      </div>
+                  </div>
+                  <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12 hidden">
+                    <div class="dashboard-stat2 bordered">
+                      <div class="display">
+                        <div class="number">
+                          <small>NEW MESSAGES <i class="fa fa-envelope"></i></small>
+                          <h3>
+                            <span data-counter="counterup" data-value="9">9</span>
+                          </h3>
+                        </div>
+                        <div class="actions">
+                          <a href="#" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs"> View inbox
+                            <i class="fa fa-arrow-right"></i>
+                          </a>
+                        </div>
+
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- BEGIN CHART PORTLET-->
+            <div class="portlet light">
+              <div class="portlet-title">
+                <div class="caption"> <span class="caption-subject font-dark sbold uppercase">RX TRANSACTION HISTORY</span> </div>
+              </div>
+              <div class="portlet-body">
+                <input type="hidden" id="ajax_data_chart_url" value="{{path('ajax_get_chart_data_doctor')}}">
+                <div id="agent_chart" class="chart" style="height: 400px;"> </div>
+              </div>
+            </div>  
+            <!-- END CHART PORTLET-->
+          {% endif %}
+          </div>
+        </div>
+      </div>
+
+  <div id="modal-refill-rx-complete" class="modal fade modal-new modal-acknowledgement" tabindex="-1" data-width="700">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="note-content text-center">
+      {% if isOrderScheduled == true and scheduledOrderSendDate != null %}
+        <div class="mb-10"><i class="icon-check icon-check-lg"></i></div>
+        <p>Your Prescription Order has been successfully scheduled.</p>
+        <p>The order ID: <span class="txt-green-new">{{ orderId }}</span></p>
+        <p>The scheduled send date: <span class="txt-green-new">{{ scheduledOrderSendDate }}</span></p>
+        <p>The prescription order will be sent to the patient on the date indicated.</p>
+        <div class="mt-20">
+          <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10" data-dismiss="modal">Close</a>
+        </div>
+      {% else %}
+        <div class="mb-10"><i class="icon-check icon-check-lg"></i></div>
+        <p>Your Prescription Order has been sent to your patient.</p>
+        <p>The order ID: <span class="txt-green-new">{{ orderId }}</span></p>
+        <p>Once your patient completes the payment, the Prescription Order will be processed and the medicines will be delivered to your patient.</p>
+        <div class="mt-20">
+          <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10" data-dismiss="modal">Close</a>
+        </div>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+  <div id="modal-close" class="modal fade modal-new" tabindex="-1" data-width="760" data-backdrop="static">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+        <h4 class="modal-title">Close</h4>
+    </div>
+    <div class="modal-body">
+      <input type='hidden' id="rrId_hf" value="">
+      <div class="text-center mt-20">
+        <i class="fa fa-exclamation-circle icon-check-lg txt-red"></i>
+        <p>Are you sure you want to close this item?</p>
+             
+        <div>
+          <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10" data-dismiss="modal">Cancel</a>
+          <a href="javascript:;" id="modal_close_anchor"  class="btn btn-ahalf-circle text-uppercase red btn-sm ml-10" data-dismiss="modal">Close</a>
+        </div>      
+      </div>
+    </div>
+  </div>
+  {% if orderId is defined and orderId %}
+    <input type="hidden" name="isShowDialog" id="isShowDialog">
+  {% endif %}
+
+  <div id="modal-closed-messages" class="modal fade modal-new" tabindex="-1" data-width="979" data-backdrop="static" data-height="500px">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+        <h4 class="modal-title">Closed Messages</h4>
+    </div>
+    <div class="modal-body">
+      <div class="table-scrollable" id="cmDiv">
+      </div>
+      <div class="text-center">
+        <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase red btn-sm ml-10" data-dismiss="modal">Close</a>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" id ="cmURL" name="cmURL" value="{{ path('ajax_closed_messages') }}">
+
+{% endblock %}
+
+{% block stylesheets %}
+{% stylesheets
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+  %}
+  <link rel="stylesheet" href="{{ asset_url }}" />
+{% endstylesheets %}
+{% endblock %}
+
+{% block hiddenfields %}
+    <input type="hidden" id="close_notification_hf" value="{{ path('doctor_dashboard_close_notification') }}">
+{% endblock %}

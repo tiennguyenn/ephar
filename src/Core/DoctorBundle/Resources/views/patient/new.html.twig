@@ -1,0 +1,369 @@
+{% extends '@Doctor/layout.html.twig' %}
+
+{% form_theme form '@Doctor/patient/_fields.html.twig' %}
+
+{% block body %}
+
+  {% if app.user.isMPA %}
+  {% include '@Doctor/mpa/header.html.twig' %}
+  {% else %}
+  {% include '@Doctor/header.html.twig' %}
+  {% endif %}
+
+  <div class="page-container">
+    {% if app.user.isMPA %}
+      {% include '@Doctor/mpa/left-menu.html.twig' with { 'mainMenu': 'patient', 'subMenu':  andCreateRx is defined ? 'create-patient' : 'list-patient' } %}
+    {% else %}
+      {% include '@Doctor/left-menu.html.twig' with { 'mainMenu': 'patient', 'subMenu':  andCreateRx is defined ? 'create-patient' : 'list-patient' } %}
+    {% endif %}
+    <div class="page-content-wrapper">
+      <!-- BEGIN CONTENT BODY -->
+      <div class="page-content">
+        <!-- BEGIN PAGE HEAD-->
+        <div class="page-head">
+          <!-- BEGIN PAGE TITLE -->
+          <div class="page-title">
+            <h1>{{ andCreateRx is defined ? 'Register' : 'Update' }} Patient</h1>
+          </div>
+          <!-- END PAGE TITLE -->
+        </div>
+        <!-- END PAGE HEAD-->
+        <!-- BEGIN PAGE BREADCRUMB -->
+        <ul class="page-breadcrumb breadcrumb">
+          <li> <a href="{{ path('doctor_dashboard') }}">Home</a><i class="fa fa-circle"></i></li>
+          <li><span class="active">{{ andCreateRx is defined ? 'Register' : 'Update' }} patient</span></li>
+        </ul>
+        <!-- END PAGE BREADCRUMB -->
+        <div class="row">
+          <div class="col-md-12">
+            <!-- Begin: life time stats -->
+            <div class="portlet light bordered">
+              <div class="portlet-body form">
+                  {{ form_start(form) }}
+                <div class="form-wizard">
+                  <div class="form-body">
+                    <div class="form-content">
+                      <div class="form-group">
+                        <div class="col-md-6">
+                          <h4 class="block">Patient Information</h4>
+                        </div>
+                        <div class="col-md-6" style="text-align: right">
+                          {% if action == "edit" %}
+                            <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit" id="btn-patient-note"> View or add patient notes </a>
+                            <input type="hidden" value="{{ encodeHex(patient.id) }}" id="current-patient-id" />
+                          {% endif %}
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-md-4">
+                          <label>Date registered: {{ patient.createdOn|date('d M y') }}</label>
+                            {% if patient.updatedOn %}
+                              <br><label>Last updated date: {{ patient.updatedOn|date('d M y') }}</label>
+                            {% endif %}
+                        </div>
+                      </div>
+
+                        {{ form_widget(form.personalInformation) }}
+
+                      <div class="form-group">
+                        <div class="col-md-12">
+                          <div class="icheck-list showHere">
+                            <label class="bold-medium mt-5 mb-5">
+                                {{ form_widget(form.isAssessed) }} {{  form.isAssessed.vars.label }}
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-md-12">
+                          <div class="icheck-list showHere">
+                            <label class="bold-medium mt-5 mb-5">
+                                {{ form_widget(form.isEnrolled) }} {{  form.isEnrolled.vars.label }}
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group mb-grid">
+                        <div class="col-md-4 showHere">
+                          <label>Email <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.personalInformation.emailAddress) }}
+                        </div>
+                          {{ form_widget(form.phones) }}
+                      </div>
+
+                      <div class="form-group mb-grid">
+                        <div class="col-md-4">
+                          <label>Date of Birth <span class="required" aria-required="true"> * </span></label>
+                          <div class="row">
+                            <div class="col-md-12 showHere">
+                              <div class="form-float">
+                                  {{ form_widget(form.personalInformation.dateOfBirth) }}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <label>Country of Residence / Delivery <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.primaryResidenceCountry) }}
+                        </div>
+                      </div>
+
+                      <h4 class="block">Patient Identification</h4>
+                      <div class="form-group mb-grid">
+                        <div class="col-md-4">
+                          <label>Passport No. or Identification No.<span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.personalInformation.passportNo) }}</div>
+                        <div class="col-md-4">
+                          <label>Country of Issue <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.issueCountry) }}
+                        </div>
+                      </div>
+
+                      <div class="form-group mb-grid">
+                        <div class="col-md-4">
+                          <label>Nationality <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.nationality) }}
+                        </div>
+                        <div class="col-md-4" style="display:none;" id="tax_id_div">
+                          <label>Tax ID</label>
+                            {{ form_widget(form.taxId, {'attr': {'originval': patient.taxId}}) }}
+                        </div>
+                      </div>
+
+                      <div class="form-group mt-40">
+                        <div class="col-md-4">
+                          <label><strong class="txt-red">Known Medication Allergies *</strong></label>
+                          <div class="mt-radio-inline mt-radio-inline-grid" id="knowMedication">
+                            <label class="mt-radio mt-radio-outline"> Yes
+                              <input type="radio" value="1" checked="checked" name="knowMedication"/>
+                              <span></span>
+                            </label>
+                            <label class="mt-radio mt-radio-outline"> No
+                              <input type="radio" value="0" {% if not form.allergies.vars.value.count %}checked="checked"{% endif %} name="knowMedication" />
+                              <span></span>
+                            </label>
+                          </div>
+                          <div class="mt-repeater" id="allergyContainer" {% if not form.allergies.vars.value.count %}style="display: none"{% endif %}>
+                            <div data-repeater-list="group-b">
+                                {{ form_widget(form.allergies) }}
+                            </div>
+                            <a href="javascript:;" data-repeater-create class="btn green-seagreen mt-repeater-add" id="addLink"><i class="fa fa-plus"></i></a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group mt-40">
+                        <div class="multi-select-col-4 showHere">
+                          <label><strong class="txt-green-new">Diagnosis *</strong></label>
+                            {{ form_widget(form.diagnosis) }}
+                        </div>
+                      </div>
+                      <div class="form-group mb-grid">
+                        <div class="col-md-offset-4 other-diagnosis {% if otherDiagnosisValues is empty %} hidden {% endif %}">
+                          <label>Key in 'Others' diagnosis <span class="required" aria-required="true"> * </span></label>
+                          <textarea id="other_values" name="other_values" class="form-control">{{ otherDiagnosisValues|join(',') }}</textarea>
+                          <small>For multiple diagnosis, separate using comma</small>
+                        </div>
+                      </div>
+                      <div class="form-group mt-40">
+                        <div class="col-md-12" id="hasCaregiver">
+                          <label><strong>Patient has assigned a Caregiver</strong> <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.useCaregiver) }}
+                        </div>
+                      </div>
+
+                      <div class="bg-grey-light mt-20" id="caregiverContainer">
+                        <p class="mb-30"><strong>Enter particulars of the patient's caregiver in the form below:</strong></p>
+                        <div class="form-group mb-20">
+                          <div class="col-md-12">
+                            <div class="icheck-list">
+                              <label>
+                                  {{ form_widget(form.isSendMailToCaregiver) }} The patient gives consent to the doctor to send the prescription order, notification, payment and shipment details to an appointed caregiver. </label>
+                            </div>
+                          </div>
+                        </div>
+
+                          {{ form_widget(form.caregivers[0].personalInformation, {'isCaregiver': true}) }}
+
+                        <div class="form-group mb-grid">
+                          <div class="col-md-4">
+                            <label>Email <span class="required" aria-required="true"> * </span></label>
+                              {{ form_widget(form.caregivers[0].personalInformation.emailAddress) }}
+                          </div>
+                            {{ form_widget(form.caregivers[0].phones) }}
+                        </div>
+
+                        <div class="form-group mb-grid">
+                          <div class="col-md-4">
+                            <label>Relationship to Patient <span class="required" aria-required="true"> * </span></label>
+                              {{ form_widget(form.caregivers[0].relationshipType) }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-actions">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <a href="{{ path('patient_index') }}" class="btn grey-dark btn-ahalf-circle text-uppercase btn-sm button-back"> Cancel </a>
+                            <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit" id="saveBtn"> Save </a>
+                              {% if andCreateRx is defined %}
+                                <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit" id="saveAndCreatRxBtn"> Save and Create Prescription <i class="fa fa-arrow-right"></i>
+                                </a>
+                              {% endif %}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <input name="andCreateRx" id="andCreateRx" type="hidden">
+                <input type="hidden" name="form-action" value="{{ action }}" id="form_action">
+                  {{ form_end(form) }}
+              </div>
+              {% if action is defined and action == "edit" %}
+              <div class="pt-20 pb-20">
+                {% set module = 'patients' %}
+                <a href="#modal-doctor-view-logs" id="view_logs_anchor"
+                data-toggle="modal"
+                data-module="{{ module }}"
+                data-template-view="AdminBundle:admin\logs:patient_log.html.twig"
+                data-template-print="AdminBundle:admin\logs:patient_pdf.html.twig"
+                data-breadcrumb-title="Patients"
+                data-file-name="Patient_Log"
+                data-entity-id ="{{ patient.id }}"
+                class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm">View Log</a>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div id="modal-npwp" data-keyboard="false" data-backdrop="static" class="modal fade modal-new status danger" tabindex="-1" data-width="400">
+    <div class="modal-header">
+      <h4 class="modal-title">Warning</h4>
+    </div>
+    <div class="modal-body">
+      <div class="portlet-title">
+        <div class="caption">
+          <span class="caption-subject uppercase sbold" id="title"></span>
+        </div>
+      </div>
+      <div class="portlet-body">
+        A tax ID (NPWP) is required for importing medicines to Indonesia. Please collect the NPWP from the patient, or remind the patient to input his NPWP upon payment.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" id='modal-patient-ok' class="btn btn-primary">Ok</button>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+
+
+
+  <input type="hidden" id="load-patient-url" value="{{ path('patient_ajax_get_info') }}">
+
+  <input type="hidden" id="export-patient-url" value="{{ path('patient_ajax_get_info_note_list',{patientId: patient.id}) }}">
+
+    <div id="modal-patient-note" class="modal fade modal-new" tabindex="-1" data-width="900">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+            <h4 class="modal-title">Patient Notes</h4>
+        </div>
+        <div class="modal-body">
+            <div class="notes-patient-info patient-info bg-light-blue">
+
+            </div>
+            <div class="form mb-30">
+                <div class="mb-5"><strong>Add a new note:</strong></div>
+                <div class="form-group">
+                    <textarea rows="5" class="form-control" id="note-content" placeholder="Add notes about this patient"></textarea>
+                </div>
+                <div class="form-action text-right">
+                    <a href="javascript:;" id="btn-add-note" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right">Add Notes<i class="fa fa-plus"></i></a>
+                </div>
+            </div>
+
+            <div class="mb-5"><strong>Previous Notes</strong></div>
+            <div class="portlet box white portlet-scroller">
+                <div class="portlet-body">
+                    <div class="scroller" style="height:280px" data-always-visible="1" data-rail-visible="1" data-rail-color="white" data-handle-color="green">
+                        <div class="table-scrollable table-scrollable-borderless">
+                            <div class="list-notes">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="clearfix">
+                <div class="pull-left"><a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right" id="export-patient-note">Print<i class="fa fa-print"></i></a></div>
+                <div class="pull-right"><a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right" data-dismiss="modal">Close Patient Notes<i class="fa fa-close"></i></a></div>
+            </div>
+
+        </div>
+    </div>
+{% include '@Admin/modals/view-log.html.twig'%}
+{% endblock %}
+
+{% block stylesheets %}
+  <style type="text/css">
+  .notes-delete{
+    color: red;
+   }
+  </style>
+    {% stylesheets
+
+    'bundles/admin/assets/global/plugins/font-awesome/css/font-awesome.min.css'
+    'bundles/admin/assets/global/plugins/simple-line-icons/simple-line-icons.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap/css/bootstrap.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-select/css/bootstrap-select.css'
+    'bundles/admin/assets/global/plugins/jquery-multi-select/css/multi-select.css'
+    'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+    'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+    'bundles/admin/assets/global/plugins/icheck/skins/all.css'
+    'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+    'bundles/admin/assets/global/plugins/icheck/skins/minimal/_all.css'
+    'bundles/admin/assets/global/plugins/icheck/skins/polaris/polaris.css'
+    'bundles/admin/assets/global/plugins/icheck/skins/futurico/futurico.css'
+    'bundles/admin/assets/global/css/components.min.css'
+    'bundles/admin/assets/global/css/plugins.min.css'
+    'bundles/admin/assets/layouts/layout4/css/layout.min.css'
+    'bundles/admin/assets/layouts/layout4/css/themes/default.min.css'
+    'bundles/admin/assets/layouts/layout4/css/custom.min.css'
+
+    filter='cssrewrite'
+    %}
+  <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/additional-methods.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/icheck/icheck.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+    '@PatientBundle/Resources/public/js/patient-common.js'
+    '@DoctorBundle/Resources/public/js/patient-crud.js' %}
+  <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+

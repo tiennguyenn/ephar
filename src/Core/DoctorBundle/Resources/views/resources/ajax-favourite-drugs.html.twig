@@ -1,0 +1,128 @@
+<div class="row show-grid mb-grid">
+  <div class="col-md-6">
+    <div id="search">
+      <div class="input-icon right"> <i class="icon-magnifier"></i>
+        <input style="padding-right: 30px;" id="name" type="text" class="form-control" placeholder="Search Product Name" value="{{params.name}}">
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="text-right">
+      <label>
+        <select id="limit" class="form-control input-sm input-xsmall input-inline">
+          <option value="10" {{ params.limit == 10 ? 'selected=""' : '' }}>10</option>
+          <option value="20" {{ params.limit == 20 ? 'selected=""' : '' }}>20</option>
+          <option value="50" {{ params.limit == 50 ? 'selected=""' : '' }}>50</option>
+        </select>
+        entries</label>
+    </div>
+  </div>
+</div>
+<div class="row show-grid module-filter">
+  <div class="col-md-6"></div>
+  <div class="col-lg-6 text-right">
+    <a id="bulkUpdateBtn" href="#modal-import" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right ml-10 btn-modal-move-group" data-toggle="modal">Bulk update of favorite medicines</a>
+    <a id="logs" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">View Log</a>
+  </div>
+</div>
+<div class="table-scrollable">
+  <table class="table table-striped table-bordered table-checkable table-hover dataTable no-footer dtr-inline table-edit" role="grid" style="width: 1562px;" id="productList">
+    <thead>
+      <tr role="row">
+        <th valign="middle" style="vertical-align: middle;min-width: 70px" class="sorting {{ params.sort == 'sku' ? 'sorting_' ~ params.dir: 'sorting' }}" tabindex="0" rowspan="1" colspan="1" data-sort="sku" data-dir="{{ params.sort == 'sku' ? params.dir : 'asc' }}"> PLU </th>
+
+        <th valign="middle" style="vertical-align: middle" class="sorting {{ params.sort == 'name' ? 'sorting_' ~ params.dir: 'sorting' }}" tabindex="0" rowspan="1" colspan="1" data-sort="name" data-dir="{{ params.sort == 'name' ? params.dir : 'asc' }}"> Product Name </th>
+
+        <th valign="middle" style="vertical-align: middle" class="sorting {{ params.sort == 'minimumOrderQuantity' ? 'sorting_' ~ params.dir: 'sorting' }}" tabindex="0" rowspan="1" colspan="1" data-sort="minimumOrderQuantity" data-dir="{{ params.sort == 'minimumOrderQuantity' ? params.dir : 'asc' }}"> Minimum <br> Order Qty </th>
+
+        <th valign="middle" style="vertical-align: middle" class="sorting {{ params.sort == 'packQuantity' ? 'sorting_' ~ params.dir: 'sorting' }}" tabindex="0" rowspan="1" colspan="1" data-sort="packQuantity" data-dir="{{ params.sort == 'packQuantity' ? params.dir : 'asc' }}"> No Of Unit <br> Per PLU </th>
+
+        <th valign="middle" style="vertical-align: middle" class="sorting {{ params.sort == 'costPriceToClinic' ? 'sorting_' ~ params.dir: 'sorting' }}" tabindex="0" rowspan="1" colspan="1" data-sort="costPriceToClinic" data-dir="{{ params.sort == 'costPriceToClinic' ? params.dir : 'asc' }}"> Cost to clinic - <br> Local Patients (SGD)</th>
+
+        <th valign="middle" style="vertical-align: middle" class="sorting {{ params.sort == 'listPriceDomestic' ? 'sorting_' ~ params.dir: 'sorting' }}" tabindex="0" rowspan="1" colspan="1" data-sort="listPriceDomestic" data-dir="{{ params.sort == 'listPriceDomestic' ? params.dir : 'asc' }}"> Selling price - <br> Local Patients (SGD)</th>
+
+        <th valign="middle" style="vertical-align: middle" class="sorting {{ params.sort == 'costPriceToClinicOversea' ? 'sorting_' ~ params.dir: 'sorting' }}" tabindex="0" rowspan="1" colspan="1" data-sort="costPriceToClinicOversea" data-dir="{{ params.sort == 'costPriceToClinicOversea' ? params.dir : 'asc' }}"> 
+        Cost to clinic - <br> Overseas Patients (SGD)</th>
+
+        <th valign="middle" style="vertical-align: middle" class="sorting {{ params.sort == 'listPriceInternational' ? 'sorting_' ~ params.dir: 'sorting' }}" tabindex="0" rowspan="1" colspan="1" data-sort="listPriceInternational" data-dir="{{ params.sort == 'listPriceInternational' ? params.dir : 'asc' }}"> 
+        Selling price - <br> Overseas Patients (SGD)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for drug in data.list %}
+      <tr role="row" class="row-item rowItem">
+        <td>{{ drug.sku }}</td>
+        <td>{{ drug.name }}</td>
+        <td class="text-right">{{ drug.minimumOrderQuantity }}</td>
+        <td class="text-right">{{ drug.packQuantity }}</td>
+        <td class="text-right">{{ drug.costPriceToClinic }}</td>
+        <td class="price list_price_domestic text-right" id="list_price_domestic_{{drug.id}}">
+          <a href="javascript:;" class="editableInline" data-action="update_price" data-id="{{ drug.id }}" data-field="list_price_domestic" data-name="{{ drug.name }}" data-value="{{ drug.audits.old_value is defined and drug.audits.old_value ? drug.audits.old_value|number_format(2, '.', ',') : drug.listPriceDomestic|number_format(2, '.', ',') }}" data-origin="{{ drug.costPriceToClinic|number_format(2, '.', ',') }}">{{ drug.audits.old_value is defined and drug.audits.old_value ? drug.audits.old_value|number_format(2, '.', ',') : drug.listPriceDomestic|number_format(2, '.', ',') }}</a>
+          {% if drug.audits.new_value is defined and drug.audits.new_value %}
+          <a href="javascript:;" data-toggle="tooltip" title="New value {{drug.audits.new_value|number_format(2, '.', ',')}} will be effective on {{ drug.audits.take_effect_on|date('d M y') }}" class="icon-tooltip"><i class="fa fa-exclamation-circle"></i></a>
+          {% endif %}
+          {% if drug.audits.new_value is defined and drug.audits.new_value or drug.audits.old_value is defined and drug.audits.old_value != drug.listPriceDomestic %}
+          <a href="javascript:;" data-toggle="tooltip" title="Reset price to {{drug.listPriceDomestic|number_format(2, '.', ',')}}" class="reset icon-tooltip" data-id="{{ drug.id }}" data-field="list_price_domestic"><i class="fa fa-rotate-left"></i></a>
+          {% endif %}
+        </td>
+        <td class="text-right">{{ drug.costPriceToClinicOversea }}</td>
+        <td class="price list_price_international text-right" id="list_price_international_{{drug.id}}">
+          <a href="javascript:;" class="editableInline" data-action="update_price" data-id="{{ drug.id }}" data-field="list_price_international" data-name="{{ drug.name }}" data-value="{{ drug.audits.inter_old_value is defined and drug.audits.inter_old_value ? drug.audits.inter_old_value|number_format(2, '.', ',') : drug.listPriceInternational|number_format(2, '.', ',') }}" data-origin="{{ drug.costPriceToClinicOversea|number_format(2, '.', ',') }}">{{ drug.audits.inter_old_value is defined and drug.audits.inter_old_value ? drug.audits.inter_old_value|number_format(2, '.', ',') : drug.listPriceInternational|number_format(2, '.', ',') }}</a>
+          {% if drug.audits.inter_new_value is defined and drug.audits.inter_new_value %}
+          <a href="javascript:;" data-toggle="tooltip" title="New value {{drug.audits.inter_new_value|number_format(2, '.', ',')}} will be effective on {{ drug.audits.inter_take_effect_on|date('d M y') }}" class="icon-tooltip"><i class="fa fa-exclamation-circle"></i></a>
+          {% endif %}
+          {% if drug.audits.inter_new_value is defined and drug.audits.inter_new_value or drug.audits.inter_old_value is defined and drug.audits.inter_old_value != drug.listPriceInternational %}
+          <a href="javascript:;" data-toggle="tooltip" title="Reset price to {{drug.listPriceInternational|number_format(2, '.', ',')}}" class="reset icon-tooltip" data-id="{{ drug.id }}" data-field="list_price_international"><i class="fa fa-rotate-left"></i></a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+<div class="row">
+    <div class="col-md-5 col-sm-12">
+        <div class="dataTables_info" role="status" aria-live="polite">Showing {{ data.total ? (data.page - 1) * data.limit + 1 : 0 }} to {{ (data.page * data.limit) < data.total ? data.page * data.limit : data.total }} of {{ data.total }} entries</div>
+    </div>
+    <div class="col-md-7 col-sm-12">
+        <div class="dataTables_paginate paging_bootstrap_number">
+            <ul class="pagination" style="visibility: {{ data.pages > 1 ? 'visible' : 'hidden' }};">
+                <li class="prev {{ data.page == 1 ? 'disabled' : '' }}">
+                    {% if (data.page == 1) %}
+                    <span><i class="fa fa-angle-left"></i></span>
+                    {% else %}
+                    <a href="javascript:void(0)" data-params="{{ jsonPageParams(data.page - 1, params) }}" title="Prev"><i class="fa fa-angle-left"></i></a>
+                    {% endif %}
+                </li>
+        {% if data.start > 1 %}
+                <li class="disabled">
+                    <span>...</span>
+                </li>
+        {% endif %}
+                {% for i in data.start..data.end %}
+                <li class="{{ i == data.page ? 'active' : '' }}">
+                    {% if (i == data.page) %}
+                    <span>{{ i }}</span>
+                    {% else %}
+                    <a href="javascript:void(0)" data-params="{{ jsonPageParams(i, params) }}">{{ i }}</a>
+                    {% endif %}
+                </li>
+                {% endfor %}
+        {% if data.end < data.pages %}
+                <li class="disabled">
+                    <span>...</span>
+                </li>
+        {% endif %}
+                <li class="next {{ data.page == data.pages ? 'disabled' : '' }}">
+                    {% if (data.page == data.pages) %}
+                    <span><i class="fa fa-angle-right"></i></span>
+                    {% else %}
+                    <a href="javascript:void(0)" data-params="{{ jsonPageParams(data.page + 1, params) }}" title="Next"><i class="fa fa-angle-right"></i></a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

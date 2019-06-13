@@ -1,0 +1,65 @@
+{% set sortColumn = sortInfo is not empty ? sortInfo.column : '' %}
+{% set sortDirection = sortInfo is not empty ? sortInfo.direction : '' %}
+
+<div class="table-scrollable">
+  <table class="table table-hover table-bordered dataTable" id="sample_1" role="grid" aria-describedby="sample_1_info">
+    <thead>
+      <tr role="row">
+        <th class="sorting {% if 'rx.orderNumber' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" Order ID : activate to sort column descending" data-sort="rx.orderNumber">Order ID</th>
+        <th class="sorting {% if 'rx.createdOn' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="1" aria-label=" RX Issue Date : activate to sort column ascending" data-sort="rx.createdOn"> RX Issue Date </th>
+        <th class="sorting {% if 'p.patientCode' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="2" aria-label=" Patient Code : activate to sort column ascending" data-sort="p.patientCode"> Patient Code </th>
+        <th class="sorting {% if 'info.firstName' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="3" aria-label=" Patient Name : activate to sort column ascending" data-sort="info.firstName"> Patient Name </th>
+        <th class="sorting {% if 'rx.paidOn' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Payment Timestamp : activate to sort column ascending" data-sort="rx.paidOn"> Payment Timestamp </th>
+        <th class="sorting {% if 'rx.orderValue' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="5" aria-label=" Order Value ({{ getCurrencyCode() }}) : activate to sort column ascending" data-sort="rx.orderValue"> Order Value ({{ getCurrencyCode() }}) </th>
+        <th class="sorting {% if 'rxl.costPrice' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="5" aria-label=" Recalled Timestamp : activate to sort column ascending" data-sort="rxl.costPrice"> Doctor's Fees ({{ getCurrencyCode() }}) </th>
+        <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="6" aria-label=" Actions : activate to sort column ascending"> Actions </th>
+      </tr>
+    </thead>
+    <tbody>
+    {% set totalOrder = 0 %}
+    {% set totalFee = 0 %}
+    {% for item in data %}
+      <tr role="row" class="{{ (loop.index % 2) ? 'odd' : 'event' }} {% if item.isDoctorRead is not null and item.isDoctorRead == 0 %} highlight {%  endif %}">
+        <td>{{ item[0].orderNumber  }}</td>
+        <td>{{ item[0].createdOn ? item[0].createdOn|date('d M y') : '' }}</td>
+        <td>{{ item[0].patient.patientCode }}</td>
+        <td>{{ item.firstName ~ ' ' ~ item.lastName }}</td>
+        <td>{{ item[0].paidOn|date('d M y') }}</td>
+        <td>{{ item[0].orderValue|number_format(2, '.', ',') }}</td>
+        <td>{{ item.doctorFee|number_format(2, '.', ',') }}</td>
+        <td>
+        <a href="{{ path('view_rx', {'rxId': item[0].id}) }}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right">View <i class="fa fa-arrow-right"></i></i></a>
+        </td>
+      </tr>
+      {% set totalOrder = totalOrder + item[0].orderValue %}
+      {% set totalFee = totalFee + item.doctorFee %}
+    {% endfor %}
+      <tr role="row" class="event">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Total</td>
+          <td>{{ totalOrder|number_format(2, '.', ',') }}</td>
+          <td>{{ totalFee|number_format(2, '.', ',') }}</td>
+          <td></td>
+       </tr>
+    </tbody>
+  </table>
+</div>
+
+{% if data|length > 0 %}
+    {% set fromRecord = currentPage > 0? currentPage*perPage: currentPage %}
+    {% set toRecored = fromRecord + perPage %}
+    <div class="row">
+        <div class="col-md-5 col-sm-12">
+            <div class="dataTables_info" role="status" aria-live="polite">Showing {{ fromRecord + 1 }} to {{ toRecored < totalResult? toRecored: totalResult }} of {{ totalResult }} entries</div>
+        </div>
+        <div class="col-md-7 col-sm-12">
+            <div class="dataTables_paginate paging_bootstrap_number ajax_paging">
+                {{ paginationHTML|raw }}
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="ps_filter[page]" value="{{ currentPage }}">
+{% endif %}

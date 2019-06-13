@@ -1,0 +1,346 @@
+<div class="row personal-information">
+    <div class="col-md-6">
+        <h4 class="block">Doctor's Personal Information</h4>
+        <div class="personal-information-wrap">
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Doctor's Title:</span></div>
+                <div class="col-md-6  col-xs-6"><span class="info-name">{{form.title}}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">First Name:</span></div>
+                <div class="col-md-6  col-xs-6"><span class="info-name">{{form.firstName}}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Last Name:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{form.lastName}}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Display Name:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{form.displayName}}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Gender:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ gender[form.gender]}}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Email:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.email }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Mobile Number:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">+{{ phoneCode[form.phoneLocation] ~ ' ' ~ form.phoneArea ~ ' ' ~ form.phone}}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Local Medical Licence No:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.localMedicalLicence }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Local Medical Country of Issue:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{country[form.localMedicalCountry] }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Local Medical Date of Issue:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.localMedicalDate|default('-') }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Local ID / Passport:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.localIdPassport|default('-') }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Local Country of Issue:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ country[form.localIdPassportCountry]|default('-') }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Local Date of Issue:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.localIdPassportDate|default('-') }}</span></div>
+            </div>
+        </div>
+
+        {% if form.agentId is defined %}
+            <div class="personal-information-wrap">
+                <div class="row personal-information-item">
+                    <div class="col-md-6 col-xs-6"><span class="info-title">Agent ID:</span></div>
+                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ agent[form.agentId] }}</span></div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="personal-information-wrap">
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Doctor Specialization:</span></div>
+                <div class="col-md-6 col-xs-6">
+
+                    {% if form.specialization|length >0 %}
+                        {% for curspec in form.specialization %}
+                            <div>
+                                <span class="info-name">{{ special[curspec] }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        <div class="personal-information-wrap">
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Bank Name:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.bankName }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Account Number:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.accountNumber }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Account Name:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.accountName }}</span></div>
+            </div>
+
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Bank Swift Code:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.bankSwiftCode }}</span></div>
+            </div>
+
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Bank Country:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ country[form.bankCountryIssue] }}</span></div>
+            </div>
+
+        </div>
+        {% if paymentGate is defined %}
+            <div class="personal-information-wrap">
+                <div class="row personal-information-item">
+                    <div class="col-md-6 col-xs-6"><span class="info-title">Payment Gateway:</span></div>
+                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ paymentGate[form.paymentGate] }}</span></div>
+                </div>
+            </div>
+        {% endif %}
+        <div class="personal-information-wrap">
+            <div class="row personal-information-item">
+                {% set local = (form.listRxReviewFeeLocal != 'Other')? form.listRxReviewFeeLocal: form.rxReviewFeeLocal %}
+                <div class="col-md-6 col-xs-6"><span class="info-title">Prescription Review Fee (Local Patients):</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">SGD {{ local|number_format(2, '.', ',') }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                {% set international = (form.listRxReviewFeeInternational != 'Other')? form.listRxReviewFeeInternational: form.rxReviewFeeInternational %}
+                <div class="col-md-6 col-xs-6"><span class="info-title">Prescription Review Fee (Overseas Patients):</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">SGD {{ international|number_format(2, '.', ',') }} </span></div>
+            </div>
+        </div>
+
+        <div class="personal-information-wrap">
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Profile image:</span></div>
+                <div class="col-md-6 col-xs-6"><img src="#" class="img-responsive pic-bordered" alt="profile" id="main-logo-preview-profile"></div>
+            </div>
+
+        </div>
+        <div class="personal-information-wrap">
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">E-Signature:</span></div>
+                <div class="col-md-6 col-xs-6"><img src="#" class="img-responsive pic-bordered" alt="signature" id="main-logo-preview-signature"></div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-6">
+        <h4 class="block">Doctor's Main Clinic Details</h4>
+        <div class="personal-information-wrap">
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Clinic Name:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.mainClinicName }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Email:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.mainClinicEmail }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Clinic Telephone number:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">+{{ phoneCode[form.mainClinicTelephoneLocation] ~ ' ' ~ form.mainClinicAreacode ~ ' ' ~ form.mainClinicPhone }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Address Line 1:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.mainClinicAddressLine1 }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Address Line 2:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.mainClinicAddressLine2|default('-') }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Address Line 3:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.mainClinicAddressLine3|default('-') }}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Country:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ country[form.mainClinicCountry]}}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">State/Province:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{% if form.mainClinicState != '' %} {{state[form.mainClinicState]}} {% else %} - {% endif %}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">City:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{city[form.mainClinicCity]}}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Zip / Postal code:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.mainClinicZipCode }}</span></div>
+            </div>
+
+        </div>
+
+        <div class="personal-information-wrap">
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">GST Registered:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{{ gst[form.gstSetting]}}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">GST Registration No:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name"> {% if form.mainClinicGstNo is defined %} {{ form.mainClinicGstNo }} {% else %} - {% endif %}</span></div>
+            </div>
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">GST Effective Date:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">{% if form.mainClinicGstDate is defined %} {{ form.mainClinicGstDate}} {% else %} - {% endif %}</span></div>
+            </div>
+        </div>
+
+        <div class="personal-information-wrap">
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">GST Medicine Local Code:</span></div>
+                <div class="col-md-6 col-xs-6"><span class="info-name">Based on Medicine GST Code</span></div>
+            </div>
+        </div>
+        {% if form.gstSetting != 0 %}
+        {% if form.applyGstReviewLocal is defined and form.gstCodeReviewLocal != ''   %}
+            <div class="personal-information-wrap">
+                <div class="row personal-information-item">
+                    <div class="col-md-6 col-xs-6"><span class="info-title">GST Review Local Registration No:</span></div>
+                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ listGstCode[form.gstCodeReviewLocal]}}</span></div>
+                </div>
+                <div class="row personal-information-item">
+                    <div class="col-md-6 col-xs-6"><span class="info-title">GST Review Local Effective Date:</span></div>
+                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.reviewLocalDate}}</span></div>
+                </div>
+            </div>
+        {% endif %}
+        {% if form.applyGstConsultLocal is defined and form.gstCodeConsultLocal != '' and form.gstSetting != 0 %}
+            <div class="personal-information-wrap">
+                <div class="row personal-information-item">
+                    <div class="col-md-6 col-xs-6"><span class="info-title">GST Consult Local Registration No:</span></div>
+                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ listGstCode[form.gstCodeConsultLocal]}}</span></div>
+                </div>
+                <div class="row personal-information-item">
+                    <div class="col-md-6 col-xs-6"><span class="info-title">GST Consult Local Effective Date:</span></div>
+                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.consultLocalDate}}</span></div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if form.gstCodeMedicineInternational != '' %}
+            <div class="personal-information-wrap">
+                <div class="row personal-information-item">
+                    <div class="col-md-6 col-xs-6"><span class="info-title">GST Medicine International Code:</span></div>
+                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ listGstCode[form.gstCodeMedicineInternational]}}</span></div>
+                </div>
+                <div class="row personal-information-item">
+                    <div class="col-md-6 col-xs-6"><span class="info-title">GST Medicine International Effective Date:</span></div>
+                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.medicineInternationalDate|default('')}}<span></div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if form.applyGstReviewInternational is defined and form.gstCodeReviewInternational != '' %}
+            <div class="personal-information-wrap">
+                <div class="row personal-information-item">
+                    <div class="col-md-6 col-xs-6"><span class="info-title">GST Review International Registration No:</span></div>
+                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ listGstCode[form.gstCodeReviewInternational]}}</span></div>
+                </div>
+                <div class="row personal-information-item">
+                    <div class="col-md-6 col-xs-6"><span class="info-title">GST Review International Effective Date:</span></div>
+                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.reviewInternationalDate}}</span></div>
+                </div>
+            </div>
+        {% endif %}
+        {% if form.applyGstConsultInternational is defined and form.gstCodeConsultInternational != ''  %}
+            <div class="personal-information-wrap">
+                <div class="row personal-information-item">
+                    <div class="col-md-6 col-xs-6"><span class="info-title">GST Consult International Registration No:</span></div>
+                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ listGstCode[form.gstCodeConsultInternational]}}</span></div>
+                </div>
+                <div class="row personal-information-item">
+                    <div class="col-md-6 col-xs-6"><span class="info-title">GST Consult International Effective Date:</span></div>
+                    <div class="col-md-6 col-xs-6"><span class="info-name">{{ form.consultInternationalDate}}</span></div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% endif %}
+        <div class="personal-information-wrap">
+            <div class="row personal-information-item">
+                <div class="col-md-6 col-xs-6"><span class="info-title">Clinic Logo:</span></div>
+                <div class="col-md-6 col-xs-6">
+                    <img src="#" class="img-responsive pic-bordered" alt="" id="main-logo-preview">
+                </div>
+            </div>
+
+        </div>
+
+        {% if  clinics|length %}
+            {% for index, clinic in clinics %}
+                <h4 class="block"> Sub Doctor’s Clinic Details</h4>
+                <div class="personal-information-wrap">
+                    <div class="row personal-information-item">
+                        <div class="col-md-6 col-xs-6"><span class="info-title">Clinic Name:</span></div>
+                        <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.name }}</span></div>
+                    </div>
+                    <div class="row personal-information-item">
+                        <div class="col-md-6 col-xs-6"><span class="info-title">Email:</span></div>
+                        <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.email }}</span></div>
+                    </div>
+                    <div class="row personal-information-item">
+                        <div class="col-md-6 col-xs-6"><span class="info-title">Clinic Telephone number:</span></div>
+                        <div class="col-md-6 col-xs-6"><span class="info-name">+{{ phoneCode[clinic.phoneLocation] ~ ' ' ~ clinic.phoneArea ~ ' ' ~ clinic.phoneNumber }}</span></div>
+                    </div>
+                    <div class="row personal-information-item">
+                        <div class="col-md-6 col-xs-6"><span class="info-title">Address Line 1:</span></div>
+                        <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.address1 }}</span></div>
+                    </div>
+                    <div class="row personal-information-item">
+                        <div class="col-md-6 col-xs-6"><span class="info-title">Address Line 2:</span></div>
+                        <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.address2|default('-') }}</span></div>
+                    </div>
+                    <div class="row personal-information-item">
+                        <div class="col-md-6 col-xs-6"><span class="info-title">Address Line 3:</span></div>
+                        <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.address3|default('-') }}</span></div>
+                    </div>
+                    <div class="row personal-information-item">
+                        <div class="col-md-6 col-xs-6"><span class="info-title">Country:</span></div>
+                        <div class="col-md-6 col-xs-6"><span class="info-name">{{ country[clinic.country]}}</span></div>
+                    </div>
+                    <div class="row personal-information-item">
+                        <div class="col-md-6 col-xs-6"><span class="info-title">State/Province:</span></div>
+                        <div class="col-md-6 col-xs-6"><span class="info-name">{{state[clinic.state]}}</span></div>
+                    </div>
+                    <div class="row personal-information-item">
+                        <div class="col-md-6 col-xs-6"><span class="info-title">City:</span></div>
+                        <div class="col-md-6 col-xs-6"><span class="info-name">{{city[clinic.city]}}</span></div>
+                    </div>
+                    <div class="row personal-information-item">
+                        <div class="col-md-6 col-xs-6"><span class="info-title">Zip / Postal code:</span></div>
+                        <div class="col-md-6 col-xs-6"><span class="info-name">{{ clinic.zipCode }}</span></div>
+                    </div>
+
+                </div>
+
+                <div class="personal-information-wrap">
+                    <div class="row personal-information-item">
+                        <div class="col-md-6 col-xs-6"><span class="info-title">Clinic Logo:</span></div>
+                        <div class="col-md-6 col-xs-6">
+                            <img src="#" class="img-responsive pic-bordered" alt="image" id="main-logo-preview-{{index}}">
+                        </div>
+                    </div>
+
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>

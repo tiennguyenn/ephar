@@ -1,0 +1,355 @@
+{% extends '@Doctor/layout.html.twig' %}
+
+{% block body %}
+
+{% if app.user.isMPA %}
+{% include '@Doctor/mpa/header.html.twig' %}
+{% else %}
+{% include '@Doctor/header.html.twig' %}
+{% endif %}
+
+<div class="page-container">
+
+  {% if app.user.isMPA %}
+  {% include '@Doctor/mpa/left-menu.html.twig' with { 'mainMenu': 'rx', 'subMenu': 'list' } %}
+  {% else %}
+  {% include '@Doctor/left-menu.html.twig' with { 'mainMenu': 'rx', 'subMenu': 'list' } %}
+  {% endif %}
+
+  <div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content" id="pageContent">
+      <!-- BEGIN PAGE HEAD-->
+      <div class="page-head">
+        <!-- BEGIN PAGE TITLE -->
+        <div class="page-title">
+          <h1>View RX</h1>
+        </div>
+        <!-- END PAGE TITLE -->
+      </div>
+      <!-- END PAGE HEAD-->
+      <!-- BEGIN PAGE BREADCRUMB -->
+      <ul class="page-breadcrumb breadcrumb">
+        <li> <a href="{{ path('doctor_dashboard') }}">Home</a><i class="fa fa-circle"></i></li>
+        <li> <a href="{{ path('list_rx') }}">All RX</a><i class="fa fa-circle"></i></li>
+        <li> <span class="active">View RX</span> </li>
+      </ul>
+      <!-- END PAGE BREADCRUMB -->
+      <div class="row">
+        <div class="col-md-12">
+          <div class="portlet light">
+            <div class="portlet-title">
+              <div class="caption">
+                Order ID {{ rxData.orderNumber }} ({{ rxStatus }})
+              </div>
+            </div>
+            <div class="portlet-body">
+              <div class="row patient-top">
+                <div class="col-md-6">
+                  <div class="patient-info">
+                    <div class="info-item">
+                      <span>Patient Name:</span>
+                      <span class="bold">{{ patientInformation.name }} ({{ patientInformation.globalId }})</span>
+                    </div>
+                    <div class="info-group">
+                      <div class="info-item"><span>Gender:</span> <span class="bold">{{ patientInformation.gender }}</span></div>
+                      <div class="info-item"><span>Age:</span> <span class="bold">{{ patientInformation.age }}</span></div>
+                      <div class="info-item"><span>Country:</span> <span class="bold">{{ patientInformation.address }}</span></div>
+                    </div>
+                    {% if patientInformation.allergies and patientInformation.allergies is not empty %}
+                    <div class="info-item patient-medication-allergies">
+                      <span>Known Medication Allergies: {{ patientInformation.allergies }}</span>
+                    </div>
+					{% else %}
+                    <div class="info-item patient-medication-allergies">
+                      <span>Known Medication Allergies: No known drug allergies</span>
+                    </div>
+                    {% endif %}
+                    <div>
+                      <strong>Diagnosis: {{ patientInformation.diagnosis }}</strong>
+                    </div>
+                  </div>
+                </div>
+                {% if isConfirmed is defined %}
+                <div class="col-md-6">
+                  <div class="patient-info pull-right">
+                      <div class="info-item"><span class="bold">Confirmed Order Details</span></div>
+                      <div class="info-group one-line">
+                        <div class="info-item"><span class="item-title">Date of Payment:</span> <span class="item-value">{{ rxData.paidOn|date('d M y') }}</span></div>
+                        <div class="info-item"><span class="item-title">Amount:</span> <span class="item-value">{{ getCurrencyCode() }} {{ rxData.orderValue|number_format(2, '.', ',') }} </span></div>
+                      </div>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+
+              <div class="row show-grid mb-grid">
+                <div class="col-md-12">
+                    <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit" id="btn-patient-note"> View or add patient notes </a>
+                    <input type="hidden" value="{{ encodeHex(patientId) }}" id="current-patient-id" />
+                </div>
+              </div>
+
+              <div class="row show-grid mb-grid">
+                <div class="col-md-12 align-right">
+                  {% if isShowReport is defined %}
+                  <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase yellow-crusta btn-icon-right btn-sm adverseBtn"> Report Adverse Drug Reaction<i class="fa fa-arrow-right"></i></a>
+                  <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase yellow-crusta btn-icon-right btn-sm recallBtn" data-url="{{ path('ajax_recall', {'rxId': rxData.id}) }}"> Report an issue<i class="fa fa-arrow-right"></i></a>
+                  {% else %}
+                  <span>Please contact Customer Care if you wish to report an issue about this order</span>
+                  {% endif %}
+                </div>
+              </div>
+			  {% if issues is not empty %}
+                <label class="bold control-label display-block">Issues Log: </label>
+			  <div class="table-scrollable mb-20 mt-20">
+                <table class="table table-hover table-bordered dataTable">
+                  <thead>
+                    <tr role="row">
+                      <th>Date</th>
+                      <th>Reporter</th>
+                      <th>Status</th>
+                      <th>Note</th>
+                    </tr>
+                  </thead>
+                  <tbody id="issues">
+					{% for issue in issues %}
+                    <tr role="row">
+                      <td>{{ issue.createdOn|date("l, F d, Y h:ia") }}</td>
+                      <td>{{ issue.createdBy }}</td>
+                      <td>On Hold - Doctor Issue</td>
+                      <td>{{ issue.remarks|raw }}
+                          {% if issue.getIssueAttachments()|length > 0 %}
+                            <br/>
+                            <div class="incident-list-attachment">
+                              See attached reports. <br/>
+
+                                {% for att in issue.getIssueAttachments() %}
+                                  <div class="mt-5"> <a target="blank" href="{{ app.request.getBaseURL() }}/{{(att.getDocumentUrl())}}" > {{ att.getDocumentName()}} </a></div>
+                                {% endfor %}
+                            </div>
+                          {% endif %}
+
+
+                      </td>
+                    </tr>
+					{% endfor %}
+                  </tbody>
+                </table> 
+              </div>
+			  {% else %}
+			  <div class="table-scrollable mb-20 mt-20" style="display: none;">
+                <table class="table table-hover table-bordered dataTable">
+                  <thead>
+                    <tr role="row">
+                      <th>Date</th>
+                      <th>Reporter</th>
+                      <th>Status</th>
+                      <th>Note</th>
+                    </tr>
+                  </thead>
+                  <tbody id="issues">
+                  </tbody>
+                </table> 
+              </div>
+			  {% endif %}
+              <div class="patient-step-details form">
+                <div class="portlet box portlet-step green-seagreen" id="stepFour">
+                  <div class="portlet-title">
+                    <div class="caption">Review RX
+                    </div>
+                  </div>
+                  <div class="portlet-body">
+                    <div class="panel-group accordion" id="accordion3">                        
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+            <a class="accordion-toggle accordion-toggle-styled" data-toggle="collapse" data-parent="#accordion3" href="#pdfAdviceTab"> Review RX advice </a>
+          </h4>
+                        </div>
+                        <div id="pdfAdviceTab" class="panel-collapse in">
+                          <div class="panel-body align-center">
+                            <iframe width="795" height="1120" src="{{ path('pdf_rx', {'rxId': rxData.id}) }}?watermark=true#toolbar=1&view=FitH&statusbar=0&messages=0&navpanes=0" type="application/pdf">
+                            </iframe>
+                            <div class="dataTables_wrapper no-footer align-left">
+                              <h4 class="block mb-0">Refill reminder settings</h4>
+                              {% include '@Doctor/rx/_refill-reminder.html.twig' with {'isDisabled': true} %}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {% if showProforma is defined %}
+                        <div class="panel panel-default">
+                          <div class="panel-heading has-btn">
+                            <h4 class="panel-title">
+                              <a class="accordion-toggle accordion-toggle-styled" data-toggle="collapse" data-parent="#accordion3" href="#pdfProformaTab"> Proforma Invoice </a>
+                            </h4>
+                          </div>
+                          <div id="pdfProformaTab" class="panel-collapse in">
+                            <div class="panel-body align-center">
+                              <iframe width="795" height="1120" id="iframeProforma" name="iframeProforma" src="{{ path('pdf_rx', {'rxId': rxData.id, 'is-proforma': 1}) }}?watermark=true#toolbar=1&view=FitH&statusbar=0&messages=0&navpanes=0" type="application/pdf">
+                              </iframe>
+                            </div>
+                          </div>
+                        </div>
+                        {% endif %}
+                      {% if rxData.paidOn %}
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                            <a class="accordion-toggle accordion-toggle-styled" data-toggle="collapse" data-parent="#accordion3" href="#pdfInvoiceTab"> Review RX invoice </a>
+                          </h4>
+                        </div>
+                        <div id="pdfInvoiceTab" class="panel-collapse in">
+                          <div class="panel-body align-center">
+                            <iframe width="795" height="1120" src="{{ path('pdf_rx', {'rxId': rxData.id, 'is-invoice': 1}) }}#toolbar=1&view=FitH&statusbar=0&messages=0&navpanes=0" type="application/pdf">
+                            </iframe>
+                          </div>
+                        </div>
+                      </div>
+
+                      {% if not isLocalPatient and paidOn != "" %}
+                      <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                          <a class="accordion-toggle accordion-toggle-styled" data-toggle="collapse" data-parent="#accordion3" href="#pdfCustomsTab"> Customs Declaration Invoice </a>
+                        </h4>
+                        </div>
+                        <div id="pdfCustomsTab" class="panel-collapse in">
+                          <div class="panel-body align-center">
+                            <iframe width="795" height="1120" src="{{ path('pdf_cif', {'orderNumber': rxData.orderNumber}) }}#toolbar=1&view=FitH&statusbar=0&messages=0&navpanes=0" type="application/pdf">
+                            </iframe>
+                          </div>
+                        </div>
+                      </div>
+                      {% endif %}
+                      {% if isRefund %}
+                        <div class="panel panel-default">
+                          <div class="panel-heading">
+                            <h4 class="panel-title">
+                              <a class="accordion-toggle accordion-toggle-styled" data-toggle="collapse" data-parent="#accordion3" href="#pdfCustomsRefundTab"> Credit Note </a>
+                            </h4>
+                          </div>
+                          <div id="pdfCustomsRefundTab" class="panel-collapse in">
+                            <div class="panel-body align-center">
+                                {% if noteRefund is defined %}
+                                    <iframe width="795" height="1120" src="{{ noteRefund|raw }}" type="application/pdf">
+                                    </iframe>
+                                {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                      {% endif %}
+                    {% endif %}
+                    </div>
+                  </div>
+                </div>
+                <div class="form-actions">
+                    <div class="align-center">
+                      {% if 'create_rx' in app.user.permissions  %}
+                        {% if replacement == true %}
+                          <a href="{{ path('copy_rx', {'rxId': rxData.id}) }}?replacement=true" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm"> Issue Replacement RX Order
+                              <i class="fa fa-arrow-right"></i>
+                          </a>
+                        {% else %}
+                        <a href="{{ path('copy_rx', {'rxId': rxData.id}) }}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm"> Issue Similar Prescription
+                            <i class="fa fa-arrow-right"></i>
+                        </a>
+                        {% endif  %}
+                      {% endif  %}
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <input type="hidden" id="load-patient-url" value="{{ path('patient_ajax_get_info') }}">
+
+  <input type="hidden" id="export-patient-url" value="{{ path('patient_ajax_get_info_note_list',{patientId: patientId}) }}">
+
+  <div id="modal-patient-note" class="modal fade modal-new" tabindex="-1" data-width="900">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title">Patient Notes</h4>
+    </div>
+    <div class="modal-body">
+      <div class="notes-patient-info patient-info bg-light-blue">
+
+      </div>
+      <div class="form mb-30">
+        <div class="mb-5"><strong>Add a new note:</strong></div>
+        <div class="form-group">
+          <textarea rows="5" class="form-control" id="note-content" placeholder="Add notes about this patient"></textarea>
+        </div>
+        <div class="form-action text-right">
+          <a href="javascript:;" id="btn-add-note" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right">Add Notes<i class="fa fa-plus"></i></a>
+        </div>
+      </div>
+
+      <div class="mb-5"><strong>Previous Notes</strong></div>
+      <div class="portlet box white portlet-scroller">
+        <div class="portlet-body">
+          <div class="scroller" style="height:280px" data-always-visible="1" data-rail-visible="1" data-rail-color="white" data-handle-color="green">
+            <div class="table-scrollable table-scrollable-borderless">
+              <div class="list-notes">
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="clearfix">
+        <div class="pull-left"><a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right" id="export-patient-note">Print<i class="fa fa-print"></i></a></div>
+        <div class="pull-right"><a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right" data-dismiss="modal">Close Patient Notes<i class="fa fa-close"></i></a></div>
+      </div>
+
+    </div>
+  </div>
+
+{% include '@Doctor/rx/_recall-dialog.html.twig' with {'isConfirmed': (isConfirmed is defined ? true : false), 'isReported': true } %}
+<div id="modalAdverse" class="modal fade modal-new" tabindex="-1" data-width="600">
+  <div class="modal-header">
+      <h4 class="modal-title">Report Adverse Drug Reaction</h4>
+  </div>
+  <div class="modal-body"> 
+    <p>You are being taken to the external website <a href="{{ externalUrl.short }}" target="_blank">Health Sciences Authority</a> to report an Adverse Drug Reaction in relation to this RX order. This action will be logged into this RX order. Would you like to continue?</p>
+    <div class="align-center">
+      <input type="hidden" value="{{ path(ajaxAdverseUrl) }}" id="ajaxAdverseUrl">
+      <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase red btn-outline btn-sm ml-10" data-dismiss="modal">NO . I DON'T WANT TO REPORT ADVERSE DRUG REACTION</a>
+      <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm" id="adverseUrl" data-rxId="{{ rxData.id }}" data-redirectUrl="{{ externalUrl.full }}">YES</a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block stylesheets %}
+{% stylesheets
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+        'bundles/admin/assets/global/plugins/icheck/skins/minimal/_all.css'
+        'bundles/admin/assets/global/plugins/icheck/skins/polaris/polaris.css'
+        'bundles/admin/assets/global/plugins/icheck/skins/futurico/futurico.css' filter='cssrewrite'
+  %}
+  <link rel="stylesheet" href="{{ asset_url }}" />
+{% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %} 
+{% javascripts 
+  '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+  '@AdminBundle/Resources/public/assets/global/plugins/icheck/icheck.min.js'
+  '@PatientBundle/Resources/public/js/patient-common.js'
+  '@DoctorBundle/Resources/public/js/rx-view.js'
+%}
+<script type="text/javascript" src="{{ asset_url }}"></script>
+{% endjavascripts %}
+{% endblock %}

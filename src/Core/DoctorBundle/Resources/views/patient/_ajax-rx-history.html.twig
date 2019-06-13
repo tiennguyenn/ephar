@@ -1,0 +1,85 @@
+{% set sortColumn = sortInfo is not empty ? sortInfo.column : '' %}
+{% set sortDirection = sortInfo is not empty ? sortInfo.direction : '' %}
+
+<div class="table-scrollable">
+  <table class="table table-hover table-bordered dataTable" role="grid" aria-describedby="sample_1_info">
+    <thead>
+      <tr role="row">
+        <th class="sorting {% if 'rx.orderNumber' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" Order ID : activate to sort column descending" data-sort="rx.orderNumber">Order ID</th>
+        <th class="sorting {% if 'rx.createdOn' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Date : activate to sort column ascending" data-sort="rx.createdOn"> Date</th>
+        <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Description : activate to sort column ascending">Description</th>
+        <th class="sorting {% if 'totalAmount' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Amount ({{ getCurrencyCode() }}) : activate to sort column ascending" data-sort="totalAmount">Amount ({{ getCurrencyCode() }})</th>
+        <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Delivery Address : activate to sort column ascending"> Delivery Address </th>
+        <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Status : activate to sort column ascending"> Status </th>
+        <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Actions : activate to sort column ascending"> Actions </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in data %}
+      <tr role="row" class="odd {{ item.type == constant('UtilBundle\\Utility\\Constant::MESSAGE_CONTENT_TYPE_YES') ? 'highlight' : '' }}">
+        <td>
+        <a href="{{ path('view_rx', {'rxId': item.rx.id}) }}" class="underline">{{ item.rx.orderNumber }}</a>
+        </td>
+        <td>{{ item.rx.createdOn|date('d M y') }}</td>
+        <td>
+          {% set total = 0 %}
+          {% for line in item.list if 1 == line.lineType %}
+          {{ line.quantity }} {{ line.drug.packingType.name }} {{ line.name }}<br>
+          {% set total = total + line.listPrice %}
+          {% endfor %}
+          {% for line in item.list if 2 == line.lineType  %}
+          Prescription review
+          {% set total = total + line.listPrice %}
+          {% endfor %}
+          <div class="mt-5"><a href="{{ path('view_rx', {'rxId': item.rx.id}) }}" class="underline">View full RX</a></div>
+        </td>
+        <td class="align-right">{{ total|number_format(2, '.', ',') }}</td>
+        <td>{{ item.rx.shippingAddress.city.country.name|default('') }}</td>
+        <td>
+          {% if item.type == constant('UtilBundle\\Utility\\Constant::MESSAGE_CONTENT_TYPE_YES') %}
+          <a href="#modal-refill" data-toggle="modal" data-target="#modal-refill" data-date="{{ item.date|date('d M y') }}" data-type="1" class="statusLink">
+            <strong>Due for Refill</strong>
+          </a>
+          {% elseif (item.type == constant('UtilBundle\\Utility\\Constant::MESSAGE_CONTENT_TYPE_REFILLED')) %}
+            <strong>Refilled</strong>
+          {% else %}
+          <strong>{{ item.status ? 'Due for Refill' : item.rxStatus }}</strong>
+          {% endif %}
+
+          {% if item.type == constant('UtilBundle\\Utility\\Constant::MESSAGE_CONTENT_TYPE_NO') %}
+          <br><a href="#modal-refill" data-toggle="modal" data-target="#modal-refill" data-date="{{ item.date|date('d M y') }}" data-type="0" class="statusLink">Patient does not want a refill.</a>
+          {% elseif item.type == constant('UtilBundle\\Utility\\Constant::MESSAGE_CONTENT_TYPE_MAYBE') %}
+          <br><a href="#modal-refill" data-toggle="modal" data-target="#modal-refill" data-date="{{ item.date|date('d M y') }}" data-type="2" class="statusLink">Please contact patient before issuing a refill.</a>
+          {% elseif item.type != constant('UtilBundle\\Utility\\Constant::MESSAGE_CONTENT_TYPE_YES') and item.type != constant('UtilBundle\\Utility\\Constant::MESSAGE_CONTENT_TYPE_REFILLED') and item.status %}
+          <br><span>Waiting for Patient Response</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ path(constant('UtilBundle\\Utility\\Constant::RX_STATUS_DRAFT') == item.rx.status ? 'edit_rx' : 'view_rx', {'rxId': item.rx.id}) }}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right">View RX <i class="fa fa-file-text-o"></i></a>
+           {% if 'create_rx' in app.user.permissions  %}
+          <a href="{{ path('copy_rx', {'rxId':item.rx.id, 'is-refill':1}) }}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right">Refill <i class="fa fa-edit"></i></a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if data|length > 0 %}
+    {% set fromRecord = currentPage > 0? currentPage*perPage: currentPage %}
+    {% set toRecored = fromRecord + perPage %}
+    <div class="row">
+        <div class="col-md-5 col-sm-12">
+            <div class="dataTables_info" role="status" aria-live="polite">Showing {{ fromRecord + 1 }} to {{ toRecored < totalResult? toRecored: totalResult }} of {{ totalResult }} entries</div>
+        </div>
+        <div class="col-md-7 col-sm-12">
+            <div class="dataTables_paginate paging_bootstrap_number ajax_paging">
+                {{ paginationHTML|raw }}
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="page" value="{{ currentPage }}">
+{% endif %}
+
+<input type="hidden" id="ajaxLoadUrl" value="{{ pageUrl }}">

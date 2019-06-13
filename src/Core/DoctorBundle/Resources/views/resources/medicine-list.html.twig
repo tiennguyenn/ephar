@@ -1,0 +1,158 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block body %}
+
+{% if app.user.isMPA %}
+{% include '@Doctor/mpa/header.html.twig' %}
+{% else %}
+{% include '@Doctor/header.html.twig' %}
+{% endif %}
+
+    <div class="page-container">
+    
+        {% if app.user.isMPA %}
+        {% include '@Doctor/mpa/left-menu.html.twig' with { 'mainMenu': 'medicine-list', 'subMenu': 'medicine-list' } %}
+        {% else %}
+        {% include '@Doctor/left-menu.html.twig' with { 'mainMenu': 'medicine-list', 'subMenu': 'medicine-list' } %}
+        {% endif %}
+        <div class="page-content-wrapper">
+            <!-- BEGIN CONTENT BODY -->
+            <div class="page-content">
+                <!-- BEGIN PAGE HEAD-->
+                <div class="page-head">
+                    <!-- BEGIN PAGE TITLE -->
+                    <div class="page-title">
+                        <h1>Medicine List (A - Z)</h1>
+                    </div>
+                    <!-- END PAGE TITLE -->
+                </div>
+                <!-- END PAGE HEAD-->
+                <!-- BEGIN PAGE BREADCRUMB -->
+                <ul class="page-breadcrumb breadcrumb">
+                    <li> <a href="{{ path('doctor_dashboard')}}">Home</a> <i class="fa fa-circle"></i> </li>
+                    <li> <span class="active">Medicine List (A - Z)</span> </li>
+                </ul>
+                <!-- END PAGE BREADCRUMB -->
+
+                <!-- BEGIN PAGE BASE CONTENT -->
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <div class="portlet light bordered">
+                            <div class="portlet-body">
+                                <div class="row">
+                                    <input type="hidden" id="get-medicine-url" value="{{ path('doctor_ajax_medicine_list') }}" />
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <div class="input-icon">
+                                                <i class="fa fa-search"></i>
+                                                <input type="text" class="form-control" id="medicine-search" placeholder="Search by Medicine Name or Active Ingredient">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-scrollable padding-tb-15" id="table-medicine">
+                                    <p class="text-center" style="font-size: 14pt">
+                                        {% for key, value in drugs %}
+                                            <a href="javascript: void(0)" class="letter-nav margin-right-10" data-letter="{{ key == '#' ? 'numb' : key }}">{{ key }}</a>
+                                        {% endfor %}
+                                    </p>
+                                    <table class="table table-striped no-footer" id="medicine-list-table">
+                                        <thead>
+                                        <tr>
+                                            <th> Medicine Name </th>
+                                            <th style="width: 30%;"> Active Ingredient </th>
+                                            <th style="width: 10%;"> Selling Price <br />(Overseas Patient) </th>
+                                            <th style="width: 10%;"> Selling Price <br />(Local Patient) </th>
+                                            <th style="width: 10%;"> Stock Status </th>
+                                            <th style="width: 10%;"> Action </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for key, value in drugs %}
+                                            <tr>
+                                                <td colspan="5" class="text-uppercase" id="letter-{{ key == '#' ? 'numb' : key }}"><h4><strong>{{ key }}</strong></h4></td>
+                                            </tr>
+                                            {% for drug in value %}
+                                                <tr id="drugrow_{{ drug.id }}" data-drugid="{{ drug.id }}">
+                                                    <td class="text-uppercase">{{ drug.name }}</td>
+                                                    <td class="text-uppercase">{{ drug.activeIngredients|join(', ') }}</td>
+                                                    <td class="text-uppercase">
+                                                        <a href="javascript:void(0)" class="show-international-price drug-price-toggler text-uppercase">Show Price</a>
+                                                        <span class="drug-international-price price-toggler hidden">{{ getCurrencyCode() }} {{ drug.internationalPrince }}</span>
+                                                    </td>
+                                                    <td class="text-uppercase">
+                                                        <a href="javascript:void(0)" class="show-local-price drug-price-toggler text-uppercase">Show Price</a>
+                                                        <span class="drug-local-price price-toggler hidden">{{ getCurrencyCode() }} {{ drug.localPrice }}</span>
+                                                    </td>
+                                                    <td class="text-uppercase">{{ drug.stockStatus }}</td>
+                                                    <td>
+                                                        <a href="javascript:void(0);"
+                                                           class="btn btn-ahalf-circle text-uppercase red btn-outline btn-icon-right btn-xs {% if not drug.favId %}hide{% endif %} favoriteLink"
+                                                           data-url="{{ path('ajax_handle_favorite', {'drugId': drug.id}) }}"
+                                                           data-type="remove">
+                                                            Remove Favorite<i class="fa fa-star"></i>
+                                                        </a>
+                                                        <a href="javascript:void(0);"
+                                                           class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-icon-right btn-xs {% if drug.favId %}hide{% endif %} favoriteLink"
+                                                           data-url="{{ path('ajax_handle_favorite', {'drugId': drug.id}) }}"
+                                                           data-type="add">
+                                                            Add to Favourite<i class="fa fa-star"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END PAGE BASE CONTENT -->
+            </div>
+        </div>
+    </div>
+    <div id="modalDrugsLimit" class="modal fade modal-new" tabindex="-1" data-backdrop="static">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+            <h4 class="modal-title">Warning</h4>
+        </div>
+        <div class="modal-body">
+            <div class="text-center mt-20">
+                <i class="fa fa-exclamation-circle icon-check-lg txt-red"></i>
+                <p id="limit-error-msg"></p>
+                <div>
+                    <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10" data-dismiss="modal">Ok</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+        '@DoctorBundle/Resources/public/js/medicine-list.js'
+
+        debug=false
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+
+
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+    {% stylesheets
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+
+        filter='cssrewrite'
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}

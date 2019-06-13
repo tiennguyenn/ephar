@@ -1,0 +1,90 @@
+<div class="dataTables_wrapper no-footer">
+<div class="table-scrollable">
+  <table class="table table-striped table-bordered table-hover table-checkable order-column dataTable no-footer" role="grid" aria-describedby="sample_1_info" style="width: 1562px;">
+    <thead>
+      <tr role="row">
+        <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="" width="120">
+          <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+            <input type="checkbox" class="group-checkable checkboxAll" data-set="#sample_1 .checkboxes">
+            <span></span>
+          </label>
+        </th>
+        <th class="sorting" data-sort="drug.name" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" Medication : activate to sort column descending"> Medication </th>
+        <th class="sorting" data-sort="drug.costPrice" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="1" aria-label=" Price ({{ getCurrencyCode() }}) : activate to sort column ascending"> Selling Price ({{ getCurrencyCode() }}) </th>
+        <th class="sorting" data-sort="drug.costPrice" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="1" aria-label=" Price ({{ getCurrencyCode() }}) : activate to sort column ascending"> Cost to Clinic <br>({{ getCurrencyCode() }}) </th>
+        <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="3" aria-label=" Favorites : activate to sort column ascending"> Favorites </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in drugs %}
+      <tr role="row">
+        <td>
+          {% if ( not item.isColdChain or isLocalPatient ) %}
+          <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+            <input type="checkbox" class="checkboxes drugCheckbox" data-drugId="{{ item.id }}"><span></span>
+          </label>
+          {% endif %}
+        </td>
+        <td>
+          <div class="content-extension">
+            <strong>{{ item.name }} <span style="color: red">
+                      {{ item.extendName }}</span>
+            </strong>
+                {% if item.isShortLife is defined and  item.isShortLife == true %}
+                  <a href="javascript:;" data-placement="right" data-toggle="popover" data-trigger="click" data-popover-content="#popover-inline-1" class="extension-icon">
+                    <img src="{{ asset('bundles/admin/assets/layouts/layout4/img/baseline-timelapse-24px.svg') }}" alt="">
+                  </a>
+                  <!-- Content for Popover #2 -->
+                  <div class="hidden" id="popover-inline-1">
+                    <div class="popover-body">
+                      <a href="javasript:;" class="popover-close" aria-label="Close"> <i class="fa fa-close"></i> </a>
+                      <div class="important-content">
+                        <div class="important-title"><strong>IMPORTANT NOTE:</strong></div>
+                        <p>This drug has short shelf life. Select alternative medications for your overseas patients to avoid dispensing and delivery issues.</p>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+                {% if item.isColdChain %}
+                    <a href="javascript:;" data-placement="right" data-toggle="popover" data-trigger="hover" data-popover-content="#popover-inline-{{ item.id }}" class="extension-icon">
+                      <img src="{{ asset('bundles/admin/assets/layouts/layout4/img/cold-chain-icon.png') }}" alt="">
+                    </a>
+                    <!-- Content for Popover #2 -->
+                    <div class="hidden" id="popover-inline-{{ item.id }}">
+                      <div class="popover-body">
+                        <div class="important-content">
+                          <p>This medicine is a cold chain item. Keep refrigerated.</p>
+                        </div>
+                      </div>
+                    </div>
+                {% endif %}
+          </div>
+          <br>
+          {% if item.ingredients %}
+          {{ item.ingredients }}<br>
+          {% endif %}
+          {{ item.manufacturer }}<br>
+          {{ item.packQuantity * item.minimumOrderQty }} {{ item.doseUnit }}
+          {% if ( item.isColdChain and not isLocalPatient ) %}
+            <br>
+            <span style="color: red;font-weight: bold;font-size: 12px;">
+                This medicine is for local delivery only.
+            </span>
+          {% endif %}
+        </td>
+        <td class="align-right">{{ (item.price * item.minimumOrderQty)|number_format(2, '.', ',') }}</td>
+        <td class="align-right">{{ (item.costToClinic * item.minimumOrderQty)|number_format(2, '.', ',') }}</td>
+        <td><a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase red btn-outline btn-icon-right btn-xs favoriteLink" data-url="{{ path('ajax_handle_favorite', {'drugId': item.id}) }}">Remove Favorite<i class="fa fa-star"></i></a> </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="form-actions align-center">
+    <div class="row">
+      <div class="col-md-12">
+        <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-icon-right btn-sm addInFavoriteTab"> Add selected medications to RX</a>
+      </div>
+    </div>
+  </div>
+</div>

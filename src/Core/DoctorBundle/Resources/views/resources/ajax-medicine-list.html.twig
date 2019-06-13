@@ -1,0 +1,60 @@
+<p class="text-center" style="font-size: 14pt">
+    {% for key, value in drugs %}
+        <a href="javascript: void(0)" class="letter-nav margin-right-10" data-letter="{{ key == '#' ? 'numb' : key }}">{{ key }}</a>
+    {% endfor %}
+</p>
+<table class="table table-striped no-footer" id="medicine-list-table">
+    <thead>
+    <tr>
+        <th> Medicine Name </th>
+        <th style="width: 30%;"> Active Ingredient </th>
+        <th style="width: 10%;"> Selling Price <br />(International Patient) </th>
+        <th style="width: 10%;"> Selling Price <br />(Local Patient) </th>
+        <th style="width: 10%;"> Stock Status </th>
+        <th style="width: 10%;"> Action </th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {% if drugs|length > 0 %}
+        {% for key, value in drugs %}
+            <tr>
+                <td colspan="5" class="text-uppercase" id="letter-{{ key == '#' ? 'numb' : key }}"><h4><strong>{{ key }}</strong></h4></td>
+            </tr>
+            {% for drug in value %}
+                <tr id="drugrow_{{ drug.id }}" data-drugid="{{ drug.id }}">
+                    <td class="text-uppercase">{{ drug.name }}</td>
+                    <td class="text-uppercase">{{ drug.activeIngredients|join(', ') }}</td>
+                    <td class="text-uppercase">
+                        <a href="javascript:void(0)" class="show-international-price drug-price-toggler text-uppercase">Show Price</a>
+                        <span class="drug-international-price price-toggler hidden">{{ getCurrencyCode() }} {{ drug.internationalPrince }}</span>
+                    </td>
+                    <td class="text-uppercase">
+                        <a href="javascript:void(0)" class="show-local-price drug-price-toggler text-uppercase">Show Price</a>
+                        <span class="drug-local-price price-toggler hidden">{{ getCurrencyCode() }} {{ drug.localPrice }}</span>
+                    </td>
+                    <td class="text-uppercase">{{ drug.stockStatus }}</td>
+                    <td>
+                        <a href="javascript:void(0);"
+                           class="btn btn-ahalf-circle text-uppercase red btn-outline btn-icon-right btn-xs {% if not drug.favId %}hide{% endif %} favoriteLink"
+                           data-url="{{ path('ajax_handle_favorite', {'drugId': drug.id}) }}"
+                           data-type="remove">
+                            Remove Favorite<i class="fa fa-star"></i>
+                        </a>
+                        <a href="javascript:void(0);"
+                           class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-icon-right btn-xs {% if drug.favId %}hide{% endif %} favoriteLink"
+                           data-url="{{ path('ajax_handle_favorite', {'drugId': drug.id}) }}"
+                           data-type="add">
+                            Add to Favourite<i class="fa fa-star"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="5" class="text-uppercase text-center">Sorry, we cannot find this medicine.</td>
+        </tr>
+    {% endif %}
+    </tbody>
+</table>

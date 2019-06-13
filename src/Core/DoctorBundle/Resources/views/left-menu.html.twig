@@ -1,0 +1,161 @@
+{% set curRoute = app.request.get('_route') %}
+{% set params = app.request.get('_route_params') %}
+<input type='hidden' id="current-route-data" value="{{ path(curRoute, params) }}" />
+<input type="hidden" id="doctor-agreement-get-url" value="{{ path('doctor_subscriber_agreement') }}" />
+<!-- BEGIN SIDEBAR -->
+  <div class="page-sidebar-wrapper"> 
+    <!-- BEGIN SIDEBAR --> 
+    <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing --> 
+    <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+    <div class="page-sidebar navbar-collapse collapse"> 
+      <!-- BEGIN SIDEBAR MENU --> 
+      <!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) --> 
+      <!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode --> 
+      <!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode --> 
+      <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing --> 
+      <!-- DOC: Set data-keep-expand="true" to keep the submenues expanded --> 
+      <!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+      <ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200">
+        <li class="nav-item start {{ 'dashboard' == mainMenu ? 'open' : '' }}"> <a href="{{ path('doctor_dashboard') }}" class="nav-link nav-toggle"> <i class="fa fa-home"></i> <span class="title">Dashboard</span><span class="badge badge-success">{{countConfirmedPrescription()}}</span> <span class="selected"></span> </a> 
+        </li>
+		{% if app.user.permissions is empty or 'patient_index' in app.user.permissions or 'patient_new' in app.user.permissions %}
+        <li class="nav-item start {{ 'patient' == mainMenu ? 'open' : '' }}"> <a href="javascript:;" class="nav-link nav-toggle"> <i class="fa fa-user"></i> <span class="title">Patients</span><span class="arrow {{ 'patient' == mainMenu ? 'open' : '' }}"></a>
+          <ul class="sub-menu" {% if 'patient' == mainMenu %}style="display: block;"{% endif %}>
+            {% if app.user.permissions is empty or 'patient_index' in app.user.permissions %}
+			<li class="nav-item {{ 'list-patient' == subMenu ? 'active' : '' }}"> <a href="{{ path('patient_index') }}" class="nav-link "> <span class="title">List Patients</span> </a> </li>
+			{% endif %}
+			{% if app.user.permissions is empty or 'patient_new' in app.user.permissions %}
+            <li class="nav-item {{ 'create-patient' == subMenu ? 'active' : '' }}"> <a href="{{ path('patient_new') }}" class="nav-link "> <span class="title">Register New Patient</span> </a> </li>
+			{% endif %}
+            <!-- <li class="nav-item {{ 'patient-report' == subMenu ? 'active' : '' }}"> <a href="#" class="nav-link "> <span class="title">Patient Report</span> </a> </li> -->
+          </ul>
+        </li>
+		{% endif %}
+		{% if app.user.permissions is empty or 'index_rx,create_rx'  in app.user.permissions or 'list_rx' in app.user.permissions or 'list_draft_rx' in app.user.permissions or 'list_pending_rx' in app.user.permissions or 'list_confirmed_rx' in app.user.permissions or 'list_recalled_rx' in app.user.permissions or 'list_failed_rx' in app.user.permissions or 'list_reported_rx' in app.user.permissions %}
+        <li class="nav-item {{ 'rx' == mainMenu ? 'open' : '' }}"> <a href="javascript:;" class="nav-link nav-toggle"> <i class="fa fa-file-text"></i> <span class="title">RX</span> <span class="arrow {{ 'rx' == mainMenu ? 'open' : '' }}"></span> </a>
+          <ul class="sub-menu" {% if 'rx' == mainMenu %}style="display: block;"{% endif %}>
+            {% set totalList = getRxListUnreadDoctor() %}
+      {% if app.user.permissions is empty or ('index_rx' in app.user.permissions and 'create_rx' in app.user.permissions ) %}
+			       <li class="nav-item {{ 'create' == subMenu ? 'active' : '' }}"> <a href="{{ path('index_rx') }}" class="nav-link "> <span class="title">Create New RX</span> </a> </li>
+			{% endif %}
+			{% if app.user.permissions is empty or 'list_rx' in app.user.permissions %}
+            <li class="nav-item {{ 'list' == subMenu ? 'active' : '' }}" data-toggle="tooltip" data-placement="bottom" title="All your prescriptions"> <a href="{{ path('list_rx') }}" class="nav-link "> <span class="title">All RX</span> <span class="badge badge-danger">{% if totalList > 0 %}{{ totalList }}{% endif %}</span></a> </li>
+			{% endif %}
+			{% if app.user.permissions is empty or 'list_draft_rx' in app.user.permissions %}
+            <li class="nav-item {{ 'draft' == subMenu ? 'active' : '' }}" data-toggle="tooltip" data-placement="bottom" title="Prescription orders saved but not sent to patients"> <a href="{{ path('list_draft_rx') }}" class="nav-link "> <span class="title">Draft RX</span> </a> </li>
+            {% endif %}
+            {% if app.user.permissions is empty or 'list_scheduled_rx' in app.user.permissions %}
+              <li class="nav-item {{ 'scheduled' == subMenu ? 'active' : '' }}" data-toggle="tooltip" data-placement="bottom" title="Future prescription orders"> <a href="{{ path('list_scheduled_rx') }}" class="nav-link "> <span class="title">Scheduled RX Orders</span> </a> </li>
+            {% endif %}
+			{% set totalPending = getRxPendingUnreadDoctor() %}
+			{% if app.user.permissions is empty or 'list_pending_rx' in app.user.permissions %}
+            <li class="nav-item {{ 'pending' == subMenu ? 'active' : '' }}" data-toggle="tooltip" data-placement="bottom" title="Prescription orders have been sent but patient has not paid"> <a href="{{ path('list_pending_rx') }}" class="nav-link "> <span class="title">Pending RX Orders</span><span class="badge badge-danger">{% if totalPending > 0 %}{{ totalPending }}{% endif %}</span> </a> </li>
+            {% endif %}
+			{% set totalConfirm  = getRxConfirmUnreadDoctor() %}
+			{% if app.user.permissions is empty or 'list_confirmed_rx' in app.user.permissions %}
+            <li class="nav-item {{ 'confirmed' == subMenu ? 'active' : '' }}" data-toggle="tooltip" data-placement="bottom" title="Your patient or patient's caregiver has made payment"> <a href="{{ path('list_confirmed_rx') }}" class="nav-link "> <span class="title">Paid RX Orders</span><span class="badge badge-danger">{% if totalConfirm > 0 %}{{ totalConfirm }}{% endif %}</span></a> </li>
+            {% endif %}
+			{% set totalRecall  = getRxRecallUnreadDoctor() %}
+			{% if app.user.permissions is empty or 'list_recalled_rx' in app.user.permissions %}
+            <li class="nav-item {{ 'recalled' == subMenu ? 'active' : '' }}" data-toggle="tooltip" data-placement="bottom" title="RX Orders recalled for editing. Only pending RX Orders can be recalled"> <a href="{{ path('list_recalled_rx') }}" class="nav-link "> <span class="title">Recalled RX Orders</span><span class="badge badge-danger">{% if totalRecall > 0 %}{{ totalRecall }}{% endif %}</span> </a> </li>
+			{% endif %}
+			{% if app.user.permissions is empty or 'list_failed_rx' in app.user.permissions %}
+            <li class="nav-item {{ 'failed' == subMenu ? 'active' : '' }}" data-toggle="tooltip" data-placement="bottom" title="RX orders that were sent to patient but were not paid after 7 days"> <a href="{{ path('list_failed_rx') }}" class="nav-link "> <span class="title">Failed RX Orders</span> </a> </li>
+            {% endif %}
+			{% set totalReported  = getRxReportUnreadDoctor() %}
+			{% if app.user.permissions is empty or 'list_reported_rx' in app.user.permissions %}
+            <li class="nav-item {{ 'reported' == subMenu ? 'active' : '' }}" data-toggle="tooltip" data-placement="bottom" title="Paid orders that have reported issues"> <a href="{{ path('list_reported_rx') }}" class="nav-link "> <span class="title">RX Orders with Reported Issues</span><span class="badge badge-danger">{% if totalReported > 0 %}{{ totalReported }}{% endif %}</span> </a> </li>
+			{% endif %}
+			{% if app.user.permissions is empty or 'list_deleted_cancelled_rx' in app.user.permissions %}
+            <li class="nav-item {{ 'deleted_cancelled' == subMenu ? 'active' : '' }}" data-toggle="tooltip" data-placement="bottom" title="Unpaid prescription orders that you have deleted or cancelled"> <a href="{{ path('list_deleted_cancelled_rx') }}" class="nav-link "> <span class="title">Deleted and Cancelled RX Orders</span><span class="badge badge-danger"></span> </a> </li>
+			{% endif %}
+          </ul>
+        </li>
+		{% endif %}
+        <!-- <li class="nav-item start {{ 'liveconsult' == mainMenu ? 'open' : '' }}"> 
+          <a href="javascript:;" class="nav-link nav-toggle"> 
+            <i class="fa fa-user-secret"></i> 
+            <span class="title">LiveConsult</span> 
+            <span class="arrow open"></span>
+          </a>
+        </li> -->
+		{% if app.user.permissions is empty or 'doctor_report_transaction_history' in app.user.permissions or 'doctor_report_monthly_statement' in app.user.permissions %}
+        <li class="nav-item {{ 'report' == mainMenu ? 'open' : '' }}"> <a href="javascript:;" class="nav-link nav-toggle"> <i class="fa fa-bar-chart"></i> <span class="title">Reports</span> <span class="arrow {{ 'report' == mainMenu ? 'open' : '' }}"></span> </a>
+          <ul class="sub-menu" {% if 'report' == mainMenu %}style="display: block;"{% endif %}>
+            {% if app.user.permissions is empty or 'doctor_report_transaction_history' in app.user.permissions %}
+			<li class="nav-item {{ 'transaction-history' == subMenu ? 'active' : '' }}"> <a href="{{ path('doctor_report_transaction_history') }}" class="nav-link "> <span class="title">Rx Transaction History</span> </a> </li>
+			{% endif %}
+			{% if app.user.permissions is empty or 'doctor_report_monthly_statement' in app.user.permissions %}
+            <li class="nav-item {{ 'monhtly-statement' == subMenu ? 'active' : '' }}"> <a href="{{ path('doctor_report_monthly_statement') }}" class="nav-link "> <span class="title">Monthly Statements</span> </a> </li>
+			{% endif %}
+          </ul>
+        </li>
+		{% endif %}
+        <li class="nav-item"> <a href="{{path('doctor_message')}}" class="nav-link nav-toggle"> <i class="icon-messages"></i> <span class="title">Messages</span> <span id="it-total" class="badge badge-danger">{% if get_message_total(true) > 0 %}{{ get_message_total(true) }}{% endif %}</span></a></li>
+        <li class="nav-item start {{ 'profile' == mainMenu ? 'open' : '' }}"> 
+          <a href="javascript:;" class="nav-link nav-toggle"> 
+            <i class="fa fa-user-secret"></i> 
+            <span class="title">Profile</span> 
+            <span class="arrow {{ 'profile' == mainMenu ? 'open' : '' }}"></span>
+          </a>
+          <ul class="sub-menu" {% if 'profile' == mainMenu %}style="display: block;"{% endif %}>
+            {% if isMainDoctorLogin(app.user) %}
+              <li class="nav-item {{ 'personal-info' == subMenu ? 'active' : '' }}"> <a href="{{path('doctor_profile_view')}}" class="nav-link "> <span class="title">Personal Info</span> </a> </li>
+            {% endif %}
+            <li class="nav-item {{ 'change-password' == subMenu ? 'active' : '' }}"> <a href="{{ path('doctor_change_password') }}" class="nav-link "> <span class="title">Change Password</span> </a> </li>
+          </ul>
+        </li>
+        <li class="nav-item start {{ 'medicine-list' == mainMenu ? 'open' : '' }}">
+          <a href="javascript:;" class="nav-link nav-toggle"> 
+            <i class="fa fa-file-text"></i>
+            <span class="title">Resources</span> 
+            <span class="arrow"></span>
+          </a>
+          <ul class="sub-menu">
+         <!--    <li class="nav-item"> <a href="patient_agreement.html" class="nav-link" target="_blank"> <span class="title">Patient Terms of Use</span> </a> </li> -->
+            <li class="nav-item"> <a href="javascript:void(0)" class="nav-link nav-toggle" id="doctor-subcriber-agreement"><span class="title">Doctor's Subscriber Agreement</span> </a> </li>
+            <li class="nav-item"> <a href="{{ path('doctor_user_guide') }}" class="nav-link" target="_blank"> <span class="title">Doctor's User Guide</span> </a> </li>
+            <li class="nav-item"> <a href="{{ path('patient_terms_of_use') }}" class="nav-link" target="_blank"> <span class="title">Patient Terms of Service</span> </a> </li>
+            <li class="nav-item"> <a href="{{ getFAQUrl('doctor_faq') }}" class="nav-link" target="_blank"> <span class="title">Doctor's FAQ</span> </a> </li>
+            <li class="nav-item"> <a href="{{ getFAQUrl('patient_faq') }}" class="nav-link" target="_blank"> <span class="title">Patient's FAQ</span> </a> </li>
+            <li class="nav-item {{ 'medicine-list' == subMenu ? 'active' : '' }}"> <a href="{{path('doctor_medicine_list')}}" class="nav-link "> <span class="title">Medicine List (A - Z)</span> </a> </li>
+            {% if app.user.permissions is empty or 'doctor_custom_selling_prices' in app.user.permissions %}
+            <li class="nav-item {{ 'selling-price' == subMenu ? 'active' : '' }}"> <a href="{{path('doctor_custom_selling_prices')}}" class="nav-link "> <span class="title">Custom selling prices</span> </a> </li>
+            {% endif %}
+			<li class="nav-item"> <a href="javascript:;" class="nav-link nav-toggle"> 
+				<span class="title">Video Tutorials</span> <span class="arrow"></span> </a>	
+							
+				<ul class="sub-menu">		
+					<li class="nav-item"> <a href="https://bit.ly/gmedes_how_to_generate_a_rx" class="nav-link" target="_blank"> <span class="title">1 of 6 How to generate a prescription</span> </a> </li>
+					<li class="nav-item"> <a href="https://bit.ly/gmedes_how_to_generate_a_refill_prescription" class="nav-link" target="_blank"> <span class="title">2 of 6 How to generate a refill prescription</span> </a> </li>
+					<li class="nav-item"> <a href="https://bit.ly/gmedes_how_patients_respond_to_refill_reminders" class="nav-link" target="_blank"> <span class="title">3 of 6 How patients respond to refill reminders</span> </a> </li>
+					<li class="nav-item"> <a href="https://bit.ly/gmedes_how_patients_can_pay_via_desktop" class="nav-link" target="_blank"> <span class="title">4 of 6 How patients can pay via desktop</span> </a> </li>
+					<li class="nav-item"> <a href="https://bit.ly/gmedes_how_patients_can_pay_via_mobile_english" class="nav-link" target="_blank"> <span class="title">5 of 6 How patients can pay via mobile (English)</span> </a> </li>
+					<li class="nav-item"> <a href="https://bit.ly/gmedes_how_patients_can_pay_via_mobile_bahasa" class="nav-link" target="_blank"> <span class="title">6 of 6 How patients can pay via mobile (Bahasa)</span> </a> </li>					
+				</ul>
+			</li>
+          </ul>
+        </li>
+
+      </ul>
+      <!-- END SIDEBAR MENU --> 
+    </div>
+    <!-- END SIDEBAR --> 
+  </div>
+  <!-- END SIDEBAR -->
+	<div id="doctor-terms-service" class="modal fade modal-new modal-terms-service" tabindex="-1" data-width="900" data-backdrop="static">
+	  <div class="modal-header">
+		  <h4 class="modal-title">Doctor Subscriber Agreement</h4>
+	  </div>
+	  <div class="modal-body pt-15">
+          <div class="terms-service">
+              <div class="scroller" style="height:350px" data-always-visible="1" data-rail-visible="1" data-rail-color="white"
+                   data-handle-color="green" id="scrollerSetHeight">
+                  <div class="terms-service-wrap pt-15" id="doctor-agreement-container"></div>
+              </div>
+          </div>
+	  </div>
+	  <div class="modal-footer">
+		<a href="javascript:void(0);" class="btn btn-tandc btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right" id="doctor-subscriber-agreement-close">Close</a>
+	  </div>  
+	</div>

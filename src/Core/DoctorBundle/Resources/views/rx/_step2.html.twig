@@ -1,0 +1,174 @@
+<table class="table table-hover">
+    <thead>
+    <tr role="row"><td colspan="4">Date of Rx:  {{ rxData.date }}</td> </tr>
+    <tr role="row">
+        <th width="20%"> Medication Qty </th>
+        <th width="60%"> Dosage, Frequency and Instructions </th>
+        <th width="20%"> Warnings </th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in drugs %}
+        {% set totalPrice = item.quantity == 1 ? item.quantity * item.minimumOrderQty * item.price : item.quantity * item.price %}
+        {% set doctorMargin = item.quantity == 1 ? item.quantity * item.minimumOrderQty * item.costToClinic : item.quantity * item.costToClinic %}
+        <tr data-drugId="{{ item.id }}">
+            <td>
+                <input type="hidden" class="quantity_step" data-id="{{ item.id }}" value="{{ item.packQuantity }}" data-step="{{ item.minimumOrderQty }}" />
+                <p class="mb-10"><a href="javascript:;" class="btn btn-ahalf-circle text-uppercase red btn-icon-right btn-xs removeDrugBtn" data-drugId="{{ item.id }}" data-rxLineId="{{ item.rxLineId }}" data-drugname="{{item.name}}" id="removeDrug_{{ item.id }}">Remove</a></p>
+                <p><strong>{{item.name}} </strong>{% if item.isColdChain %}<img src="/bundles/admin/assets/layouts/layout4/img/cold-chain-icon.png" alt="">{% endif %}<br>
+                    {% if item.ingredients %}
+                        {{ item.ingredients }}<br>
+                    {% endif %}
+                    {{ item.manufacturer }}<br>
+                    <strong class="drug-quantity"><span class="quantitySpan" data-step="{{ item.minimumOrderQty }}" data-origin="{{ item.packQuantity }}">{{ item.quantity == 1 ? item.packQuantity * item.quantity * item.minimumOrderQty : item.quantity * item.packQuantity }}</span> <span class="label-doseunit-{{ item.id }}">{{ item.doseUnit }}</span></strong>
+                </p>
+                <div class="form-group">
+                    <label>{{ item.packingType }}<span class="required" aria-required="true"> * </span></label>
+                    <div class="form-group-touchspin">
+                        <input class="touchspin_7_{{ item.id }} requiredItem form-control transparent-input" type="text" value="{{ item.quantity == 1 ? item.quantity * item.minimumOrderQty : item.quantity }}" name="drugs[{{ item.id }}][quantity]" data-bts-min=0 onkeydown="return false" autocomplete="off">
+                    </div>
+                </div>
+                <p>Total Price<br>
+                    <strong>{{ getCurrencyCode() }} <span class="priceSpan" data-price="{{ item.price }}">{{ totalPrice|number_format(2, '.', ',') }}</span></strong></p>
+                <p>Cost to Clinic <br> (SGD) <br>
+                    <strong>{{ getCurrencyCode() }} <span class="priceSpan2" data-price="{{ item.costToClinic }}">{{ doctorMargin|number_format(2, '.', ',') }}</span></strong></p>
+            </td>
+            <td>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" class="icheck checkboxPRN" name="drugs[{{ item.id }}][prn]" data-val="{% if item.isTakenAsNeeded %} checked {% endif %}" value="1"> PRN(Take as needed) </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-inline-customize three-items clearfix">
+                            <div class="form-group">
+                                <label>Action <span class="required" aria-required="true"> * </span></label>
+                                <select name="drugs[{{ item.id }}][action]" class="form-control select2 sigPreviewElem">
+                                    {% set flag = false %}
+                                    {% for action in actions %}
+                                        <option {% if item.action == action.name %} selected="selected" {% set flag = true %} {% endif %}>{{ action.name }}</option>
+                                    {% endfor %}
+                                    <option value="others" {% if item.action and not flag %} selected="selected" {% endif %}>Others</option>
+                                </select>
+                                <input type="text" placeholder="" class="form-control {% if not item.action or flag %}hide{% endif %} otherInput requiredItem" name="drugs[{{ item.id }}][otherAction]" value="{{ item.action }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Dose <span class="required" aria-required="true"> * </span></label>
+                                <select name="drugs[{{ item.id }}][dose]" required class="form-control select2 sigPreviewElem">
+                                    <option {% if item.dose == '-1' %}selected="selected" {% endif %} value="-1"  >Select</option>
+                                    <option {% if item.dose == 0.5 %}selected="selected" {% endif %}>0.5</option>
+                                    <option {% if item.dose == 1 %}selected="selected" {% endif %}>1</option>
+                                    <option {% if item.dose == 2 %}selected="selected" {% endif %}>2</option>
+                                    <option {% if item.dose == 3 %}selected="selected" {% endif %}>3</option>
+                                    <option {% if item.dose == 4 %}selected="selected" {% endif %}>4</option>
+                                    <option {% if item.dose == 5 %}selected="selected" {% endif %}>5</option>
+                                    <option {% if item.dose == 6 %}selected="selected" {% endif %}>6</option>
+                                    <option {% if item.dose and item.dose not in ['-1', 0.5, 1, 2, 3, 4, 5, 6] %} selected="selected" {% endif %} value="others">Others</option>
+                                </select>
+                                <input type="text" placeholder="" class="form-control {% if not item.dose or item.dose in ['-1', 0.5, 1, 2, 3, 4, 5, 6] %}hide{% endif %} otherInput requiredItem" name="drugs[{{ item.id }}][otherDose]" value="{{ item.dose }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Dose Unit <span class="required" aria-required="true"> * </span></label>
+                                <select name="drugs[{{ item.id }}][doseUnit]" class="form-control select2 sigPreviewElem" data-label="label-doseunit-{{ item.id }}" data-pack="{{ item.packQuantity }}">
+                                    {% set flag = false %}
+                                    {% for unit in doseUnits %}
+                                        {% if item.packQuantity > 1 %}
+                                            <option data-plural={{ unit.pluralName }} {% if item.doseUnit == unit.pluralName %} selected="selected" {% set flag = true %} {% endif %}>{{ unit.name }}</option>
+                                        {% else %}
+                                            <option data-plural={{ unit.pluralName }} {% if item.doseUnit == unit.name %} selected="selected" {% set flag = true %} {% endif %}>{{ unit.name }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <option value="others" {% if item.dosageForm and not flag %} selected="selected" {% endif %}>Others</option>
+                                </select>
+                                <input type="text" placeholder="" class="form-control {% if not item.dosageForm or flag %}hide{% endif %} otherInput requiredItem" name="drugs[{{ item.id }}][otherDoseUnit]" value="{{ item.dosageForm }}" data-label="label-doseunit-{{ item.id }}" data-pack="{{ item.packQuantity }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-inline-customize three-items clearfix">
+                            <div class="form-group">
+                                <label>Frequency <span class="required" aria-required="true"> * </span></label>
+                                <select name="drugs[{{ item.id }}][frequency]" required class="form-control select2 sigPreviewElem">
+                                    {% set flag = false %}
+                                    <option {% if item.frequency == '-1' %} selected="selected" {% set flag = true %} {% endif %}  value="-1" >Select</option>
+                                    <option {% if item.frequency == 'n/a' %} selected="selected" {% set flag = true %} {% endif %}>n/a</option>
+                                    <option {% if item.frequency == 'once a day' %} selected="selected" {% set flag = true %} {% endif %}>once a day</option>
+                                    <option {% if item.frequency == '2 times a day' %} selected="selected" {% set flag = true %} {% endif %}>2 times a day</option>
+                                    <option {% if item.frequency == '3 times a day' %} selected="selected" {% set flag = true %} {% endif %}>3 times a day</option>
+                                    <option {% if item.frequency == '4 times a day' %} selected="selected" {% set flag = true %} {% endif %}>4 times a day</option>
+                                    <option {% if item.frequency == 'once every 2 days' %} selected="selected" {% set flag = true %} {% endif %}>once every 2 days</option>
+                                    <option {% if item.frequency == 'once a week' %} selected="selected" {% set flag = true %} {% endif %}>once a week</option>
+                                    <option value="others" {% if item.frequency and not flag %} selected="selected" {% endif %}>Others</option>
+                                </select>
+                                <input type="text" placeholder="" class="form-control {% if not item.frequency or flag %}hide{% endif %} otherInput requiredItem" name="drugs[{{ item.id }}][otherFrequency]" value="{{ item.frequency }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Duration <span class="required" aria-required="true"> * </span></label>
+                                <select name="drugs[{{ item.id }}][frequencyDuration]"  required class="form-control select2 sigPreviewElem" data-text="for">
+                                    {% set flag = false %}
+                                    {% for dura in durationUnits %}
+                                        <option {% if item.frequencyUnit == dura.name %} selected="selected" {% set flag = true %} {% endif %}>{{ dura.name }}</option>
+                                    {% endfor %}
+                                    <option value="others" {% if item.frequencyUnit and not flag %} selected="selected" {% endif %}>Others</option>
+                                </select>
+                                <input type="text" placeholder="" class="form-control {% if not item.frequencyUnit or flag %}hide{% endif %} otherInput requiredItem" name="drugs[{{ item.id }}][otherDurationUnit]" value="{{ item.frequencyUnit }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <div class="icheck-inline">
+                                <label>
+                                    <input type="checkbox" class="icheck otherElem" name="drugs[{{ item.id }}][withMeal][]" {% if 0 in item.isTakenWithFood %} checked="checked" {% endif %} value="0"> Before Meal </label>
+                                <label>
+                                    <input type="checkbox" class="icheck otherElem" name="drugs[{{ item.id }}][withMeal][]" {% if 1 in item.isTakenWithFood %} checked="checked" {% endif %} value="1"> After Meal </label>
+                                <label>
+                                    <input type="checkbox" class="icheck otherElem" name="drugs[{{ item.id }}][withMeal][]" {% if 2 in item.isTakenWithFood %} checked="checked" {% endif %} value="2"> With Meal </label>
+                                <label>
+                                    <input type="checkbox" class="icheck otherElem" name="drugs[{{ item.id }}][withMeal][]" {% if 3 in item.isTakenWithFood %} checked="checked" {% endif %} value="3"> Take in the morning </label>
+                                <label>
+                                    <input type="checkbox" class="icheck otherElem" name="drugs[{{ item.id }}][withMeal][]" {% if 4 in item.isTakenWithFood %} checked="checked" {% endif %} value="4"> Take at night </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Special Instructions</label>
+                            <textarea class="form-control" rows="3" name="drugs[{{ item.id }}][specialInstructions]" maxlength="400">{{ item.specialInstructions }}</textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label><strong>SIG Preview:</strong></label>
+                            <p class="sigPreview"></p>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="icheck-list v-middle">
+                    <label>
+                        <input type="checkbox" class="icheck" {% if item.canCauseDrowsiness %} checked="checked" {% endif %} name="drugs[{{ item.id }}][causeDrowsiness]" value="1"> May cause drowsiness. If affected, do not drive or operate machinery. Avoid alcohol. </label>
+                    <label>
+                        <input type="checkbox" class="icheck" {% if item.isToCompleteCourse %} checked="checked" {% endif %} name="drugs[{{ item.id }}][completeThisCourse]" value="1"> Complete this course of medicine </label>
+                </div>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div id="modal-save-sig" class="modal fade modal-new" data-backdrop="static" data-keyboard="false" tabindex="-1" data-width="500">
+    <div class="modal-header">
+        <h4 class="modal-title"><span class="drug-name"></span> Dosing</h4>
+    </div>
+    <div class="modal-body">
+        <div class="text-center">
+            <p>Would you like to save the changes made to SIG of <span class="drug-name"></span>?</p>
+
+            <button id="btnSaveSigCancel" type="button" data-dismiss="modal" aria-hidden="true" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10">Delete Changes</button>
+            <button id="btnConfirmSaveSig" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm">Save</button>
+        </div>
+    </div>
+</div>

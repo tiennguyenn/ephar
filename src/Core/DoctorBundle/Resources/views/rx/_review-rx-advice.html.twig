@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title> Review RX advice</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1" name="viewport" />
+<meta content="Preview page of Metronic Admin Theme #4 for blank page layout" name="description" />
+<meta content="" name="author" />
+
+<style>
+  @page {
+    margin: 30px 0 0 0;
+  }
+  @page :first {
+    margin: 0;
+  }
+
+  body {
+    font-family: sans-serif;
+    font-size: 12px;
+    line-height: 1.42857;
+    color: #000;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 152px;
+  }
+  p {
+    margin: 0;
+  }
+  .wrapper-content {
+    background-color: #ffffff;
+  }
+
+  .bg-light-blue {
+    background-color: #f2f9ff;
+  }
+
+  .container {
+    padding: 0 10px;
+  }
+
+  .header {
+    padding: 10px 10px 0 10px;
+  }
+
+  .pt-0 {
+    padding-top: 0 !important;
+  }
+  .pb-0 {
+    padding-bottom: 0 !important;
+  }
+  table {
+   border-collapse: collapse;
+    border: 0;
+    width: 100%;
+    table-layout: fixed;
+  }
+  table td, th {
+    padding: 10px;
+    vertical-align: top;
+  }
+  table th {
+    text-align: left;
+  }
+  table.table-data td {
+    border: 0;
+  }
+  table.table-data th,
+  table.table-data td {
+    padding: 8px;
+  }
+  table.table-subdata td {
+    padding: 2px 0;
+  }
+
+  table.table-title {
+    border-bottom: 1px solid #c7cbce;
+  }
+
+  table.table-title table td {
+    padding: 0;
+  }
+
+  table.table-main th{
+    background-color: #f2f9ff;
+    border-bottom: 1px solid #d2d2d2;
+  }
+  table.table-main th,
+  table.table-main td {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  table.table-main th.pl20,
+  table.table-main td.pl20 {
+    padding-left: 20px;
+  }
+
+  table.table-main th:last-child,
+  table.table-main td:last-child {
+    padding-right: 20px;
+  }
+
+  table.table-right {
+    text-align: right;
+  }
+
+  table.table-footer {
+    border-top: 1px solid #9d9d9d;
+  }
+
+  .logo {
+    margin: 10px 0 0;
+  }
+  .logo img {
+    max-width: 62px;
+  }
+
+  .left-info {
+    margin-right: 10px;
+  }
+
+  .info-big {
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .info-bigest {
+    font-size: 24px;
+  }
+  .info-medium {
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .info-mediumest {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .info-small {
+    font-size: 12px;
+  }
+
+  .info-title {
+    padding: 20px 0 10px 10px;
+  }
+  .align-right {
+    text-align: right;
+  }
+  .valign-top {
+    vertical-align: top;
+  }
+  .valign-bottom {
+    vertical-align: bottom;
+  }
+  .text-transform {
+    text-transform: uppercase;
+  }
+  .text-gray {
+    color: #555;
+  }
+
+  .text-light-gray {
+    color: #a1a1a1;
+  }
+
+  .right-info .info-big {
+    font-weight: 600;
+  }
+  .patient-info {
+    margin-top: 10px;
+    border-right: 1px solid #e0e0e0;
+    padding-right: 10px;
+  }
+  .medication-note {
+    text-transform: uppercase;
+    margin-top: 10px;
+  }
+
+  .authorized-signature {
+    width: 215px;
+    padding: 3px;
+    border: 2px solid #7e7e7e;
+     text-align: left;
+    -webkit-border-radius: 2px;
+       -moz-border-radius: 2px;
+            border-radius: 2px;
+  }
+
+  #footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 162px;
+  }
+
+  .page_break { page-break-before: always; }
+
+  .pl20 {
+    padding-left: 20px;
+  }
+  {% if hasWatermark %}
+  {%  if status == 1 %}
+  #watermark {
+  position: fixed;
+  top: 58%;
+  left: 105px;
+  transform: rotate(30deg);
+  transform-origin: 50% 50%;
+  opacity: 0.5;
+  font-size: 140px;
+  font-weight: 700;
+  letter-spacing: 10px;
+  color: #666;
+  width: 640px;
+  text-align: center;
+  text-transform: uppercase;
+  background-color: transparent;
+  }
+  {%  elseif status == 9 or status == 13 or status == 14 or status == 15 or status == 16 or status == 17 or status == 34 or status == 42 %}
+  #watermark {
+  position: fixed;
+  top: 55%;
+  left: 105px;
+  transform: rotate(30deg);
+  transform-origin: 50% 50%;
+  opacity: 0.5;
+  font-size: 120px;
+  font-weight: 700;
+  letter-spacing: 5px;
+  color: #666;
+  width: 640px;
+  text-align: center;
+  text-transform: uppercase;
+  background-color: transparent;
+  }
+  {%  endif %}
+  {% endif %}
+
+  .chinese {
+    font-family: DroidSansFallback, sans-serif;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    text-align: justify-all !important;
+    font-weight: 400;
+  }
+  .font-chinese {
+    font-family: simsun;
+  }
+</style>
+</head>
+<body>
+  {% if hasWatermark %}
+  {%  if status == 1 %}
+  <div id="watermark">Draft</div>
+  {%  elseif status == 9 or status == 13 or status == 14 or status == 15 or status == 16 or status == 17 or status == 34 or status == 42 %}
+  <div id="watermark">Paid & <br>Dispensed</div>
+  {%  endif %}
+  {% endif %}
+
+  {% for c in 0.. copy|default(0) %}
+  {% if c > 0 %}<div class="page_break"></div>{% endif %}
+
+  <div class="wrapper-content">
+    <div class="header bg-light-blue">
+      {% include '@Doctor/rx/_pdf_rx_header.html.twig' %}
+    </div>
+
+    <div class="container bg-light-blue">
+      <table class="table-data">
+        <tbody>
+          <tr>
+            <td width="55%"> <p class="info-bigest text-transform text-gray">Prescription Advice</p></td>
+            <td width="45%">
+              <table class="table-subdata">
+                <tr>
+                  <td width="42%" class="text-gray" align="right"><strong>Date:</strong></td>
+                  <td width="58%" align="right">{{ rxInformation.confirmDate }}</td>
+                </tr>
+                <tr>
+                  <td width="42%" class="text-gray" align="right"><strong>Order No:</strong></td>
+                  <td width="58%" align="right"><strong>{{ rxInformation.orderNo }}</strong></td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2" class="pt-0 pb-0"><p class="info-medium text-light-gray">Patient Details</p></td>
+          </tr>
+
+            <tr>
+            <td width="55%">
+               <table class="table-subdata">
+                <tr>
+                  <td width="37%" class="text-gray "><strong class="chinese">Patient Name:</strong></td>
+                  <td width="63%"><strong>
+                      {% if checkChineseFont(patientInformation.name ) == 1 %}
+                        <span class="font-chinese" >{{ patientInformation.name }}</span>
+                      {% else %}
+                        {{ patientInformation.name }}
+                      {% endif %}
+                    </strong></td>
+                </tr>
+                <tr>
+                  <td width="37%" class="text-gray"><strong>Patient Code:</strong></td>
+                  <td width="63%"><strong>{{ patientInformation.globalId }}</strong></td>
+                </tr>
+                 <tr>
+                  <td width="37%" class="text-gray"><strong>Age / Gender:</strong></td>
+                  <td width="63%">{{ patientInformation.age }}, {{ patientInformation.gender }}</td>
+                </tr>
+
+                 <tr>
+                  <td width="37%" class="text-gray"><strong>Country of Residence:</strong></td>
+                  <td width="63%">{{ patientInformation.address }}</td>
+                </tr>
+
+              </table>
+            </td>
+            <td width="55%" class="valign-top">
+              <table class="table-subdata">
+                  {% if shippingAddress and shippingAddress is not empty %}
+                      <tr>
+                          <td width="42%" class="text-gray" align="right"><strong>Patient Address:</strong></td>
+                          <td width="58%" align="right">{{ shippingAddress }}</td>
+                      </tr>
+                  {% endif %}
+                      <tr>
+                          <td width="42%" class="text-gray" align="right"><strong>Patient ID:</strong></td>
+                          <td width="58%" align="right">
+                              {% if checkChineseFont(patientInformation.patientNumber ) == 1 %}
+                              <span class="font-chinese" >{{ patientInformation.patientNumber }}</span>
+                              {% else %}
+                              {{ patientInformation.patientNumber }}
+                              {% endif %}
+                          </td>
+                      </tr>
+                {% if patientInformation.allergies and patientInformation.allergies is not empty %}
+                <tr>
+                  <td width="42%" class="text-gray" align="right"><strong>Drug Allergies:</strong></td>
+                  <td width="58%" align="right">
+                    <strong >
+                      {% if checkChineseFont(patientInformation.allergies ) == 1 %}
+                        <span class="font-chinese" >{{ patientInformation.allergies }}</span>
+                      {% else %}
+                          {{ patientInformation.allergies }}
+                      {% endif %}
+                    </strong>
+                  </td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td width="42%" class="text-gray" align="right"><strong>Drug Allergies:</strong></td>
+                  <td width="58%" align="right"><strong>No known drug allergies</strong></td>
+                </tr>
+                {% endif %}
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <div class="content-detail">
+        <div class="bg-light-blue">
+            <div class="container">
+              <p><br><span class="info-bigest text-transform text-gray info-title">RX</span><br><br>
+                  <span class="info-mediumest text-transform info-title">MEDICATION DETAILS & ADVICE </span></p>
+            </div>
+        </div>
+      <table class="table-data table-main" style="table-layout: fixed; width:100%">
+      <tbody>
+        <tr>
+          <th width="10%" class="pl20">Item No.</th>
+          <th width="30%">Name</th>
+          <th width="60%">Instructions and warnings</th>
+        </tr>
+        {% for item in drugs %}
+        <tr>
+          <td class="pl20">{{ loop.index }}</td>
+          <td>{{ item.name }}
+            {% if item.isColdChain %}
+            <img src="bundles/doctor/images/cold-chain-icon.png" alt="">
+            {% endif %}
+            <br> Qty: {{ item.qty }} {{ item.packingType }}
+          </td>
+          <td>
+            <div class="chinese" style="word-wrap: break-word;">
+              {{ item.sig }}<br>
+              {% if item.instructions %}{{ item.instructions }}<br>{% endif %}
+              {% if item.drowsiness %}{{ item.drowsiness }}<br>{% endif %}
+              {% if item.complete %}{{ item.complete }}{% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    </div>
+
+    <div class="container" id="footer">
+      <table class="table-data table-footer">
+        <tr>
+          <td width="65%">
+            <p>If you have any questions, please contact patientshelp@gmedes.com</p>
+            <p class="medication-note">Important reminders for your medication.<br>
+                <strong>If you experience any side effects/allergic reactions to the medication, STOP taking the medicine and consult your doctor immediately.</strong> <br>
+                <strong>KEEP OUT OF REACH OF CHILDREN.</strong></p>
+          </td>
+          <td width="35%" class="valign-bottom">
+            <div class="authorized-signature">
+              <p class="text-transform">AUTHORIZED DOCTOR SIGNATURE</p>
+              <img height="50px" src="{{ doctorInformation.signatureUrl }}" alt="">
+              <p class="text-transform"><strong>
+                  {% if checkChineseFont(doctorInformation.name ) == 1 %}
+                    <span class="font-chinese" >{{ doctorInformation.name }}</span>
+                  {% else %}
+                    {{ doctorInformation.name }}
+                  {% endif %}
+                  </strong></p>
+              <p>Med. License No:
+                {% if checkChineseFont(doctorInformation.license ) == 1 %}
+                  <span class="font-chinese" >{{ doctorInformation.license }}</span>
+                {% else %}
+                  {{ doctorInformation.license }}
+                {% endif %}
+              </p>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <table class="table-data">
+        <tr>
+          <td align="center">
+            <p class="collecting-agent">Collecting Agent: {{ clinicInformation.isMY ? 'GMEDES Sdn Bhd.' : 'GMEDES Pte Ltd.' }} &bull; Enquiries: patientshelp@gmedes.com</p>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  {% endfor %}
+</body>
+</html>

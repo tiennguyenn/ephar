@@ -1,0 +1,55 @@
+{% set sortColumn = sortInfo is not empty ? sortInfo.column : '' %}
+{% set sortDirection = sortInfo is not empty ? sortInfo.direction : '' %}
+<div class="table-scrollable">
+    <table class="table table-striped table-bitemed table-hover dataTable no-footer dtr-inline" id="sample_1" role="grid" aria-describedby="sample_1_info" style="width: 1562px;">
+        <thead>
+          <tr role="row">
+            <th class="sorting {% if 'monthly' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="monthly" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Month/Year</th>
+
+            <th class="sorting {% if 'totalFee' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="totalFee" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Order Value</th>
+
+
+            <th class="sorting {% if 'doctorFee' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="doctorFee" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Doctor’s Fees (Total)</th>
+
+            <th class="sorting {% if 'datePaid' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="datePaid" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Payment Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+            
+
+        {% if data %}
+            {% for item in data %}
+                  <tr role="row" class="row-item rowItem">
+                    <td>{{ [item.year, item.month, '01']|join('-')|date('Y/M') }}</td>
+                    <td class="text-right {% if item.orderValue < 0 %}txt-red{% endif %}">{{ item.orderValue|number_format(2, '.', ',') }}</td>
+                    <td class="text-right {% if item.doctorMonthlyFee < 0 %}txt-red{% endif %}">{{ item.doctorMonthlyFee|number_format(2, '.', ',') }}</td>
+                    <td>{{ doctorPaymentStatus(doctorId, item.month, item.year) }}</td>
+                    <td>
+                        <a target="_blank" href="/media/pdf/doctor/{{ item.filename }}" class="download btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-left"><i class="fa fa-download"></i> Download Statement</a>
+                        <a target="_blank" href="{{ path('doctor_report_download_invoice', {doctorId: doctorId, month: item.month|number_format, year: item.year}) }}" class="download btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-left"><i class="fa fa-download"></i> Download Invoice</a>
+                    </td>
+                  </tr>
+            {% endfor %}
+        {% else %}
+                <tr><td colspan="6">{{ generateMessage('msgNoData') }}</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+{% if data|length > 0 %}
+    {% set fromRecord = currentPage > 0? currentPage*perPage: currentPage %}
+    {% set toRecored = fromRecord + perPage %}
+    <div class="row">
+        <div class="col-md-5 col-sm-12">
+            <div class="dataTables_info" role="status" aria-live="polite">Showing {{ fromRecord + 1 }} to {{ toRecored < totalResult? toRecored: totalResult }} of {{ totalResult }} entries</div>
+        </div>
+        <div class="col-md-7 col-sm-12">
+            <div class="dataTables_paginate paging_bootstrap_number ajax_paging">
+                {{ paginationHTML|raw }}
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="ps_filter[page]" value="{{ currentPage }}">
+{% endif %}
+

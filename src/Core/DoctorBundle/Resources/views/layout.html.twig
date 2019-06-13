@@ -1,0 +1,138 @@
+{% extends '@Admin/master_layout.html.twig' %}
+
+{% block body %}
+
+    {% if app.user.isMPA %}
+    {% include '@Doctor/mpa/header.html.twig' %}
+    {% else %}
+    {% include '@Doctor/header.html.twig' %}
+    {% endif %}
+
+    <div class="page-container">
+        
+        {% if app.user.isMPA %}
+        {% include '@Doctor/mpa/left-menu.html.twig' with { 'mainMenu': 'report', 'subMenu': '' } %}
+        {% else %}
+        {% include '@Doctor/left-menu.html.twig' with { 'mainMenu': 'dashboard', 'subMenu': '' } %}
+        {% endif %}
+
+        <div class="page-content-wrapper">
+            <!-- BEGIN CONTENT BODY -->
+            <div class="page-content">
+
+                <!-- BEGIN PAGE HEAD-->
+                <div class="page-head">
+                    <!-- BEGIN PAGE TITLE -->
+
+                    <div class="page-title">
+                        {% block pageTitle %}
+                        {% endblock%}
+                    </div>
+                    <!-- END PAGE TITLE -->
+
+                </div>
+                <!-- END PAGE HEAD-->
+                <!-- BEGIN PAGE BREADCRUMB -->
+                <ul class="page-breadcrumb breadcrumb">
+                    {% block breadcrumb %}
+
+                    {% endblock %}
+                </ul>
+                <!-- END PAGE BREADCRUMB -->
+                <!-- BEGIN PAGE BASE CONTENT -->
+                <div class="row">
+                    <div class="col-md-12">
+                        {% if ajaxURL is defined %}
+                            <input type='hidden' id='ajax-url' value="{{ path(ajaxURL) }}" />
+                        {% endif %}
+                        {% block content %}
+
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+            <!-- END PAGE BASE CONTENT --> 
+        </div>
+    </div>
+{% endblock %}
+{% block expiredModal %}
+<div id="inactiveSessionModal" class="modal fade modal-newe" tabindex="-1" data-width="760" data-backdrop="static">
+    <div class="modal-header">
+        <h4 class="modal-title"><i class="fa fa-warning" style="color: #F6CB0A;"></i> <strong>Inactive Session Notice</strong></h4>
+    </div>
+    <div class="modal-body">
+        <div class="text-center">
+            <p>You have been idle for 4 hours and will be logged out from G-MEDS in</p>
+            <h3 id="logoutCounter" style="color: #FF6624;"><strong>59 seconds</strong></h3>
+            <p>Click Continue to keep working, or Logout if you are finished</p>
+
+            <button id="btnConfirmContinue" type="button" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm ml-10">Continue</button>
+            <button id="btnConfirmLogout" type="button" data-dismiss="modal" aria-hidden="true" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm">Logout</button>
+        </div>
+    </div>
+</div>
+<div class="div-autosave" id="autosave-process">
+    <img src="{{ asset('bundles/doctor/images/saving-changes.png') }}" class="img-autosave">&nbsp;Saving changes....
+</div>
+<div class="div-autosave" id="autosave-done">
+    <img src="{{ asset('bundles/doctor/images/changes-saved.png') }}" class="img-autosave">&nbsp;Changes saved
+</div>
+{% endblock %}
+{% block javascriptsMenu %}
+    {% javascripts
+    '@AdminBundle/Resources/public/js/admin_left_menu.js'
+    debug=true
+    %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    
+    <script type="text/javascript">        
+        var logoutCountDown = null;
+        var logoutModalCountDown = null;
+        $('#btnConfirmContinue').click(function () {
+            $('#inactiveSessionModal').modal('hide');
+            document.getElementById("logoutCounter").innerHTML = "<strong>59 seconds</strong>";
+            clearTimeout(logoutCountDown);
+            resetLogoutCountDown();
+        });
+
+        $('#btnConfirmLogout').click(function () {
+            window.location.href = '/logout';
+        });
+
+        $(document).ready(function () {
+            setLogoutCountDown();
+        });
+
+        $(document).bind('mousemove', function(){
+            resetLogoutCountDown();
+        });
+
+        function resetLogoutCountDown() {
+            clearTimeout(logoutModalCountDown);
+            setLogoutCountDown();
+        }
+
+        function setLogoutCountDown() {
+            logoutModalCountDown = setTimeout(function(){
+                $('#inactiveSessionModal').modal('show');
+                var countDownDate = new Date();
+                countDownDate.setSeconds(countDownDate.getSeconds() + 59);
+
+                logoutCountDown = setInterval(function() {
+                    clearTimeout(logoutModalCountDown);
+                    var now = new Date().getTime();
+                    var distance = countDownDate - now;
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                    document.getElementById("logoutCounter").innerHTML = "<strong>" + seconds + " seconds</strong>";
+
+                    if (distance <= 0) {
+                        clearInterval(logoutCountDown);
+                        document.getElementById("logoutCounter").innerHTML = "<strong>Logging out</strong>";
+                        window.location.href = '/logout';
+                    }
+                }, 1000);
+            }, 14400000);
+        }
+    </script>
+{% endblock %}

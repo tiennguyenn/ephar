@@ -1,0 +1,91 @@
+<table class="table-data table-title">
+  <tbody>
+    <tr>
+      <td>
+        <table>
+          <tr>
+            <td width="50%">
+              <table>
+                <tr>
+                  <td width="20%">
+                    <div class="logo"><img src="{{ clinicInformation.logo }}" alt="" width="62" height="52"></div>
+                  </td>
+                  <td width="80%">
+                    <div class="left-info">
+                      <p class="info-big">
+                        {% if checkChineseFont(clinicInformation.name ) == 1 %}
+                        <span class="font-chinese" >{{ clinicInformation.name }}</span>
+                        {% else %}
+                          {{ clinicInformation.name }}
+                        {% endif %}
+                      </p>
+                      <p class="info-small text-gray">
+                        {% if checkChineseFont(clinicInformation.address ) == 1 %}
+                        <span class="font-chinese" >{{ clinicInformation.address|nl2br }}</span>
+                        {% else %}
+                          {{ clinicInformation.address|nl2br }}
+                        {% endif %}
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+            <td width="50%">
+              <div class="right-info align-right">
+                <p class="info-big">
+                  {% if checkChineseFont(doctorInformation.name ) == 1 %}
+                  <span class="font-chinese" >{{ doctorInformation.name }}</span>
+                  {% else %}
+                    {{ doctorInformation.name }}
+                  {% endif %}
+                </p>
+                <p class="info-small text-gray">Med. License No:
+                  {% if checkChineseFont(doctorInformation.license ) == 1 %}
+                    <span class="font-chinese" >{{ doctorInformation.license }}</span>
+                  {% else %}
+                    {{ doctorInformation.license }}
+                  {% endif %}
+                </p>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    {% if clinicInformation.list|length > 0 %}
+    <tr>
+      <td>
+        <table>
+          <tr>
+            <td width="10%"></td>
+            {% for item in clinicInformation.list %}
+            <td width="30%">
+              <div class="left-info">
+                <p class="info-big">
+                  {% if checkChineseFont(item.name ) == 1 %}
+                  <span class="font-chinese" >{{ item.name  }}</span>
+                  {% else %}
+                  {{ item.name  }}
+                  {% endif %}
+                </p>
+                <p class="info-small text-gray">
+                  {% if checkChineseFont(item.address ) == 1 %}
+                  <span class="font-chinese" >{{ item.address|nl2br }}</span>
+                  {% else %}
+                    {{ item.address|nl2br }}
+                  {% endif %}
+                  </p>
+              </div>
+            </td>
+            {% endfor %}
+            {% for item in 0..(3-clinicInformation.list|length) if item > 0 %}
+            <td width="30%"></td>
+            {% endfor %}
+          </tr>
+        </table>
+      </td>
+    </tr>
+    {% endif %}
+  </tbody>
+</table>

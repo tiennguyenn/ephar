@@ -1,0 +1,44 @@
+<div id="modalRecall" class="modal fade modal-new" tabindex="-1" data-width="900">
+  <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      {% if isReported is defined %}
+      <h4 class="modal-title">REPORT AN ISSUE</h4>
+      {% else %}
+      <h4 class="modal-title">RECALL A {{ isConfirmed is defined ? 'CONFIRMED' : 'PENDING' }} ORDER</h4>
+      {% endif %}
+  </div>
+  <div class="modal-body"> 
+    <div class="info-wrap">
+      <p>Order ID: <span id="orderId"></span></p>
+      <p>Patient Name: <span id="patientName"></span></p>
+  </div>
+    <form method="post" action="" id="recallForm">
+    <div class="form-group">
+      <div class="row">
+        <div class="col-md-6">
+          {% if isReported is defined %}
+          <label>Describe your issue:<span class="required" aria-required="true"> * </span></label>
+          {% else %}
+          <label>Reason for recall:<span class="required" aria-required="true"> * </span></label>
+          {% endif %}
+        </div>
+        <div class="col-md-6 align-right"><p class="help-block"><span id="lengthSpan">2000</span> characters left</p></div>
+      </div>
+      <textarea class="form-control max-height" rows="3" placeholder="What is the reason this order is being {{ isReported is defined ? 'reported' : 'recalled' }}?" maxlength="2000" id="reasonTextArea" name="reasonForRecall"></textarea>
+    </div>
+    <div class="form-actions align-center">
+      {% if isReported is defined %}
+        <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase red btn-sm btn-icon-right" id="recallUrl">Report Issue <i class="fa fa-rotate-left"></i></a>
+      {% else %}
+        <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase red btn-outline btn-sm btn-icon-right" id="recallCancelUrl"><i class="fa fa-trash"></i> Recall and Cancel RX Order</a>
+        <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase yellow-gold btn-sm btn-icon-right" id="recallEditUrl"><i class="fa fa-edit"></i> Recall and Edit RX Order</a>
+      {% endif %}
+    </div>
+    {% if isConfirmed is defined and isConfirmed %}
+    <input type="hidden" name="isConfirmed" value="true">
+    {% else %}
+    <input type="hidden" name="recallAction" id="recallAction" />
+    {% endif %}
+    </form>
+  </div>
+</div>
