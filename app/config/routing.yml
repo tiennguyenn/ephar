@@ -1,0 +1,18 @@
+patient:
+    resource: "@PatientBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+admin:
+    resource: '@AdminBundle/Controller/'
+    type: annotation
+
+doctor:
+    resource: "@DoctorBundle/Controller/"
+    type:     annotation
+    prefix:   /doctor
+
+agent:
+    resource: "@AgentBundle/Controller/"
+    type:     annotation
+    prefix:   /agent

@@ -1,0 +1,36 @@
+imports:
+    - { resource: config.yml }
+
+#framework:
+#    validation:
+#        cache: validator.mapping.cache.doctrine.apc
+#    serializer:
+#        cache: serializer.mapping.cache.apc
+
+#doctrine:
+#    orm:
+#        metadata_cache_driver: apc
+#        result_cache_driver: apc
+#        query_cache_driver: apc
+
+monolog:
+    handlers:
+        info:
+            type: stream
+            level: info
+            path: '%kernel.logs_dir%/info.log'
+            channels: [app]
+        doctrine:
+            type:     stream
+            path:     "%kernel.logs_dir%/doctrine.log"
+            channels: [doctrine]
+        main:
+            type: fingers_crossed
+            action_level: error
+            handler: nested
+        nested:
+            type: stream
+            path: '%kernel.logs_dir%/%kernel.environment%.log'
+            level: debug
+        console:
+            type: console

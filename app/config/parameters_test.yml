@@ -1,0 +1,197 @@
+parameters:
+    database_host: gmedes.cdifvkbfozkg.ap-southeast-1.rds.amazonaws.com
+    database_port: null
+    database_name: gmedes_core_pantai
+    database_user: gmedes
+    database_password: Singapore2017!
+
+    # Slave
+    database_host_slave: gmedes.cdifvkbfozkg.ap-southeast-1.rds.amazonaws.com
+    database_port_slave: null
+    database_name_slave: gmedes_core_pantai
+    database_user_slave: gmedes
+    database_password_slave: Singapore2017!
+    
+    # Memcached Session
+    memcached_session_host: '127.0.0.1'
+    memcached_session_port: 11211
+    memcached_session_expire: 3600
+    memcached_session_prefix: core_pantai_
+    
+    session_handle: session.handler.memcached
+
+    mailer_transport: smtp
+    mailer_host: smtp.sendgrid.net
+    mailer_user: antono@gmedes.com
+    mailer_password: GMeds2018
+    mailer_bcc: antono@gmedes.com
+
+    secret: ThisTokenIsNotSoSecretChangeIt
+
+    send_message_api : https://1mx.fortdigital.net/http/send-message
+    send_message_from_name : GMeds
+    send_message_user: 83498
+    send_message_password: SMSf0rBusiness*
+    expire_time_otp : 300
+
+    asset_version: 03262018
+    upload_directory : '%kernel.root_dir%/../web/uploads'
+    upload_directory_profile_mpa : 'uploads/mpa/'
+    base_url: http://uat-site-pp.gmedsapp.com
+    sale_agent:
+      - "kellyn@gmedes.com"
+      - "finance.uat@yopmail.com"
+    primary_email: info@gmedes.com
+    
+    api_url: http://uat-router.gmedsapp.com/api/v1
+    api_token: 1104d7667595c99888826e11a0e8dd9c
+    api_client_id: 10000006
+    api_client_secret: fdd9c41fda1e7af6323276c3bc2e5790
+
+    apiv2_url: http://uat-router.gmedsapp.com/api/v2
+    apiv2_client_id: 1_2i2bolpefxuskgksskk4wgksoc00gs8goo44k8g8s88wggsw0
+    apiv2_client_secret: 153ve6tk9ry84w4488swc8gskg88o00ww48gcwgkcgssw884o0
+
+    expire_time_login : 86400000
+    expire_time_forgot_password : 300
+    tripledes_hashphrase : 8j$Bvn=fju8NXDaE@ZH3g54P
+    report_resolve_issue: carolvt@gmedes.com
+
+# third party api
+    asia_pay_api:
+        login: apidemo
+        password: demo1234
+        merchant_id: 85002451
+        order_url: https://test.paydollar.com/b2cDemo/eng/merchant/api/orderApi.jsp
+        settlement_url: https://test.paydollar.com/b2cDemo/GenTxnXML
+        payment_url: https://test.paydollar.com/b2cDemo/eng/payment/payForm.jsp
+        type: AsiaPay
+
+    mol_pay_api:
+        base_url: https://api.molpay.com
+        merchant_id: SB_gmedes
+        payment_url: https://sandbox.molpay.com/MOLPay/pay/SB_gmedes/index.php
+        verify_key: 538845a762e990ff473c198578f51cff
+        secret_key: e888df9c0158357126681438c6a23406
+        type: MOLPay
+        
+    ipay_88_api:
+        base_url: https://www.mobile88.com
+        payment_url: https://www.mobile88.com/ePayment/entry.asp
+        merchant_id: M11037
+        merchant_code: M11037
+        type: IPay88
+        
+    red_dot_api:
+        api_url:
+            start_payment: https://secure-dev.reddotpayment.com/service/payment-api
+            validate: https://secure-dev.reddotpayment.com/service/Merchant_processor/query_redirection
+            refund: https://test.reddotpayment.com/instanpanel/api/payment
+        mid: 1002089813
+        key: cGXEviTLb87L7DHv4VIvVjQzH4WPgHNve79530EB
+        secret: S4GS4p7NambpDxioqOfqGi2ISAahhsgGEBffF4lvncX7SS6sSAnSRK532OrxRzWVA9ykdTUde8eqa8wVJiGioaNgqRkYzSml6VyjdigIuVE5hMoaHijPqeon82DnaF0O
+        type: Reddot
+
+    payment_gateway: %red_dot_api%
+
+    mas_api:
+        eservices_url: https://eservices.mas.gov.sg/api/action/datastore/search.json
+        resource_id  : 95932927-c8bc-4e7a-b484-68a66a24edfe
+
+# Create signature
+    signature_url: http://uat-router.gmedsapp.com/signaturepad.html
+
+    media:
+        doctor_report_path: web/media/pdf/doctor
+        agent_report_path: web/media/pdf/agent
+        po_path: web/media/pdf/po
+        xero_path: web/media/xero
+        redispense_path: web/media/pdf/redispense
+        invoice_party_path: web/media/pdf/invoice
+    
+    #invoice dir
+    invoice:
+        redispense: web/media/pdf/invoice/redispense
+        refund: web/media/pdf/invoice/refund
+        note: media/pdf/invoice/refund
+
+    #Email, SMS send counter
+    email_send_counter: 2
+
+    #Email delay peirod, 15 minutes
+    email_delay_period: 15M
+    
+    # Email askpharmacist
+    askpharmacist_email: s3.gmeds@gmail.com #askpharmacist@gmedes.com
+    
+    # Email send remider to gmdes
+    email_send_reminder: finance.uat@yopmail.com
+    
+    # Debit account
+    debit_account: 312193952554
+
+    # xero folder cer
+    xero:
+        cert: web/certs
+        account: uploads/xero/account
+        download_path: uploads/xero/tlr/download
+        template_path: uploads/xero/tlr
+    email_xero:
+        tech: tech@gmedes.com
+
+    bank_statement:
+        upload: web/uploads/bank_payment
+
+    refund:
+        history: media/pdf/history
+        approvalUrl: https://prod-12.southeastasia.logic.azure.com:443/workflows/fd35f39ab7864fc48b36e552802d0bdd/triggers/manual/paths/invoke?api-version=2016-06-01&sp=/triggers/manual/run&sv=1.0&sig=sWM7prKp3R_xwrfH6jhAh1NyPgs5mKlySxcbSe337cM
+        infoUrl: https://prod-07.southeastasia.logic.azure.com:443/workflows/ebcdbe93f36f47e0a7813c8b5c2556a1/triggers/manual/paths/invoke?api-version=2016-06-01&sp=/triggers/manual/run&sv=1.0&sig=Vnoq6_4wzK5USXM-Lo_xgc5phF-2QzhsSdk5QzlOKnk
+
+    courier:
+        api_token: 79a8a63b6af1806caf64eb168e0fadad
+        api_client_id: 10000004
+        api_client_secret: fdd9c41fda1e7af6323276c3bc2e5790
+
+    gtln:
+        url: http://149.129.212.118/v3.9/bromine/dev/TrackLinehaul
+        api_key : dev#2770336d2cd50ff1f674be0b2e35981a
+        token_id : dev#3.9#68bd6ff343a80ebef57d554f7ffdd6ed
+        party_id : FIRSTMILE#e496d9cb6cce75e6a73501adbd7f93ce#dev
+
+    sendgrid:
+        url: https://api.sendgrid.com/v3/mail/send
+        key: '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'
+        send_at: 600 #second        
+    
+    bank_negara_malaysia:
+        url: http://www.bnm.gov.my/index.php
+
+    adverse_url:
+        SG:
+            short: http://www.hsa.gov.sg/
+            full: https://eservice.hsa.gov.sg/adr/adr/adrOnline.do?action=loadOnlineForm
+        MY:
+            short: http://npra.moh.gov.my/
+            full: https://quest3plus.bpfk.gov.my/front-end/adr_res_web_form.php
+
+    upload_share_point: https://prod-00.southeastasia.logic.azure.com:443/workflows/1c33645e71b84e5ba4bee43d41d60b25/triggers/manual/paths/invoke?api-version=2016-06-01&sp=/triggers/manual/run&sv=1.0&sig=dEOk9qnohLW0QxTPBVRE10ZKE7M8H8dXAP0QBZ0Ikcg
+    invoice_party_at_fault_url: https://prod-05.southeastasia.logic.azure.com:443/workflows/499d5a2509944e3c8d92968b879a7ed4/triggers/manual/paths/invoke?api-version=2016-06-01&sp=/triggers/manual/run&sv=1.0&sig=Zv28ldFIq9lrnRuoP4A1NKG4vo9U44sCjH2ky2-6eMk
+    pharmacist_redispense_url: https://prod-07.southeastasia.logic.azure.com:443/workflows/ebcdbe93f36f47e0a7813c8b5c2556a1/triggers/manual/paths/invoke?api-version=2016-06-01&sp=/triggers/manual/run&sv=1.0&sig=Vnoq6_4wzK5USXM-Lo_xgc5phF-2QzhsSdk5QzlOKnk
+    
+    ga_code_patient_pageview: UA-124329106-3
+
+    sites:
+        parkway: uat.mygmeds.com
+        non_parkway: uat-sg.gmedsapp.com
+    
+    currency_code: SGD
+    core_media_pdf:
+        -
+            username: 'pdfaccess'
+            password: 'just4pdfaccess'
+
+    atc_order_notify_api: https://uat-atc.gmedsapp.com/orders/notify
+    tracking_url: uat-tracking.gmedsapp.com
+    app_env : uat
+    ga_tracking_code : UA-124329106-3
+    

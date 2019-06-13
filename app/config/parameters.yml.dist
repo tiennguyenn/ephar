@@ -1,0 +1,46 @@
+# This file is auto-generated during the composer install
+parameters:
+
+    database_host: 10.100.0.30
+    database_port: null
+    database_name: gmeds_admin
+    database_user: innomaxm_gmedes
+    database_password: innomaxm_gmedes
+
+    mailer_transport: smtp
+    mailer_host: email-smtp.us-west-2.amazonaws.com
+    mailer_port:       587
+    mailer_encryption: TLS
+    mailer_user: AKIAJCVRGEJA4QIJRH3A
+    mailer_password: AoVSw5ExIQFZBiuFVl9Q/K51iTci+ou18ycp9BDrp/EQ
+
+    secret: ThisTokenIsNotSoSecretChangeIt
+
+    send_message_api : https://mx.fortdigital.net/http/send-message
+    expire_time_otp : 300
+
+    asset_version: 0.0.1
+    upload_directory : '%kernel.root_dir%/../web/uploads'
+    base_url: https://uat-site-my.gmedslogin.net
+    primary_email: gmedes@s3corp.com.vn
+
+    expire_time_login : 86400000
+    expire_time_forgot_password : 300
+    tripledes_hashphrase : 8j$Bvn=fju8NXDaE@ZH3g54P
+
+# third party api
+    asia_pay_api:
+        login: apidemo
+        password: demo1234
+        merchant_id: 85002451
+        order_url: https://test.paydollar.com/b2cDemo/eng/merchant/api/orderApi.jsp
+        settlement_url: https://test.paydollar.com/b2cDemo/GenTxnXML
+        payment_url: https://test.paydollar.com/b2cDemo/eng/payment/payForm.jsp
+
+    mas_api:
+        eservices_url: https://eservices.mas.gov.sg/api/action/datastore/search.json
+        resource_id  : 10eafb90-11a2-4fbd-b7a7-ac15a42d60b6
+    
+    media:
+        doctor_report_path: web/media/pdf/doctor
+        agent_report_path: web/media/pdf/agent

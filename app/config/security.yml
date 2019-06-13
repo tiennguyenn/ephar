@@ -1,0 +1,45 @@
+# To get started with security, check out the documentation:
+# https://symfony.com/doc/current/security.html
+security:
+    access_denied_url: /login
+    encoders:
+        Core\AdminBundle\Security\GmedsUser: sha512
+
+    role_hierarchy:
+        ROLE_DOCTOR:      ROLE_USER
+        ROLE_AGENT:       ROLE_USER
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN,ROLE_AGENT,ROLE_DOCTOR]
+
+    providers:
+        in_memory:
+            memory: ~
+        user_provider:
+           id: gmeds.user_provider
+
+    firewalls:
+        main:
+            anonymous:    ~
+        
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        login:
+            pattern:  ^/login$
+            security: false
+
+        secured_area:
+            anonymous: ~
+            form_login:
+                check_path: login_check
+                login_path: login
+                remember_me: true
+            logout: true  
+            remember_me:
+                name: GmedsRememberMeCookie
+                secret:      "%secret%"
+                lifetime: 604800 # 1 week in seconds
+                path:     /
+                remember_me_parameter: _remember_me
+                always_remember_me: true
