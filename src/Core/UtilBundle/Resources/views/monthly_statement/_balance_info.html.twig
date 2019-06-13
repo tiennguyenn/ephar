@@ -1,0 +1,76 @@
+{% set type = result.type %}
+{% set data = result.data %}
+{% set balance = result.balance %}
+{% set lastMonthData = {'postDate': null, 'amountPaid': null, 'totalAmount' : null} %}
+{% set monthlyStatementData = {'statementDate' : null, 'projectedPaymentDate' : null} %}
+{% if data[0] is defined %}
+  {% set lastMonthData = data[0] %}
+   {% if type == 'agent' %}
+    {% set monthlyStatementData = lastMonthData.agentMonthlyStatement %}
+   {% else %}
+      {% set monthlyStatementData = lastMonthData.doctorMonthlyStatement %}
+   {% endif %}
+  
+{% endif %}
+
+<h2 class="sub-title">Balance</h2>
+<table class="table-data table-one-line">
+  <thead>
+    <tr>
+      <th align="left" width="20%">Date</th>
+      <th align="left" width="60%">Description</th>
+      <th align="right" width="20%">Amount ({{ result.currencyCode }})</th>
+    </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>{{ monthlyStatementData.statementDate is not null ? monthlyStatementData.statementDate|date('d M Y') : 'NIL' }}</td>
+    <td>Balances as per {{ monthlyStatementData.statementDate|last_day }}</td>
+      <td align="right">{{ lastMonthData.totalAmount is not null ? lastMonthData.totalAmount|number_format(2, '.', ',') : 'NIL' }}</td>
+  </tr>
+
+  {# payment info of pre months of lastmonth that paid in current month #}
+  {% if data|length > 1 %}
+    {% for i in 1..(data|length - 1) %}
+      {% if type == 'agent' %}
+        {% set mS = data[i].agentMonthlyStatement %}
+      {% else %}
+          {% set mS = data[i].doctorMonthlyStatement %}
+      {% endif %}
+      {% set str =  mS.month ~ '/01/' ~ mS.year %}
+      {% set str = ' for ' ~ str|date("M Y") ~ ' Statement' %}
+        <tr>
+          <td>{{ data[i].postDate|date('d M Y') }}</td>
+          <td>Balance paid on {{ data[i].postDate|date('d M Y') }} {{ str }}</td>
+          <td align="right">{{ data[i].amountPaid|number_format(2, '.', ',') }}</td>
+        </tr>
+    {% endfor %}
+  {% endif %}
+  {# last month #}
+  {% if result.isFirstStatement == false %}
+    {% if lastMonthData.postDate is not null %}
+      {% set date = lastMonthData.postDate|date('d M Y') %}
+      {% set amountPaid = lastMonthData.amountPaid %}
+    {% else %}
+      {% set date = monthlyStatementData.projectedPaymentDate|date('d M Y') %}
+      {% set amountPaid = null %}
+    {% endif %}
+    {% if monthlyStatementData.statementDate is not null %}
+      {% set str = monthlyStatementData.month ~ '/01/' ~ monthlyStatementData.year %}
+      {% set str = ' for ' ~ str|date("M Y") ~ ' Statement' %}
+    {% else %}
+       {% set str = ' for ' ~ 'NIL Statement' %}
+    {% endif %}
+      <tr>
+        <td>{{ date }}</td>
+        <td>Balance paid on {{ date }} {{ str }}</td>
+        <td align="right">{{ amountPaid|number_format(2, '.', ',') }}</td>
+      </tr>
+      <tr>
+        <td>{{ date }}</td>
+        <td>Balance as at {{ date }}</td>
+        <td align="right">{{ balance|number_format(2, '.', ',') }}</td>
+      </tr>
+  {% endif %}
+  </tbody>
+</table>

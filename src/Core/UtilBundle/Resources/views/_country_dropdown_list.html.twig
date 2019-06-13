@@ -1,0 +1,9 @@
+<div class="col-lg-3 mb-10">
+  <div class="mb-15"><strong>Country of Destination</strong></div>
+  <select id="{{ elId }}" class="form-control select2">
+    <option value=''>Select Country of Destination</option>
+    {% for item in data %}
+      <option value="{{ item.code }}">{{ item.name }}</option>
+    {% endfor %}
+  </select>
+</div>

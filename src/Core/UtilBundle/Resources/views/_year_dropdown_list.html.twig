@@ -1,0 +1,9 @@
+{# <div class="col-lg-2 col-md-4 col-xs-6"> #}
+<div class="col-md-6 col-xs-6">
+<select id="{{ elId }}" class="form-control select2">
+    <option>Year</option>
+    {% for i in range(data.start, data.end) %}
+      <option value="{{ i }}" "{% if i == val %} selected {% endif %}">{{ i }}</option>
+    {% endfor %}
+  </select> 
+</div>

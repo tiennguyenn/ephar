@@ -1,0 +1,47 @@
+parameters:
+    router.class: UtilBundle\Routing\Router
+    router.options.generator_base_class: UtilBundle\Routing\Generator\UrlGenerator
+
+services:
+    microservices.api:
+        class: UtilBundle\Microservices\ApiService
+        arguments: [@service_container]
+    
+    microservices.fx:
+        class: UtilBundle\Microservices\FxService
+        arguments: ['@service_container', '@doctrine.orm.entity_manager']
+
+    microservices.rxRefillReminder:
+        class: UtilBundle\Microservices\RxRefillReminderService
+        arguments: ['@service_container', '@doctrine.orm.entity_manager']
+        
+    microservices.email:
+        class: UtilBundle\Microservices\EmailService
+        arguments: ['@service_container', '@doctrine.orm.entity_manager']
+
+    microservices.po:
+        class: UtilBundle\Microservices\PoService
+        arguments: ['@service_container', '@doctrine.orm.entity_manager', '@templating']
+
+    microservices.sms:
+        class: UtilBundle\Microservices\SMSService
+        arguments: ['@service_container', '@doctrine.orm.entity_manager']
+
+    util.common:
+        class: UtilBundle\Microservices\CommonService
+        arguments: ['@service_container', '@doctrine.orm.entity_manager']
+
+    util.twig_extension:
+        class: UtilBundle\Twig\Extensions\TwigHelper
+        public: false
+        arguments: [@service_container, @doctrine.orm.entity_manager]
+        tags:
+            - { name: twig.extension }
+
+    microservices.sendgrid.email:
+        class: UtilBundle\Microservices\SendGridService
+        arguments: ['@service_container', '@doctrine.orm.entity_manager']
+
+    microservices.rx_partner:
+        class: UtilBundle\Microservices\RxService
+        arguments: ['@service_container']
