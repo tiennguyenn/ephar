@@ -1,0 +1,86 @@
+{% extends '@Admin/layout.html.twig' %} 
+{% block classbody %}login otp{% endblock %}
+{% block body %}
+    <!-- BEGIN LOGIN -->
+    <div class="content">
+        <!-- BEGIN FORGOT PASSWORD FORM -->
+        <form action="{{path('login_check')}}" method="post">
+            <input type="hidden" id="resend-otp-url" value="{{ path('ajax_resend_otp') }}" />
+            <input type="hidden" id="email-address" name="email" value="{{ userEmail }}" />
+            <p> Please check your phone for the OTP. </p>
+            {% for flashMessage in app.session.flashbag.get('msg') %}
+                
+                {% if flashMessage.error is defined %}
+                <div class="alert alert-danger">
+                    <span> {{ flashMessage.error }} </span>
+                    <button class="close" data-close="alert"></button>
+                </div>
+                {% else %}
+                <div class="alert alert-success">
+                    <span> {{ flashMessage.success }} </span>
+                    <button class="close" data-close="alert"></button>
+                </div>
+                {% endif %}
+
+            {% endfor %}
+            <div class="form-group">
+                <div class="input-icon">
+                    <i class="fa fa-phone"></i>
+                    <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Enter OTP here" name="otp_code" /> </div>
+            </div>
+            <div class="form-actions clearfix">
+                <button type="submit" class="btn green pull-right"> Submit </button>
+                <button type="button" class="btn green-seagreen pull-right mr-5 disabled" id="btn-resend-otp"> Resend OTP Code <span id="resend-otp-timer">(120 seconds)</span> </button>
+            </div>
+            <input type="hidden" name="token" value="{{ csrf_token('core-login') }}" />
+        </form>
+        <!-- END FORGOT PASSWORD FORM -->
+    </div>
+    <!-- END LOGIN -->
+    <div id="modal-resend-otp" class="modal fade modal-new" data-backdrop="static" data-keyboard="false" tabindex="-1" data-width="500">
+        <div class="modal-header">
+            <h4 class="modal-title"><span id="resend-otp-result-title"></span></h4>
+        </div>
+        <div class="modal-body">
+            <div class="text-center">
+                <p id="resend-otp-result-message"></p>
+
+                <button id="CloseModalResendOtp" type="button" data-dismiss="modal" aria-hidden="true" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10">Close</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        var background1 = "{{ asset('bundles/admin/assets/pages/media/bg/1.jpg') }}";
+        var background2 = "{{ asset('bundles/admin/assets/pages/media/bg/2.jpg') }}";
+        var background3 = "{{ asset('bundles/admin/assets/pages/media/bg/3.jpg') }}";
+        var background4 = "{{ asset('bundles/admin/assets/pages/media/bg/4.jpg') }}";
+    </script>
+    {% javascripts
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/backstretch/jquery.backstretch.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/login-4.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+        $(document).ready(function()
+        {
+            $('#clickmewow').click(function()
+            {
+                $('#radio1003').attr('checked', 'checked');
+            });
+        })
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets
+        'bundles/admin/assets/pages/css/login-4.min.css'
+        filter='cssrewrite'
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}

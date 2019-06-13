@@ -1,0 +1,58 @@
+<table class="table table-hover table-light_">
+    <thead>
+        <tr class="uppercase">
+            <th style="width: 80px">Date</th>
+            <th style="width: 140px">User</th>
+            <th>Changes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+            <tr>
+                {% set tmp = log.title|split(' - ')|first %}
+                <td>{{ log.createdOn|date('d M y') }}</td>
+                <td>{{ log.createdBy }}</td>
+                <td>
+                    {% if tmp == 'for_indonesia' %}
+                        {% if log.oldValue.newFee != log.newValue.newFee %}
+                            Set Admin Fee {{ log.title|replace({'_': ' '})|title }} is changed
+                            <br />Old Value: {{ log.oldValue.newFee }}%
+                            <br />New Value: {{ log.newValue.newFee }}%<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.effectDate != log.newValue.effectDate %}
+                            Effective date {{ log.title|replace({'_': ' '})|title }} is updated
+                            <br />Old Value: {{ log.oldValue.effectDate.date|date("d M y") }}
+                            <br />New Value: {{ log.newValue.effectDate.date|date("d M y") }}
+                        {% endif %}
+                    {% endif %}
+
+                    {% if tmp == 'customs_clearance_admin_fee' %}
+                        {{ log.title|replace({'_': ' '})|title }}
+                        {% if log.oldValue.platformPercentage != log.newValue.platformPercentage %}
+                            <br> GMEDES Sdn Bhd is updated
+                            <br>Old Value: {{ log.oldValue.platformPercentage }}%
+                            <br>New Value: {{ log.newValue.platformPercentage }}%<br /><br />
+                        {% endif %}
+
+                        {% if log.oldValue.doctorPercentage != log.newValue.doctorPercentage %}
+                            Doctor is updated
+                            <br>Old Value: {{ log.oldValue.doctorPercentage }}%
+                            <br>New Value: {{ log.newValue.doctorPercentage }}%<br /><br />
+                        {% endif %}
+
+                        {% if log.oldValue.takeEffectOn != log.newValue.takeEffectOn %}
+                            Effective date is updated
+                            <br />Old Value: {{ log.oldValue.takeEffectOn.date|date("d M y") }}
+                            <br />New Value: {{ log.newValue.takeEffectOn.date|date("d M y") }}
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<input type='hidden' id='print_log_url' value="{{ printUrl }}" />
+<input type='hidden' id='breadcrumb_title' value="{{ breadcrumbTitle }}" />
+
+

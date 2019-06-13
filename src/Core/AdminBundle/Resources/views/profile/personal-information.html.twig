@@ -1,0 +1,236 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block body %}
+
+{% include '@Admin/header.html.twig' %}
+
+<div class="page-container">
+  {% include '@Admin/left-menu.html.twig' with { 'mainMenu': 'profile', 'subMenu': 'personal-information' } %}
+  <div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+      <!-- BEGIN PAGE HEAD-->
+      <div class="page-head">
+        <!-- BEGIN PAGE TITLE -->
+        <div class="page-title">
+          <h1>Personal Information</h1>
+        </div>
+        <!-- END PAGE TITLE -->
+      </div>
+      <!-- END PAGE HEAD--> 
+      <!-- BEGIN PAGE BREADCRUMB -->
+      <ul class="page-breadcrumb breadcrumb">
+        <li> <a href="index.html">Home</a> <i class="fa fa-circle"></i> </li>
+        <li> <span class="active">Profile</span> </li>
+      </ul>
+      <!-- END PAGE BREADCRUMB -->
+
+      <!-- BEGIN PAGE BASE CONTENT -->
+      <div class="row">
+        
+        <div class="col-md-12"> 
+          <!-- Begin: life time stats -->
+          <div class="portlet light">            
+            <div class="portlet-body form">
+              <div class="row profile-account">
+                <div class="col-md-12">
+                      {{ form_start(formProfile) }}
+                        <div class="form-wizard">
+                          <div class="form-body">                                    
+                            <div class="form-content">
+                              <div class="alert alert-danger display-none">
+                                  <button class="close" data-dismiss="alert"></button> You have some form errors. Please check below. </div>
+                              <div class="alert alert-success display-none">
+                                  <button class="close" data-dismiss="alert"></button> Your form validation is successful! </div>
+                                  
+                              <h4 class="block mt-0 pt-0">Personal Information</h4>
+                              
+                               <div class="form-group mb-grid">
+                                  <div class="col-md-4">                                
+                                    <label>First Name <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(formProfile.first_name, {'attr': {'class': 'form-control'}}) }}
+                                    <div class="error"></div>
+                                  </div>
+                                  <div class="col-md-4">
+                                    <label>Last Name (Surname) <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(formProfile.last_name, {'attr': {'class': 'form-control'}}) }}
+                                    <div class="error"></div>
+                                  </div>
+                                <div class="col-md-4">
+                                  <label>Gender <span class="required" aria-required="true"> * </span></label>
+                                  <div class="mt-radio-inline mt-radio-inline-grid">
+                                    {% for key, genderItem in formProfile.gender.children %}
+                                        <label class="mt-radio mt-radio-outline"> {% if key == 0 %} Male {% else %} Female {% endif %}
+                                           {{ form_widget(genderItem) }}
+                                          <span></span>
+                                        </label>
+                                    {% endfor %}
+                                    <div class="error"></div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                  <label>Email <span class="required" aria-required="true"> * </span></label>
+                                    <input type="hidden" id="old_email" value="{{ formProfile.email.vars.value }}" />
+                                  {{ form_widget(formProfile.email, {'attr': {'class': 'form-control'}}) }}
+                                  <div class="error"></div>
+                                </div>  
+                              </div>
+
+                              <div class="row">
+                                <div class="col-md-4">
+                                    <h4 class="block mt-0 pt-0">Profile Photo</h4>
+
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <label>Upload Profile Image <span class="required" aria-required="true"> * </span></label>
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="fileinput fileinput-new" data-provides="fileinput">
+                                                        <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                                            <img src="{% if formProfile.image.vars.data != '' %}{{asset(formProfile.image.vars.data)}}&{{ date().timestamp }}{% else %}http://www.placehold.it/200x150/EFEFEF/AAAAAA&amp;text=no+image{% endif %}" alt="" />
+                                                        </div>
+                                                        <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"> </div>
+                                                        <div>
+                                            <span class="btn btn-outline blue btn-ahalf-circle btn-sm text-uppercase btn-file">
+                                                <span class="fileinput-new"> Select image </span>
+                                                <span class="fileinput-exists"> Change </span>
+                                                {{ form_widget(formProfile.image,{'attr':{'data-required': formProfile.image.vars.data}}) }}</span>
+                                                            <a href="javascript:;" class="btn btn-outline red btn-ahalf-circle btn-sm text-uppercase fileinput-exists" data-dismiss="fileinput"> Remove </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="error"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <h4 class="block mt-0 pt-0">Google Auth</h4>
+
+                                    <div class="form-group">
+                                        <input type="hidden" id="generate_google_auth_url" value="{{ path('admin_ajax_generate_google_auth') }}" />
+                                        <input type="hidden" id="save_google_auth_url" value="{{ path('admin_ajax_save_google_auth') }}" />
+                                        <input type="hidden" id="remove_google_auth_url" value="{{ path('admin_ajax_remove_google_auth') }}" />
+                                        <input type="hidden" id="google_auth_secret" value="{{ googleAuthSecret }}" />
+                                        <div class="col-md-12">
+                                            <a href="javascript:void(0)" class="btn btn-ahalf-circle text-uppercase red btn-icon-right btn-sm {{ googleAuthSecret ? '' : 'hidden' }}" id="google-auth-delete">Delete Registered Device</a>
+                                            <a href="javascript:void(0)" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm {{ googleAuthSecret ? 'hidden' : '' }}" id="google-auth-register">Register New Device</a>
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
+                            </div><!-- aaaaaaa -->
+                            <div class="form-actions">
+                              <div class="row">
+                                <div class="col-md-12">
+                                  <a href="{{ path('admin_dashboard') }}" class="btn grey-dark btn-ahalf-circle text-uppercase btn-sm button-back">Cancel</a>
+                                  <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit" id="btn-submit-pi">Save</a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {{ form_end(formProfile) }}
+
+                      <input type="hidden" id="ajax_profile_change" value="{{path('ajax_admin_change_profile')}}">
+                      <input type="hidden" id="ajax_password_change" value="{{path('ajax_admin_change_password')}}">
+                </div>
+                <!--end col-md-9-->
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END PAGE BASE CONTENT --> 
+    </div>
+  </div>
+</div>
+<div id="modal-google-auth-qr" class="modal fade modal-new" data-backdrop="static" data-keyboard="false" tabindex="-1" data-width="500">
+    <div class="modal-header text-center">
+        <h4 class="modal-title">Google Authenticator QR Code</h4>
+    </div>
+    <div class="modal-body" style="padding-top: 0">
+        <div class="text-center">
+            <div id="google-auth-qr-step1">
+                <p>Open your Google Authenticator App and scan this QR Code.</p>
+                <p id="google-auth-qr"><img src="{{ asset('bundles/admin/assets/global/img/loading-spinner-default.gif') }}" /></p>
+            </div>
+            <div id="google-auth-qr-step2" style="display: none">
+                <p>Please input the code from Google Authenticator app on your phone.</p>
+                <div class="row mb-20">
+                    <div class="col-md-offset-3 col-md-6">
+                        <input class="form-control" type="text" autocomplete="off" id="google-auth-code" />
+                        <small id="google-auth-qr-error" style="color: red; display: none"></small>
+                    </div>
+                </div>
+            </div>
+
+            <button id="btnSaveGoogleAuth" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm ml-10">Next</button>
+            <button id="btnCancelGoogleAuth" type="button" data-dismiss="modal" aria-hidden="true" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10">Close</button>
+        </div>
+    </div>
+</div>
+<div id="modal-google-auth-alert" class="modal fade modal-new" data-backdrop="static" data-keyboard="false" tabindex="-1" data-width="400">
+    <div class="modal-header text-center">
+        <h4 class="modal-title" id="google-auth-alert-title"></h4>
+    </div>
+    <div class="modal-body">
+        <div class="text-center">
+            <p id="google-auth-alert"></p>
+
+            <button type="button" data-dismiss="modal" aria-hidden="true" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10">Close</button>
+        </div>
+    </div>
+</div>
+{% include '@Agent/popup-notice.html.twig' %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+        '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js' 
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins//bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js' 
+        '@AdminBundle/Resources/public/js/profile.js' 
+    %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script type="text/javascript">
+        var step = 0;
+
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+    {% stylesheets
+        'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+        
+        filter='cssrewrite'
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+    <style type="text/css">
+        .disable-nav{
+            pointer-events: none;
+            cursor: default;
+            text-decoration: none;
+        }
+        .nav-item:hover .disable-nav span  {
+            color: #9d9d9d !important;
+        }
+    </style>
+{% endblock %}

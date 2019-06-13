@@ -1,0 +1,260 @@
+{% extends '@Admin/layout.html.twig' %}
+
+{% form_theme cycleOne '@Admin/rx/reminder_setting/_fields.html.twig' %}
+
+{% block pageTitle %}
+<h1>Rx Orders Reminders Setting</h1>
+{% endblock %}
+
+{% block breadcrumb %}
+<li> <a href="">Home</a> <i class="fa fa-circle"></i> </li>
+<li> <span class="active">Rx Orders Reminders Setting</span></li>
+{% endblock %}
+{% block content %}
+  {{ display_messages()|raw }}
+<div class="portlet light bordered">
+  <div class="portlet-title">
+    <div class="caption"> <span class="caption-subject font-dark sbold uppercase">Cycle 1 Reminders Policy </span> </div>
+    <div class="text-right">
+        <a id="logs_cycle_one" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">View Log</a>
+    </div>
+  </div>
+  <div class="portlet-body form">
+    {{ form_start(cycleOne) }}
+    <div class="form-wizard">
+      <div class="form-content">
+        <h4 class="block mt-0">Reminder 1 for Patient</h4>
+        <p class="mb-10">Email &amp; SMS Notification sent from the date of prescription</p>
+        {{ form_widget(cycleOne.reminder1,{'time':1}) }}
+        <h4 class="block">Reminder 2 for Patient</h4>
+        <p class="mb-10">Email &amp; SMS Notification sent from Strike 1 Timer Settings</p>
+        {{ form_widget(cycleOne.reminder2,{'time':2}) }}
+        <h4 class="block">Reminder 3 for Patient</h4>
+        <p class="mb-10">Email &amp; SMS Notification sent from Strike 2 Timer Settings</p>
+        {{ form_widget(cycleOne.reminder3,{'time':3}) }}
+        <hr class="mt-30 mb-0">
+        <h4 class="block">Cycle 1 Failed Email for Patient</h4>
+        <p class="mb-10">Email sent to patient for non-payment after the 3 strikes policy.</p>
+        <div class="form-group">
+          <div class="col-md-12">
+            <label>Mail Subject</label>
+            {{ form_widget(cycleOne.failedetopatient.templateSubjectEmail,{'attr':{'class':'form-control'}}) }}
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-12">
+            <label>Mail Message</label>
+            {{ form_widget(cycleOne.failedetopatient.templateBodyEmail,{'attr':{'class':'form-control max-height wysihtml5'}}) }}
+          </div>
+        </div>
+        <h4 class="block">Cycle 1 Failed Email for Doctor</h4>
+        <p class="mb-10">Email sent to the doctor if his patient did not settle the prescription order after the 3-strikes policy.</p>
+        <div class="form-group">
+          <div class="col-md-12">
+            <label>Mail Subject</label>
+            {{ form_widget(cycleOne.failedetodoctor.templateSubjectEmail,{'attr':{'class':'form-control'}}) }}
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-12">
+            <label>Mail Message</label>
+            {{ form_widget(cycleOne.failedetodoctor.templateBodyEmail,{'attr':{'class':'form-control max-height wysihtml5'}}) }}
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="reset" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm">Cancel</button>
+        <button type="submit" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm ml-10">Save</button>
+      </div>
+    </div>
+    {{ form_end(cycleOne, {'render_rest': false}) }}
+  </div>
+</div>
+<div class="portlet light bordered">
+  <div class="portlet-title">
+    <div class="caption"> <span class="caption-subject font-dark sbold uppercase">Cycle 2 - Extension of Prescription Order (Grace Period Settings)</span> </div>
+    <div class="text-right">
+        <a id="logs_cycle_two" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">View Log</a>
+    </div>
+  </div>
+  <div class="portlet-body form">
+    {{ form_start(cycleTwo) }}
+    <div class="form-wizard">
+      <div class="form-content">
+        <h4 class="block mt-0">Failed Orders Setting</h4>
+        <div class="form-group mb-grid">
+          <div class="col-md-4">
+            <label>Keep failed order active</label>
+            <div class="form-float">
+              <div class="col-md-6">
+                {{ form_widget(cycleTwo.fosetting.durationTime, {'attr':{'class':'form-control'}}) }}
+              </div>
+              <div class="col-md-6">
+                {{ form_widget(cycleTwo.fosetting.timeUnit, {'attr':{'class':'form-control select2'}}) }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group mb-grid">
+          <div class="col-md-4">
+            <label>Display dead orders (Archive schedule)</label>
+            <div class="form-float">
+              <div class="col-md-6">
+                {{ form_widget(cycleTwo.fosetting.expiredTime, {'attr':{'class':'form-control'}}) }}
+              </div>
+              <div class="col-md-6">
+                {{ form_widget(cycleTwo.fosetting.timeUnitExpire, {'attr':{'class':'form-control select2'}}) }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <h4 class="block">Grace Period Settings</h4>
+        <p class="mb-10">Allow doctor to resend a failed order to patient</p>
+        <div class="form-group mb-grid">
+          <div class="col-md-4">
+            <label>Grace Period for Patient</label>
+            <div class="form-float">
+              <div class="col-md-6">
+                {{ form_widget(cycleTwo.gpsetting.durationTime, {'attr':{'class':'form-control'}}) }}
+              </div>
+              <div class="col-md-6">
+                {{ form_widget(cycleTwo.gpsetting.timeUnit, {'attr':{'class':'form-control select2'}}) }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-12">
+            <label>Grace Period Subject Line</label>
+            {{ form_widget(cycleTwo.gpsetting.templateSubjectEmail, {'attr':{'class':'form-control'}}) }}
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-12">
+            <label>Grace Period Message</label>
+            {{ form_widget(cycleTwo.gpsetting.templateBodyEmail, {'attr':{'class':'form-control max-height wysihtml5'}}) }}
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-12">
+            <label>Grace Period SMS Message</label>
+            {{ form_widget(cycleTwo.gpsetting.templateSms, {'attr':{'class':'form-control max-height wysihtml5'}}) }}
+          </div>
+        </div>
+        <hr class="mt-30 mb-0">
+        <h4 class="block">Cycle 2 Failed Order Email for Patient</h4>
+        <p class="mb-10">Email sent to the patient for non-payment of prescription order in Cycle 2</p>
+        <div class="form-group">
+          <div class="col-md-12">
+            <label>Cycle 2 Failed Order Subject Line</label>
+            {{ form_widget(cycleTwo.c2failedpatient.templateSubjectEmail, {'attr':{'class':'form-control'}}) }}
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-12">
+            <label>Cycle 2 Failed Order Mail Message</label>
+            {{ form_widget(cycleTwo.c2failedpatient.templateBodyEmail, {'attr':{'class':'form-control max-height wysihtml5'}}) }}
+          </div>
+        </div>
+        <h4 class="block">Cycle 2 Failed Order Email for Doctor</h4>
+        <p class="mb-10">Email sent to the doctor for non-payment of prescription order in Cycle 2</p>
+        <div class="form-group">
+          <div class="col-md-12">
+            <label>Cycle 2 Failed Order Subject Line</label>
+            {{ form_widget(cycleTwo.c2faileddoctor.templateSubjectEmail, {'attr':{'class':'form-control'}}) }}
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-12">
+            <label>Cycle 2 Failed Order Mail Message</label>
+            {{ form_widget(cycleTwo.c2faileddoctor.templateBodyEmail, {'attr':{'class':'form-control max-height wysihtml5'}}) }}
+          </div>
+        </div>
+        <h4 class="block">Cycle 2 Failed Order Email for GMEDES Admin</h4>
+        <p class="mb-10">Email sent to the admin for non-payment of prescription order in Cycle 2</p>
+        <div class="form-group">
+          <div class="col-md-12">
+            <label>Cycle 2 Failed Order Subject Line</label>
+            {{ form_widget(cycleTwo.c2failedadmin.templateSubjectEmail, {'attr':{'class':'form-control'}}) }}
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-12">
+            <label>Cycle 2 Failed Order Mail Message</label>
+            {{ form_widget(cycleTwo.c2failedadmin.templateBodyEmail, {'attr':{'class':'form-control max-height wysihtml5'}}) }}
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="reset" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm">Cancel</button>
+        <button type="submit" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm ml-10">Save</button>
+      </div>
+    </div>
+    {{ form_end(cycleTwo, {'render_rest': false}) }}
+  </div>
+  <!-- END PAGE BASE CONTENT -->
+</div>
+<div id="modal-view-logs" class="modal fade modal-new" tabindex="-1" data-width="900">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+        <h4 class="modal-title">View Log</h4>
+    </div>
+    <div class="modal-body">
+        <div class="portlet box white portlet-scroller">
+            <div class="portlet-title">
+                <div class="caption">
+                    <span class="caption-subject uppercase sbold" id="title"></span>
+                </div>
+                <div class="actions">
+                    <a id="printLogCycleOne" href="{{ path('rx_reminder_print_logs', {'logType': 'one'}) }}" target="_blank" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">Print<i class="fa fa-print"></i></a>
+                    <a id="printLogCycleTwo" href="{{ path('rx_reminder_print_logs', {'logType': 'two'}) }}" target="_blank" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">Print<i class="fa fa-print"></i></a>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <div class="scroller" style="height:280px" data-always-visible="1" data-rail-visible="1" data-rail-color="white" data-handle-color="green">
+                    <div class="table-scrollable table-scrollable-borderless" id="list-logs">
+                        <!-- logs -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ul class="page-breadcrumb breadcrumb">
+            <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+            <li> <span class="active">Rx Orders Reminders Setting</span> </li>
+        </ul>
+        <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" data-dismiss="modal">Close</a>
+    </div>
+</div>
+<div class="blink-loader">
+    <div class="load1-wrap"><div class="load1"><div class="loader">Loading...</div></div></div>
+</div>
+<input type="hidden" id="logs_cycle_one_url" value="{{ path('rx_reminder_logs', {'logType': 'one'}) }}"/>
+<input type="hidden" id="logs_cycle_two_url" value="{{ path('rx_reminder_logs', {'logType': 'two'}) }}"/>
+{% endblock %}
+
+{% block stylesheets %}
+{% stylesheets
+'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+filter='cssrewrite' %}
+<link rel="stylesheet" href="{{ asset_url }}" />
+{% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+{% javascripts
+'@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+'@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+'@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/lib/js/wysihtml5-0.3.0.js'
+'@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.js'
+'@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+'@AdminBundle/Resources/public/js/rx_reminder_setting.js'
+'@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+'@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+%}
+<script src="{{ asset_url }}"></script>
+{% endjavascripts %}
+{% endblock %}

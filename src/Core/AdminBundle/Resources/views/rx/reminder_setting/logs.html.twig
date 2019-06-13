@@ -1,0 +1,21 @@
+<table class="table table-hover table-light_">
+    <thead>
+        <tr class="uppercase">
+            <th>Date</th>
+            <th>User</th>
+            <th>Changes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+            <tr>
+                <td>{{ log.createdOn|date('d M y') }}</td>
+                <td>{{ log.createdBy }}</td>
+                <td>
+                    Old Value: {{ log.oldValue }} days
+                    <br />New Value: {{ log.newValue }} days
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,96 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {% stylesheets 
+        'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+        'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'        
+        'bundles/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' 
+        'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+        'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+        'bundles/admin/assets/global/plugins/ion.rangeslider/css/ion.rangeSlider.css'
+        'bundles/admin/assets/global/plugins/ion.rangeslider/css/ion.rangeSlider.skinFlat.css'
+        'bundles/admin/assets/global/plugins/bootstrap-markdown/css/bootstrap-markdown.min.css' 
+        'bundles/admin/assets/global/plugins/bootstrap-summernote/summernote.css' 
+        'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-editable/bootstrap-editable/css/bootstrap-editable.css'
+        'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+        'bundles/admin/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+    filter='cssrewrite'  
+    debug=false
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    <!-- do not move it into stylesheet block -->
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block pageTitle %}
+    <h1>{{ title}}</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard')}}">Home</a> <i class="fa fa-circle"></i> </li>
+
+    <li> <span class="active">{{ title}}</span> </li>
+    {% endblock %}
+    {% block content %}
+    <div class="portlet light bordered" id="form_wizard_1" enctype="multipart/form-data"  >
+        <div class="portlet-body form">
+            {% include '@Admin/admin/gateway_fee_setting/_reddot_fee.html.twig' %}
+            <div class="pt-20 pb-20">
+                {% set module = constant('UtilBundle\\Utility\\Constant::PAYMENT_GATEWAY_FEE_MODULE_NAME') %}
+
+                <a href="#" id="view_logs_anchor" 
+                data-module="{{ module }}" 
+                data-template-view="AdminBundle:payment_setting\Logs:gateway_fee_log.html.twig"
+                data-template-print="AdminBundle:payment_setting\Logs:gateway_fee_pdf.html.twig"
+                data-breadcrumb-title="PAYMENT GATEWAY FEES" 
+                data-modal-title="PAYMENT GATEWAY FEES" 
+                data-file-name="Payment_Gateway_Fees" 
+                data-toggle="modal" class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen">View Log</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts      
+        '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/clockface/js/clockface.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/ion.rangeslider/js/ion.rangeSlider.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-markdown/lib/markdown.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-markdown/js/bootstrap-markdown.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-summernote/summernote.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/lib/js/wysihtml5-0.3.0.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'      
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'   
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery.mockjax.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/bootstrap-editable/js/bootstrap-editable.js'      
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/wysihtml5/wysihtml5.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'      
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'      
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+        '@AdminBundle/Resources/public/js/admin_gateway_fee.js'
+        debug=false
+    %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+{% endblock %}

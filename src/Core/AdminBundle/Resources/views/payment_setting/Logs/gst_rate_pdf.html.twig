@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>GST Rates Logs</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="Preview page of Metronic Admin Theme #4 for blank page layout" name="description" />
+    <meta content="" name="author" />
+    <style>
+        body {
+            color: #333;
+            padding: 0;
+            margin: 0;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
+        .portlet-title {
+            border-left: 1px solid #e7ecf1;
+            border-right: 1px solid #e7ecf1;
+            border-top: 1px solid #e7ecf1;
+            min-height: 41px;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 18px;
+            padding: 10px;
+        }
+        table {
+            width: 100%;
+            border: 1px solid #e7ecf1;
+        }
+        th {
+            padding: 10px;
+            font-weight: 600;
+            vertical-align: bottom;
+        }
+        td {
+            border-top: 1px solid #e7ecf1;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="portlet">
+    <div class="portlet-title">
+        <div class="caption">GST Rates Logs</div>
+    </div>
+    <div class="portlet-body">
+        <table class="table table-hover table-light_">
+          <thead>
+            <tr>
+                <th style="width: 20%">Date</th>
+                <th style="width: 20%">User</th>
+                <th>Changes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if logs %}
+        {% for log in logs %}
+            <tr>
+                <td>{{ log.createdOn|date('d M y') }}</td>
+                <td>{{ log.createdBy }}</td>
+                <td>
+                    {% if log.oldValue.gmeds_to_doctor is not defined and log.oldValue.doctor_to_patient_local is not defined and log.oldValue.doctor_to_patient_oversea is not defined and log.oldValue.gmeds_to_doctor is not defined %}
+                        {% if log.oldValue.gstRateAffectDate != log.newValue.gstRateAffectDate %}
+                        GST Rate is updated
+                            <br>Old Value: {{ log.oldValue.newGstRate }}%
+                            <br>New Value: {{ log.newValue.newGstRate }}%<br><br>
+                        {% endif %}
+                        {% if log.oldValue.gstRateAffectDate != log.newValue.gstRateAffectDate %}
+                            Effective date is updated
+                            <br />Old Value: {{ log.oldValue.gstRateAffectDate.date|date("d M y") }}
+                            <br />New Value: {{ log.newValue.gstRateAffectDate.date|date("d M y") }}
+                        {% endif %}
+                    {% endif %}
+
+
+                    {% if log.oldValue.doctor_to_patient_local is defined %}
+                        GST: Doctor's Invoice to Local Patient
+                        {% if log.oldValue.doctor_to_patient_local.sf_patient_local.gstCode != log.newValue.doctor_to_patient_local.sf_patient_local.gstCode %}
+                            <br>Shipping and Handling is updated
+                            <br>Old value: {{ log.oldValue.doctor_to_patient_local.sf_patient_local.gstCode }}
+                            <br>New value: {{ log.newValue.doctor_to_patient_local.sf_patient_local.gstCode }}
+                        {% endif %}
+                    {% endif %}
+
+                    {% if log.oldValue.doctor_to_patient_oversea is defined %}
+                        GST: Doctor's Invoice to Overseas Patient
+                        {# custom clearance admin fee #}
+                        {% if log.oldValue.doctor_to_patient_oversea.ccaf_sg.gstCode != log.newValue.doctor_to_patient_oversea.ccaf_sg.gstCode %}
+                            <br>Custom Clearance Admin Fee - SG is updated
+                            <br>Old value: {{ log.oldValue.doctor_to_patient_oversea.ccaf_sg.gstCode }}
+                            <br>New value: {{ log.newValue.doctor_to_patient_oversea.ccaf_sg.gstCode }}<br><br>
+                        {% endif %}
+
+                        {# shipping and handling #}
+                        {% if log.oldValue.doctor_to_patient_oversea.sf_patient_oversea.gstCode != log.newValue.doctor_to_patient_oversea.sf_patient_oversea.gstCode %}
+                            <br>Shipping and Handling is updated
+                            <br>Old value: {{ log.oldValue.doctor_to_patient_oversea.sf_patient_oversea.gstCode }}
+                            <br>New value: {{ log.newValue.doctor_to_patient_oversea.sf_patient_oversea.gstCode }}<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.doctor_to_patient_oversea.ccaf_id.gstCode != log.newValue.doctor_to_patient_oversea.ccaf_id.gstCode %}
+                            <br>Custom Clearance Admin Fee - INDO is updated
+                            <br>Old value: {{ log.oldValue.doctor_to_patient_oversea.ccaf_id.gstCode }}
+                            <br>New value: {{ log.newValue.doctor_to_patient_oversea.ccaf_id.gstCode }}<br><br>
+                        {% endif %}
+                    {% endif %}
+
+
+                    {% if log.oldValue.gmeds_to_doctor is defined %}
+                        {% set gtdOldData = log.oldValue.gmeds_to_doctor %}
+                        {% set gtdNewData = log.newValue.gmeds_to_doctor %}
+                        {% set gtdPSOldData = log.oldValue.platformSetting %}
+                        {% set gtdPSNewData = log.newValue.platformSetting %}
+
+
+                        <strong>G-MEDS GST Settings</strong>
+                        {% if gtdPSOldData.isGst != gtdPSNewData.isGst %}
+                            <br>GST Registered is updated
+                            <br>Old Value: {{ gtdPSOldData.isGst == false ? 'No' : 'Yes' }}
+                            <br>New Value: {{ gtdPSNewData.isGst == false ? 'No' : 'Yes' }}<br><br>
+                        {% endif %}
+
+                        {% if gtdPSOldData.gstNo != gtdPSNewData.gstNo %}
+                            GST Registration No. is updated
+                            <br>Old Value: {{ gtdPSOldData.gstNo }}
+                            <br>New Value: {{ gtdPSNewData.gstNo}}<br><br>
+                        {% endif %}
+                        {% if gtdPSOldData.gstAffectDate != gtdPSNewData.gstAffectDate %}
+                            Effective is updated
+                            <br>Old Value: {{ gtdPSNewData.gstAffectDate.date|date("d M y") }}
+                            <br>New Value: {{ gtdPSOldData.gstAffectDate.date|date("d M y") }}<br><br>
+                        {% endif %}
+
+                        
+                        {% set flag = false %}
+                        {% if gtdOldData.gm_ccaf_sg.gstCode != gtdNewData.gm_ccaf_sg.gstCode %}
+                            <br>GST: GMEDES Invoice to Doctor
+                            {% set flag = true %}
+                            <br>Custom Clearance Admin Fee - SG is updated
+                            <br>Old value: {{ gtdOldData.gm_ccaf_sg.gstCode }}
+                            <br>New value: {{ gtdNewData.gm_ccaf_sg.gstCode }}<br><br>
+                        {% endif %}
+                        {% if gtdOldData.gm_ccaf_id.gstCode != gtdNewData.gm_ccaf_id.gstCode %}
+                            {% if flag == false %} <br>GST: GMEDES Invoice to Doctor {% endif %}
+                            <br>Custom Clearance Admin Fee - SG is updated
+                            <br>Old value: {{ gtdOldData.gm_ccaf_id.gstCode }}
+                            <br>New value: {{ gtdNewData.gm_ccaf_id.gstCode }}<br><br>
+                        {% endif %}
+
+                        {% if gtdOldData.gm_sgcig_pf.gstCode != gtdNewData.gm_sgcig_pf.gstCode %}
+                            {% if flag == false %} <br>GST: GMEDES Invoice to Doctor {% endif %}
+                            <br>SG Custom IG Permit Fee is updated
+                            <br>Old value: {{ gtdOldData.gm_sgcig_pf.gstCode }}
+                            <br>New value: {{ gtdNewData.gm_sgcig_pf.gstCode }}<br><br>
+                        {% endif %}
+
+                        {% if gtdOldData.gm_pgb_variable.gstCode != gtdNewData.gm_pgb_variable.gstCode %}
+                            {% if flag == false %} <br>GST: GMEDES Invoice to Doctor {% endif %}
+                            <br>Payment Gateway (Variable) is updated
+                            <br>Old value: {{ gtdOldData.gm_pgb_variable.gstCode }}
+                            <br>New value: {{ gtdNewData.gm_pgb_variable.gstCode }}<br><br>
+                        {% endif %}
+                        {% if gtdOldData.gm_pgb_fixed.gstCode != gtdNewData.gm_pgb_fixed.gstCode %}
+                            {% if flag == false %} <br>GST: GMEDES Invoice to Doctor {% endif %}
+                            <br>Payment Gateway (Fixed) is updated
+                            <br>Old value: {{ gtdOldData.gm_pgb_fixed.gstCode }}
+                            <br>New value: {{ gtdNewData.gm_pgb_fixed.gstCode }}<br><br>
+                        {% endif %}
+
+                        {% if gtdOldData.gm_mgms.gstCode != gtdNewData.gm_mgms.gstCode %}
+                            {% if flag == false %} <br>GST: GMEDES Invoice to Doctor {% endif %}
+                            <br>Medicines Gross Margin Share is updated
+                            <br>Old value: {{ gtdOldData.gm_mgms.gstCode }}
+                            <br>New value: {{ gtdNewData.gm_mgms.gstCode }}<br><br>
+                        {% endif %}
+                        {% if gtdOldData.gm_pfrs.gstCode != gtdNewData.gm_pfrs.gstCode %}
+                            {% if flag == false %} <br>GST: GMEDES Invoice to Doctor {% endif %}
+                            <br>Prescribing Fees Revenue Share is updated
+                            <br>Old value: {{ gtdOldData.gm_pfrs.gstCode }}
+                            <br>New value: {{ gtdNewData.gm_pfrs.gstCode }}<br><br>
+                        {% endif %}
+                        {% if gtdOldData.gm_lcrs.gstCode != gtdNewData.gm_lcrs.gstCode %}
+                            {% if flag == false %} <br>GST: GMEDES Invoice to Doctor {% endif %}
+                            <br>Live Consult Revence Share is updated
+                            <br>Old value: {{ gtdOldData.gm_lcrs.gstCode }}
+                            <br>New value: {{ gtdNewData.gm_lcrs.gstCode }}<br><br>
+                        {% endif %}
+
+                        {% if gtdOldData.gm_sf.gstCode != gtdNewData.gm_sf.gstCode %}
+                            {% if flag == false %} <br>GST: GMEDES Invoice to Doctor {% endif %}
+                            <br>Shipping and Handling is updated
+                            <br>Old value: {{ gtdOldData.gm_sf.gstCode }}
+                            <br>New value: {{ gtdNewData.gm_sf.gstCode }}<br><br>
+                        {% endif %}
+
+                        {% if gtdOldData.gm_ct_sg.gstCode != gtdNewData.gm_ct_sg.gstCode %}
+                            {% if flag == false %} <br>GST: GMEDES Invoice to Doctor {% endif %}
+                            <br>Import Tax/VAT - SG is updated
+                            <br>Old value: {{ gtdOldData.gm_ct_sg.gstCode }}
+                            <br>New value: {{ gtdNewData.gm_ct_sg.gstCode }}<br><br>
+                        {% endif %}
+
+                        {% if gtdOldData.gm_ct_id.gstCode != gtdNewData.gm_ct_id.gstCode %}
+                            {% if flag == false %} <br>GST: GMEDES Invoice to Doctor {% endif %}
+                            <br>Import Tax/VAT - INDO is updated
+                            <br>Old value: {{ gtdOldData.gm_ct_id.gstCode }}
+                            <br>New value: {{ gtdNewData.gm_ct_id.gstCode }}<br><br>
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+            {% endif %}
+          </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

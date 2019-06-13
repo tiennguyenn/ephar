@@ -1,0 +1,202 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {% stylesheets
+        'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+        'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+        'bundles/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+        'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+        'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+        'bundles/admin/assets/global/plugins/ion.rangeslider/css/ion.rangeSlider.css'
+        'bundles/admin/assets/global/plugins/ion.rangeslider/css/ion.rangeSlider.skinFlat.css'
+        'bundles/admin/assets/global/plugins/bootstrap-markdown/css/bootstrap-markdown.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-summernote/summernote.css'
+        'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-editable/bootstrap-editable/css/bootstrap-editable.css'
+        'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+        'bundles/admin/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+        'bundles/admin/assets/global/plugins/icheck/skins/all.css'
+        filter='cssrewrite'
+        debug=false
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        <!-- do not move it into stylesheet block -->
+        <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block pageTitle %}
+    <h1>{{ title}}</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard')}}">Home</a> <i class="fa fa-circle"></i> </li>
+    <li> <span class="active">{{ title }}</span> </li>
+{% endblock %}
+{% block content %}
+    <div class="portlet light bordered">
+        <div class="portlet-body">
+            <input type="hidden" id="ajax-url-save" value="{{ path('admin_save_' ~ documentSelector ~ '_setting') }}" />
+            <input type="hidden" id="ajax-url-get" value="{{ path('admin_get_' ~ documentSelector ~ '_setting') }}" />
+            <input type="hidden" id="ajax-upload-image" value="{{ path('admin_upload_picture') }}" />
+            <input type="hidden" id="documentName" value="{{ documentName }}" />
+            <input type="hidden" id="ajax-get-log-url" value="{{ path('admin_document_log_list_ajax') }}" />
+            <input type="hidden" id="ajax-view-document-log-before" value="{{ path('admin_view_document_log', {'documentLogId':'_documentId', 'isAfter': false}) }}" />
+            <input type="hidden" id="ajax-view-document-log-after" value="{{ path('admin_view_document_log', {'documentLogId':'_documentId', 'isAfter': true}) }}" />
+            <input type="hidden" id="documentId" value="{{ document_content.fileDocument.id }}">
+            <input type="hidden" id="contentSelector" value="{{ documentSelector }}" />
+            <form class="form-horizontal" action="#" id="document-setting" method="POST" enctype="multipart/form-data">
+                <div class="form-body pt-0">
+                    <div class="form-content">
+                        <h3 class="block mt-0">{{ title }}</h3>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="selectedSite" class="col-md-3 control-label">Selected Site:</label>
+                                    <div class="col-md-4">
+                                        <select id="selectedSite" class="form-control select2">
+                                            {% for site in sites %}
+                                                <option value="{{ site.id }}" {% if current_site == site.name|lower %}selected{% endif %}>{{ site.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6" style="padding-right: 20px;">
+                                    <a href="javascript: void(0)" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit pull-right" id="view-document-log">Document Log</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-grid">
+                            <div class="col-md-12">
+                                <textarea name="{{ documentSelector }}">{{ document_content.contentAfter }}</textarea>
+                                <span style="color: red; display: none" id="document-setting-error"><small>Document content can't be blank</small></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="effectiveDate" class="col-md-3 control-label">Effective Date <span class="required" aria-required="true"> * </span></label>
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="effectiveDate" value="{{ document_content.effectiveDate|date('Y-m-d') }}">
+                                            <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-grid">
+                            <div class="col-md-12 mt-10">
+                                <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit pull-right" id="document-setting-submit">Save</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="modal-document" class="modal fade modal-new" data-backdrop="static" data-keyboard="false" tabindex="-1" data-width="500">
+        <div class="modal-header">
+            <h4 class="modal-title" id="document-title"></h4>
+        </div>
+        <div class="modal-body">
+            <div class="text-center">
+                <p id="document-information"></p>
+
+                <button type="button" data-dismiss="modal" aria-hidden="true" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10">Close</button>
+            </div>
+        </div>
+    </div>
+    <div id="modal-document-log" class="modal fade modal-new" data-backdrop="static" data-keyboard="false" tabindex="-1" data-width="700">
+        <div class="modal-header">
+            <h4 class="modal-title" id="document-title">Document Log</h4>
+        </div>
+        <div class="modal-body">
+            <div class="text-center">
+                <div class="text-right" id="sample_1_length">
+                    <label>
+                        <select id="table-length" name="sample_1_length" aria-controls="sample_1" class="form-control input-sm input-xsmall input-inline">
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                        </select>
+                        entries</label>
+                </div>
+                <div class="table-scrollable">
+                    <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" id="sample_1" role="grid" aria-describedby="sample_1_info">
+                        <thead>
+                        <tr role="row">
+                            <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending"> Content Before </th>
+                            <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="1"> Content After </th>
+                            <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="2"> Effective Date </th>
+                            <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="3"> Log Date </th>
+                        </tr>
+                        </thead>
+                        <tbody id="table-body-document-log"></tbody>
+                    </table>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-5 col-sm-12">
+                        <div class="dataTables_info" id="list-tables-info" role="status" aria-live="polite"></div>
+                    </div>
+                    <div class="col-md-7 col-sm-12">
+                        <div class="dataTables_paginate paging_bootstrap_number" id="sample_1_paginate">
+                            <ul class="pagination" style="visibility: visible;" id="list-table-pagin">
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" data-dismiss="modal" aria-hidden="true" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10">Close</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        var CKEDITOR_BASEPATH = '/bundles/admin/assets/global/plugins/ckeditor/';
+    </script>
+    {% javascripts
+        '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/clockface/js/clockface.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/ion.rangeslider/js/ion.rangeSlider.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-markdown/lib/markdown.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-markdown/js/bootstrap-markdown.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-summernote/summernote.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/lib/js/wysihtml5-0.3.0.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery.mockjax.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/bootstrap-editable/js/bootstrap-editable.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/wysihtml5/wysihtml5.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/icheck/icheck.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/ckeditor/ckeditor.js'
+        '@AdminBundle/Resources/public/js/base.js'
+        '@AdminBundle/Resources/public/js/admin_document_setting.js'
+        debug=false
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

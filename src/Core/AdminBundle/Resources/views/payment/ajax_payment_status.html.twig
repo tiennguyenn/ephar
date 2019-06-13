@@ -1,0 +1,57 @@
+<div class="multi-select items-selected-info" style="display: none;">
+    <div class="row">
+        <div class="col-md-6 pt-5"><span class="items_picked">0</span> Items selected <a href="javascript:void(0);" class="btn-clear-all-checkbox">Clear all check boxes</a></div>
+        <div class="col-md-6 text-right">
+            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right btn-modal-update-multi">Update Selected <i class="fa fa-arrow-right"></i></a>
+        </div>
+    </div>
+    <input type="hidden" name="items_picked" value="">
+</div>
+{% set arr_sorting = sorting|split('_') %}
+{% set user_label = userType == 1? 'Dr': user_type_label(userType) %}
+<div class="table-scrollable">
+    <table class="table table-striped table-bordered table-checkable table-hover dataTable no-footer dtr-inline table-edit" id="sample_1" role="grid" aria-describedby="sample_1_info" style="width: 1562px;">
+        <thead>
+        <tr role="row">
+            <th>
+                <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                    <input type="checkbox" class="group-checkable checkedAll" data-usertype="{{ userType }}" data-set="#sample_1 .checkboxes">
+                    <span></span>
+                </label>
+            </th>
+            {% if userType in [1,2,4] %}
+            <th class="sorting {% if 'userCode' in arr_sorting|default([]) %}sorting_{{ arr_sorting[1]|default('') }}{% endif %}" tabindex="0" data-colname="userCode" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">{{ user_label }} Code</th>
+            {% endif %}
+            <th class="sorting {% if 'name' in arr_sorting|default([]) %}sorting_{{ arr_sorting[1]|default('') }}{% endif %}" tabindex="0" data-colname="name" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">{{ user_label }} Name</th>
+            <th class="sorting {% if 'amountDue' in arr_sorting|default([]) %}sorting_{{ arr_sorting[1]|default('') }}{% endif %}" tabindex="0" data-colname="amountDue" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Amount Due</th>
+            <th class="sorting {% if 'amountPaid' in arr_sorting|default([]) %}sorting_{{ arr_sorting[1]|default('') }}{% endif %}" tabindex="0" data-colname="amountPaid" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Amount Paid</th>
+            <th class="sorting {% if 'status' in arr_sorting|default([]) %}sorting_{{ arr_sorting[1]|default('') }}{% endif %}" tabindex="0" data-colname="status" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Status</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if data %}
+            {% for item in data %}
+                {% include '@Admin/payment/payment_status_row.html.twig' with {item: item, userType: userType} %}
+            {% endfor %}
+        {% else %}
+            <tr><td></td><td colspan="6">{{ generateMessage('msgNoData') }}</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+{% if data|length > 0 %}
+{% set fromRecord = currentPage > 0? currentPage*perPage: currentPage %}
+{% set toRecored = fromRecord + perPage %}
+<div class="row">
+    <div class="col-md-5 col-sm-12">
+        <div class="dataTables_info" role="status" aria-live="polite">Showing {{ fromRecord + 1 }} to {{ toRecored < totalResult? toRecored: totalResult }} of {{ totalResult }} entries</div>
+    </div>
+    <div class="col-md-7 col-sm-12">
+        <div class="dataTables_paginate paging_bootstrap_number ajax_paging">
+            {{ paginationHTML|raw }}
+        </div>
+    </div>
+</div>
+<input type="hidden" name="ps_filter[page]" value="{{ currentPage }}">
+{% endif %}

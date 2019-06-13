@@ -1,0 +1,380 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {{ parent () }}
+    {% stylesheets
+    'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+    'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+    'bundles/admin/assets/global/plugins/ladda/ladda-themeless.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-select/css/bootstrap-select.css'
+    'bundles/admin/assets/global/plugins/jquery-multi-select/css/multi-select.css'
+    'bundles/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+    'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+    'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+    filter='cssrewrite'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block pageTitle %}
+    <h1>Global Settings for Revenue on Medicines and Admin Service Fees</h1>
+{% endblock %}
+{% block content %}
+<div class="portlet light">
+    <div class="portlet-body form">
+        {{ display_messages()|raw }}
+        <div id="notification"></div>
+        <div class="panel panel-primary zero-margin-bottom">
+            <div class="panel-heading">
+                <div class="m-grid">
+                    <div class="m-grid-row">
+                        <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                            PATIENT TYPE
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-body">
+            <div class="col-md-6">
+                <div class="icheck-inline mb-20">
+                    <label><input type="checkbox" class="icheck" {% if isActiveLocal %}checked="checked"{% endif %} value="1" />Local Patients</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="icheck-inline mb-20">
+                    <label><input type="checkbox" class="icheck" {% if isActiveOversea %}checked="checked"{% endif %} value="2">Overseas Patients</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-body">
+            <div class="panel panel-primary zero-margin-bottom">
+                <div class="panel-heading">
+                    <div class="m-grid">
+                        <div class="m-grid-row">
+                            <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                PRIMARY AGENT GLOBAL FEES
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-20">
+                <span class="txt-red">Important Note: Primary Agent Global Fees are the default fees to be applied to all primary agents. When creating a new agent, these fees are copied over in the agent form. The fees impact the agent revenues. 
+                <u>Please modify with care.</u></span>
+            </div>
+            <div class="mb-20 well">
+                GLOBAL ADMIN SERVICE FEE PER PRESCRIPTION FOR PRIMARY AGENTS
+            </div>
+            <div class="mb-20">
+                <span>Global admin service fee per prescription is the default flat fee charged by GMedes & Agent per prescription, and is added to the doctor's prescribing fee in the patient's invoice.</span>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default custom-panel-grey">
+                        <div class="panel-heading">
+                            <div class="m-grid">
+                                <div class="m-grid-row">
+                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                        Local Patients
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include '@Admin/payment_setting/gms_form_1366.html.twig' with { 'form': formService1, 'formId': 'frm-service1', 'area_type': 1, 'ms_type': 2, 'is_active': isActiveLocal  } %}
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default custom-panel-grey">
+                        <div class="panel-heading">
+                            <div class="m-grid">
+                                <div class="m-grid-row">
+                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                        Overseas Patients
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include '@Admin/payment_setting/gms_form_1366.html.twig' with { 'form': formService2, 'formId': 'frm-service2', 'area_type': 2, 'ms_type': 2, 'is_active': isActiveOversea  } %}
+                </div>
+            </div>
+        </div>
+        <div class="form-body">
+            <div class="mb-20 well">
+                GLOBAL MARKETING SERVICE FEE FOR PRIMARY AGENTS (FIXED FEES ON MEDICINES)
+            </div>
+            <div class="mb-20">
+                <span>Global Marketing Service Fees for Primary Agents are the default fees deducted from GMedes margins on medicines, and paid to Agents. GMedes margin is calculated as the (Total Medicine Cost to Clinic per RX) less (Total Pharmacy Cost per RX).</span>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default custom-panel-grey">
+                        <div class="panel-heading">
+                            <div class="m-grid">
+                                <div class="m-grid-row">
+                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                        Local Patients
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include '@Admin/payment_setting/agent_gms_form_1366.html.twig' with { 'form': formMedicine1, 'formId': 'frm-medicine1', 'area_type': 1, 'ms_type': 1, 'is_active': isActiveLocal  } %}
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default custom-panel-grey">
+                        <div class="panel-heading">
+                            <div class="m-grid">
+                                <div class="m-grid-row">
+                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                        Overseas Patients
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include '@Admin/payment_setting/agent_gms_form_1366.html.twig' with { 'form': formMedicine2, 'formId': 'frm-medicine2', 'area_type': 2, 'ms_type': 1, 'is_active': isActiveOversea  } %}
+                </div>
+            </div>
+        </div>
+        <div class="form-body">
+            <div class="mb-20 well">
+                GLOBAL MINIMUM MEDICINE MARGINS FOR PAYOUT TO PRIMARY AGENTS
+            </div>
+            <div class="mb-20">
+                <span>Global minimum margins on medicines for payout to primary agents determines the minimum GMedes margins that must be earned from medicines, per prescription, before marketing service fees for primary agents are paid. These are the default fees.</span>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    {% include '@Admin/payment_setting/agent_min_margin_1366.html.twig' with { 'form': primaryMinMarginForm, 'formId': 'frm-primary-min-margin', 'is_active': true, 'type': 2  } %}
+                </div>
+            </div>
+        </div>
+        <div class="form-body">
+            <div class="mb-20 well">
+                GLOBAL ADMIN SERVICE FEE PER LIVECONSULT FOR PRIMARY AGENTS
+            </div>
+            <div class="mb-20">
+                <span>Global admin service fee per liveconsult is the default flat fee charged by GMedes & Agent per liveconsult, and is added to the doctor's liveconsult fee in the patient's invoice.</span>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default custom-panel-grey">
+                        <div class="panel-heading">
+                            <div class="m-grid">
+                                <div class="m-grid-row">
+                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                        Local Patients
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include '@Admin/payment_setting/gms_form_1366.html.twig' with { 'form': formLiveConsult1, 'formId': 'frm-live-consult1', 'area_type': 1, 'ms_type': 4, 'is_active': isActiveLocal } %}
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default custom-panel-grey">
+                        <div class="panel-heading">
+                            <div class="m-grid">
+                                <div class="m-grid-row">
+                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                        Overseas Patients
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include '@Admin/payment_setting/gms_form_1366.html.twig' with { 'form': formLiveConsult2, 'formId': 'frm-live-consult2', 'area_type': 2, 'ms_type': 4, 'is_active': isActiveOversea } %}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-body">
+            <div class="panel panel-primary zero-margin-bottom">
+                <div class="panel-heading">
+                    <div class="m-grid">
+                        <div class="m-grid-row">
+                            <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                SECONDARY AGENT GLOBAL FEES
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-20">
+                <span class="txt-red">Important Note: Secondary agent global fees determine the default fees that a secondary agent will earn should they sign up parkway doctors under the parkway accredited service.</span>
+            </div>
+            <div class="mb-20 well">
+                GLOBAL ADMIN SERVICE FEE PER PRESCRIPTION FOR SECONDARY AGENTS
+            </div>
+            <div class="mb-20">
+                <span>Global admin service fees per prescription for secondary agents are paid to agents for transactions by doctors under the Parkway accredited service. The fees are deducted from GMedes Admin Service Fees per Prescription.</span>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default custom-panel-grey">
+                        <div class="panel-heading">
+                            <div class="m-grid">
+                                <div class="m-grid-row">
+                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                        Local Patients
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include '@Admin/payment_setting/agent_2nd_gms_form_1366.html.twig' with { 'form': agentFormLocalDescription, 'formId': 'form-3', 'area_type': 1, 'fee': fee3ardDescriptionLocalFee, 'is_active': isActiveLocal } %}
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default custom-panel-grey">
+                        <div class="panel-heading">
+                            <div class="m-grid">
+                                <div class="m-grid-row">
+                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                        Overseas Patients
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include '@Admin/payment_setting/agent_2nd_gms_form_1366.html.twig' with { 'form': agentFormOverseaDescription, 'formId': 'form-4', 'area_type': 2, 'fee': fee3ardDescriptionOverseaFee, 'is_active': isActiveOversea } %}
+                </div>
+            </div>
+        </div>
+        <div class="form-body">
+            <div class="mb-20 well">
+                GLOBAL MARKETING SERVICE FEE FOR SECONDARY AGENTS (FIXED FEES ON MEDICINES)
+            </div>
+            <div class="mb-20">
+                <span>Global marketing service fees for secondary agents are fees that are paid to secondary agents for transactions by doctors under the Parkway accredited service. These fees are deducted from GMedes marketing service fees if the minimum medicine margins for payout to secondary agents are met.</span>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default custom-panel-grey">
+                        <div class="panel-heading">
+                            <div class="m-grid">
+                                <div class="m-grid-row">
+                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                        Local Patients
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include '@Admin/payment_setting/agent_2nd_gms_form_1366.html.twig' with { 'form': agentFormLocalMedicine, 'formId': 'form-1', 'area_type': 1, 'fee': fee3ardMedicineLocalFee, 'is_active': isActiveLocal } %}
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default custom-panel-grey">
+                        <div class="panel-heading">
+                            <div class="m-grid">
+                                <div class="m-grid-row">
+                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                        Overseas Patients
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include '@Admin/payment_setting/agent_2nd_gms_form_1366.html.twig' with { 'form': agentFormOverseaMedicine, 'formId': 'form-2', 'area_type': 2, 'fee': fee3ardMedicineOverseaFee, 'is_active': isActiveOversea } %}
+                </div>
+            </div>
+        </div>
+        <div class="form-body">
+            <div class="mb-20 well">
+                GLOBAL MINIMUM MEDICINE MARGINS FOR PAYOUT TO SECONDARY AGENTS
+            </div>
+            <div class="mb-20">
+                <span>Global minimum medicine margins for payout to secondary agents determine the default minimum GMedes margins that must be left after the Marketing Service Fee for Primary Agents are settled. Global marketing service fee for secondary agents may be overridden by Custom marketing service fee for secondary agents.</span>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    {% include '@Admin/payment_setting/agent_min_margin_1366.html.twig' with { 'form': secondaryMinMarginForm, 'formId': 'frm-secondary-min-margin', 'is_active': true, 'type': 3 } %}
+                </div>
+            </div>
+        </div>
+        <div class="form-body">
+            <div class="mb-20 well">
+                GLOBAL ADMIN SERVICE FEE PER LIVE CONSULT FOR SECONDARY AGENTS
+            </div>
+            <div class="mb-20">
+                <span>Global admin service fee per liveconsult for secondary agents are the default fees that will be deducted from GMedes Admin Service Fee per LiveConsult.</span>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default custom-panel-grey">
+                        <div class="panel-heading">
+                            <div class="m-grid">
+                                <div class="m-grid-row">
+                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                        Local Patients
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include '@Admin/payment_setting/agent_2nd_gms_form_1366.html.twig' with { 'form': agentFormLocalConsult, 'formId': 'form-5', 'area_type': 1, 'fee': fee3ardConsultLocalFee, 'is_active': isActiveLocal } %}
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default custom-panel-grey">
+                        <div class="panel-heading">
+                            <div class="m-grid">
+                                <div class="m-grid-row">
+                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                        Overseas Patients
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include '@Admin/payment_setting/agent_2nd_gms_form_1366.html.twig' with { 'form': agentFormOverseaConsult, 'formId': 'form-6', 'area_type': 2, 'fee': fee3ardConsultOverseaFee, 'is_active': isActiveOversea } %}
+                </div>
+            </div>
+        </div>
+        <div class="pt-20 pb-20">
+            {% set module = constant('UtilBundle\\Utility\\Constant::GLOBAL_MARGIN_SHARE_FEE_MODULE_NAME') %}
+            <a href="#modal-gms-view-logs" id="view_logs_anchor"
+            data-module="{{ module }}"
+            data-template-view="AdminBundle:payment_setting\Logs:gross_margin_share_log.html.twig"
+            data-template-print="AdminBundle:payment_setting\Logs:gross_margin_share_pdf.html.twig"
+            data-breadcrumb-title="GLOBAL SETTINGS FOR MARGIN SHARE AND PLATFORM FEES"
+            data-modal-title='GLOBAL MARGIN SHARE AND FEE'
+            data-file-name="Global_Margin_Share_Log"
+            data-toggle="modal" class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm">View Log</a>
+        </div>
+        <input type="hidden" id="url_payment_gms_new_update_active" value="{{ path('payment_gms_new_update_active') }}">
+        <input type="hidden" id="url_payment_global_margin_share_fee" value="{{ path('payment_global_margin_share_fee') }}">
+        <input type="hidden" id="platform_share_fee" value="{{ platform_share_fee }}">
+    </div>
+</div>
+
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/additional-methods.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/ladda/spin.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/ladda/ladda.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/ui-buttons-spinners.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/table-datatables-managed.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/icheck/icheck.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+    '@AdminBundle/Resources/public/js/payment.settings.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js">
+
+<head>
+  <title>{% block title %}G-MEDS{% endblock %}</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <meta content="Dashboard" name="description" />
+  <meta content="Dashboard" name="keywords" />
+  <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+    
+        {% stylesheets
+            'bundles/admin/assets/global/plugins/font-awesome/css/font-awesome.min.css'
+            'bundles/admin/assets/global/plugins/simple-line-icons/simple-line-icons.min.css'
+            'bundles/admin/assets/global/plugins/bootstrap/css/bootstrap.min.css'
+            'bundles/admin/assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css'
+            'bundles/admin/assets/global/plugins/typeahead/typeahead.css' 
+            debug=false
+            filter='cssrewrite'
+        %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+
+        {% block stylesheets %} {% endblock %}
+
+        {% stylesheets
+            'bundles/admin/assets/global/css/components.min.css'
+            'bundles/admin/assets/global/css/plugins.min.css'
+            'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+            'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+            'bundles/admin/assets/layouts/layout4/css/layout.min.css'
+            'bundles/admin/assets/layouts/layout4/css/themes/default.min.css'
+            'bundles/admin/assets/layouts/layout4/css/custom.min.css'
+            'bundles/admin/assets/layouts/layout4/css/custom2.min.css'
+            'bundles/admin/assets/layouts/layout4/css/slick/slick.css'
+            filter='cssrewrite'
+            debug=true
+        %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+    <style type="text/css">
+        .notes-delete{
+            color: red;
+        }
+    </style>
+
+  <link rel="shortcut icon" href="{{ asset('bundles/admin/assets/pages/img/logo.png') }}" />
+
+  {% if app.user.id|default('not_login') != 'not_login' %}
+    <script>
+      (function(i,s,o,g,r,a,m){
+        i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)
+        },
+        i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];
+        a.async=1;a.src=g;
+        m.parentNode.insertBefore(a,m)
+      })
+      (window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      ga('create', '{{ ga_code }}', {'siteSpeedSampleRate': 100});
+      ga('set', 'userId', '{{ app.user.id }}');
+      ga('send', 'pageview');
+    </script>
+  {% endif %}
+</head>
+<body class="page-container-bg-solid page-header-fixed page-sidebar-fixed page-sidebar-closed-hide-logo {% block classbody %}{% endblock %}">
+
+  {% block body %}{% endblock %}
+  
+  {% block expiredModal %}{% endblock %}
+
+  <!--[if lt IE 9]>
+  {% javascripts
+      '@AdminBundle/Resources/public/assets/global/plugins/respond.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/excanvas.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/ie8.fix.min.js'
+      
+       debug=false
+  %}
+  <script type="text/javascript" src="{{ asset_url }}"></script>
+  {% endjavascripts %}
+  <![endif]-->
+  <script type="text/javascript">
+      var msg = {{ getMessageContent()|raw }};
+      var singleSessionUrl = "{{path('single_session')}}";
+  </script>
+
+
+      {% javascripts
+          '@AdminBundle/Resources/public/assets/global/plugins/jquery.min.js'
+          '@AdminBundle/Resources/public/assets/global/plugins/bootstrap/js/bootstrap.min.js'
+          '@AdminBundle/Resources/public/assets/global/plugins/js.cookie.min.js'
+          '@AdminBundle/Resources/public/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js'
+          '@AdminBundle/Resources/public/assets/global/plugins/jquery.blockui.min.js'
+          '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js'
+          '@AdminBundle/Resources/public/assets/global/scripts/app.min.js'
+           debug=false
+
+      %}
+      <script type="text/javascript" src="{{ asset_url }}"></script>
+      {% endjavascripts %}
+
+      {% block javascripts %} {% endblock %}
+
+      {% javascripts
+          '@AdminBundle/Resources/public/assets/layouts/layout4/scripts/layout.min.js'
+          '@AdminBundle/Resources/public/assets/layouts/layout4/scripts/custom.min.js'
+          '@AdminBundle/Resources/public/js/common.js'
+          '@AdminBundle/Resources/public/assets/layouts/global/scripts/quick-sidebar.min.js'
+          '@AdminBundle/Resources/public/assets/layouts/global/scripts/quick-nav.min.js'
+          debug=false
+
+       %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+       {% endjavascripts %}
+
+    {% block javascriptsMenu %}
+    {% endblock %}
+  <div id="hidden_fields">
+      {% block hiddenfields %}
+      {% endblock %}
+  </div>
+</body>
+
+<div id="modal-single-session" data-keyboard="false" data-backdrop="static" class="modal fade modal-new" tabindex="-1" data-width="400">
+    <div class="modal-header">
+        <h4 class="modal-title">Notice</h4>
+    </div>
+    <div class="modal-body">
+        <div class="portlet-title">
+            <div class="caption">
+                <span class="caption-subject uppercase sbold" id="title"></span>
+            </div>
+        </div>
+        <div class="portlet-body">
+            You have been logged out from this computer.
+        </div>
+    </div>
+    <div class="modal-footer">
+      <a href="{{path('login')}}" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm">Close</a>
+    </div>
+</div>
+
+</html>

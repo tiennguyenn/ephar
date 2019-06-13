@@ -1,0 +1,830 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {% stylesheets
+        'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+        'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+        'bundles/admin/assets/global/plugins/bootstrap-select/css/bootstrap-select.css'
+        'bundles/admin/assets/global/plugins/jquery-multi-select/css/multi-select.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+        'bundles/admin/assets/global/plugins/icheck/skins/all.css'
+        'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+        'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+    filter='cssrewrite'
+    debug=false
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    <!-- do not move it into stylesheet block -->
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts
+
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-select/js/bootstrap-select.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/clockface/js/clockface.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/icheck/icheck.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-multi-select.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/form-icheck.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+        '@AdminBundle/Resources/public/js/admin_doctor_edit.js'
+        debug=false
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+{% endblock %}
+
+{% block pageTitle %}
+    <h1>{{ title}}</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard')}}">Home</a> <i class="fa fa-circle"></i> </li>
+    {% if doctorId > 0 %}
+    <li> <a href="{{ path('admin_doctor_list')}}">List Doctors</a><i class="fa fa-circle"></i> </li>
+    {% endif %}
+    <li> <span class="active">{{ title}}</span> </li>
+    {% endblock %}
+    {% block content %}
+    <div class="portlet light bordered" id="form_wizard_1" enctype="multipart/form-data"  >
+        <div class="portlet-body form">
+            <div class="mt-element-step">
+                <div class="row step-line">
+                    <div class="col-md-4 mt-step-col first done">
+                        <div class="mt-step-number bg-white font-grey">1</div>
+                        <div class="mt-step-title uppercase font-grey">Doctor's <br> Information</div>
+                    </div>
+                    <div class="col-md-4 mt-step-col second">
+                        <div class="mt-step-number bg-white font-grey">2</div>
+                        <div class="mt-step-title uppercase font-grey">Doctor's <br> Clinic</div>
+                    </div>
+                    <div class="col-md-4 mt-step-col last">
+                        <div class="mt-step-number bg-white font-grey">3</div>
+                        <div class="mt-step-title uppercase font-grey">Confirm</div>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" value="{{path(ajaxDependent)}}" id="ajaxUrlDependent" />
+            <input type="hidden" value="{{doctorId}}" id="current-doctor-id"/>
+            <input type="hidden" value="{{doctorGst}}" id="current-gst-status"/>
+            <input type="hidden" value="{{app.request.baseUrl}}/" id="asset-url"/>
+            <input type="hidden" value="{{path(successUrl)}}" id="success-url"/>
+            <input type="hidden" value="{{path('admin_validate_email')}}" id="validate-email-url"/>
+            <input type="hidden" value="{{ constant('UtilBundle\\Utility\\Constant::ID_SINGAPORE') }}" id="singapore_id">
+            <input type="hidden" value="{{ constant('UtilBundle\\Utility\\Constant::ID_MALAYSIA') }}" id="malaysia_id">
+            <form class="form-horizontal" action="#" id="admin-register-doctor-form-step1" method="POST" enctype="multipart/form-data">
+                <div class="form-wizard">
+                    <div class="form-body">
+                        <div class="form-content">
+                            {#<div class="alert alert-danger display-none">
+                                <button class="close" data-dismiss="alert"></button> You have some form errors. Please check below. </div>
+                            <div class="alert alert-success display-none">
+                                <button class="close" data-dismiss="alert"></button> Your form validation is successful! </div>#}
+                            <h4 class="block">Doctor's Personal Infomation</h4>
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.title.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.title,{'attr':{'class':'form-control select2'} })}}
+                                </div>
+                            </div>
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+
+
+                                    <label>{{ form.firstName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.firstName,{'attr':{'class':'form-control'} })}}
+
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.lastName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.lastName,{'attr':{'class':'form-control'} })}}
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mt-radio-inline mt-radio-inline-grid">
+                                        <label>{{ form.gender.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                        {{ form_widget(form.gender)}}
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.displayName.vars.label }} </label>
+                                    {{ form_widget(form.displayName,{'attr':{'class':'form-control'} })}}
+                                </div>
+
+                            </div>
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.email.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.email,{'attr':{'class':'form-control'} })}}
+                                </div>
+                                <div class="col-md-8">
+                                    <label>{{ form.phoneLocation.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class=" dropdown-parent" id="dropdown-parent">
+                                                <div class="form-float clearfix">
+                                                    <div class="col-md-5">
+                                                        {{form_widget(form.phoneLocation,{'attr':{'class':'form-control select2'} }) }}
+                                                    </div>
+                                                    <div class="col-md-7">
+                                                        {{ form_widget(form.phone, {'attr':{'class':'form-control'}})}}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.localMedicalLicence.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.localMedicalLicence,{'attr':{'class':'form-control'} })}}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.localMedicalCountry.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{form_widget(form.localMedicalCountry,{'attr':{'class':'form-control select2'}}) }}
+
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.localMedicalDate.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    <div class="input-group date year-picker bs-datetime">
+                                        {{form_widget(form.localMedicalDate,{'attr':{'class':'form-control '}}) }}
+                                        <span class="input-group-addon">
+                                            <button class="btn default date-set" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.localIdPassport.vars.label }}</label>
+                                    {{form_widget(form.localIdPassport,{'attr':{'class':'form-control '}}) }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.localIdPassportCountry.vars.label }}</label>
+                                    {{form_widget(form.localIdPassportCountry,{'attr':{'class':'form-control','name': 'location'}}) }}
+                                </div>
+                            </div>
+
+                            <h4 class="block">Doctor's Agent</h4>
+
+                            <div class="form-group">
+
+                                <div class="col-md-4">
+                                    <label>{{ form.agentId.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.agentId,{'attr':{'class':'form-control admin-doctor-agent-select'}}) }}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+
+                                <div class="col-md-4">
+                                    {{ form_widget(form.check3rd,{'attr':{'class':'form-control icheck'}}) }}
+                                    <label>{{ form.check3rd.vars.label }}</label>
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+
+                                <div class="col-md-4" style="margin-left: 15px">
+                                    <label>{{ form.secondaryAgentId.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.secondaryAgentId,{'attr':{'class':'form-control admin-doctor-agent-select'}}) }}
+                                </div>
+                            </div>
+
+                            <h4 class="block">Doctor's Specialization </h4>
+
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-4 col-xs-6"><label>Select <span class="required" aria-required="true"> * </span></label></div>
+                                        <div class="col-md-4 col-xs-6"><label>Doctor's Specialization </label></div>
+                                    </div>
+                                    <div class="multi-select-col-4">
+                                        {{ form_widget(form.specialization,{'attr':{'class': 'multi-select'} }) }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h4 class="block">Bank Details</h4>
+
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.bankCountryIssue.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.bankCountryIssue,{'attr':{'class':'form-control select2'} }) }}
+                                </div>
+                                <div class="col-md-4">
+                                    {% if form.bankCountryIssue.vars.value == constant('UtilBundle\\Utility\\Constant::ID_SINGAPORE') or form.bankCountryIssue.vars.value == constant('UtilBundle\\Utility\\Constant::ID_MALAYSIA') %}
+                                        {% set getBankFromCountry = true %}
+                                    {% else %}
+                                        {% set getBankFromCountry = false %}
+                                    {% endif %}
+                                    <label>{{ form.bankName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.bankName,{'attr':{'class':'form-control', 'style': getBankFromCountry ? 'display: none;' : 'display: block;'} }) }}
+                                    <select class="form-control" id="bank_name" name="bank_name" {% if getBankFromCountry %} style="display: block;" {% else %} style="display: none;" {% endif %}></select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.bankSwiftCode.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.bankSwiftCode,{'attr':{'class':'form-control'} }) }}
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.accountName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.accountName,{'attr':{'class':'form-control'} }) }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.accountNumber.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.accountNumber,{'attr':{'class':'form-control'} }) }}
+                                </div>
+
+                            </div>
+                            <h4 class="block">Payment Gateway</h4>
+                            <div class="mb-15">Note: The new payment gateway will be applied next 2 months after changing</div>
+                            <div class="form-group mb-grid">
+
+                                <div class="col-md-4">
+                                    <div class="mt-radio-inline mt-radio-inline-grid">
+                                        {{ form_widget(form.paymentGate)}}
+                                    </div>
+                                    <div>
+                                        {{ message }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <h4 class="block">Doctor's Fee</h4>
+
+                              <div class="mb-15"><strong>Doctor Fees - Prescribing Fee</strong></div>
+
+                              <div class="form-group mb-grid ">
+                                <label class="col-md-3 control-label-2lines valign-middle mb-0"><span>Local SG Patients <br> (Residing in Singapore):</span></label>
+
+                                <div class="col-md-3">
+                                  <div class="row">
+                                    <div class="col-md-2 pl-0 pr-0">
+                                       <label class="control-label control-label-2lines valign-middle display-block"><span>SGD</span></label>
+                                    </div>
+                                    <div class="col-md-10">
+                                        {{ form_widget(form.listRxReviewFeeLocal,{'attr':{'class':'form-control select-rx-fee'} }) }}
+                                    </div>
+                                  </div>
+
+                                </div>
+                                <div class="col-md-3 {% if form.rxReviewFeeLocal.vars.value in constant('UtilBundle\\Utility\\Constant::LIST_RX_REVIEW_FEE_LOCAL')|keys %}hidden{% endif %}">
+                                  <div class="row">
+                                    <div class="col-md-2 pl-0 pr-0">
+                                       <label class="control-label control-label-2lines valign-middle display-block"><span>SGD</span></label>
+                                    </div>
+                                    <div class="col-md-10">
+                                        {{ form_widget(form.rxReviewFeeLocal,{'attr':{'class':'form-control'} }) }}
+                                    </div>
+                                  </div>
+                                </div>
+
+                              </div>
+
+                              <div class="form-group mb-grid ">
+                                <label class="col-md-3 control-label-2lines valign-middle mb-0"><span>International Patients <br> (Residing outside Singapore):</span></label>
+
+                                <div class="col-md-3">
+                                  <div class="row">
+                                    <div class="col-md-2 pl-0 pr-0">
+                                       <label class="control-label control-label-2lines valign-middle display-block"><span>SGD</span></label>
+                                    </div>
+                                    <div class="col-md-10">
+                                        {{ form_widget(form.listRxReviewFeeInternational,{'attr':{'class':'form-control select-rx-fee'} }) }}
+                                    </div>
+                                  </div>
+
+                                </div>
+                                <div class="col-md-3 {% if form.rxReviewFeeInternational.vars.value in constant('UtilBundle\\Utility\\Constant::LIST_RX_REVIEW_FEE_INTERNATIONAL')|keys %}hidden{% endif %}">
+                                  <div class="row">
+                                    <div class="col-md-2 pl-0 pr-0">
+                                       <label class="control-label control-label-2lines valign-middle display-block"><span>SGD</span></label>
+                                    </div>
+                                    <div class="col-md-10">
+                                        {{ form_widget(form.rxReviewFeeInternational,{'attr':{'class':'form-control'} }) }}
+                                    </div>
+                                  </div>
+                                </div>
+
+                              </div>
+
+                              <div class="mt-30 mb-15"><strong>Doctor Fees - LiveConsult</strong></div>
+
+                              <div class="form-group mb-grid ">
+                                <label class="col-md-3 control-label-2lines valign-middle mb-0"><span>Local SG Patients <br> (Residing in Singapore):</span></label>
+
+                                <div class="col-md-3">
+                                  <div class="row">
+                                    <div class="col-md-2 pl-0 pr-0">
+                                       <label class="control-label control-label-2lines valign-middle display-block"><span>SGD</span></label>
+                                    </div>
+                                    <div class="col-md-10">
+                                        {{ form_widget(form.listRxFeeLiveConsultLocal,{'attr':{'class':'form-control select-rx-fee'} }) }}
+                                    </div>
+                                  </div>
+
+                                </div>
+                                <div class="col-md-3 {% if form.rxFeeLiveConsultLocal.vars.value in constant('UtilBundle\\Utility\\Constant::LIST_RX_FEE_LIVE_CONSULT_LOCAL')|keys %}hidden{% endif %}">
+                                  <div class="row">
+                                    <div class="col-md-2 pl-0 pr-0">
+                                       <label class="control-label control-label-2lines valign-middle display-block"><span>SGD</span></label>
+                                    </div>
+                                    <div class="col-md-10">
+                                        {{ form_widget(form.rxFeeLiveConsultLocal,{'attr':{'class':'form-control'} }) }}
+                                    </div>
+                                  </div>
+                                </div>
+
+                              </div>
+
+                              <div class="form-group mb-grid">
+                                <label class="col-md-3 control-label-2lines valign-middle mb-0"><span>International Patients <br> (Residing outside Singapore):</span></label>
+
+                                <div class="col-md-3">
+                                  <div class="row">
+                                    <div class="col-md-2 pl-0 pr-0">
+                                       <label class="control-label control-label-2lines valign-middle display-block"><span>SGD</span></label>
+                                    </div>
+                                    <div class="col-md-10">
+                                        {{ form_widget(form.listRxFeeLiveConsultInternational,{'attr':{'class':'form-control select-rx-fee'} }) }}
+                                    </div>
+                                  </div>
+
+                                </div>
+                                <div class="col-md-3 {% if form.rxFeeLiveConsultInternational.vars.value in constant('UtilBundle\\Utility\\Constant::LIST_RX_FEE_LIVE_CONSULT_INTERNATIONAL')|keys %}hidden{% endif %}">
+                                  <div class="row">
+                                    <div class="col-md-2 pl-0 pr-0">
+                                       <label class="control-label control-label-2lines valign-middle display-block"><span>SGD</span></label>
+                                    </div>
+                                    <div class="col-md-10">
+                                        {{ form_widget(form.rxFeeLiveConsultInternational,{'attr':{'class':'form-control'} }) }}
+                                    </div>
+                                  </div>
+                                </div>
+
+                              </div>
+
+                              <div class="mt-30 mb-15"><strong>Custom Selling Price</strong></div>
+                              <div class="form-group">
+                                <div class="col-md-12">
+                                    {{ form_widget(form.isCustomizeMedicineEnabled,{'attr':{'class':'form-control icheck'}}) }}
+                                    <label>{{ form.isCustomizeMedicineEnabled.vars.label }}</label>
+                                    <div class="mb-15">Note: By ticking this checkbox, G-MEDS is allowing the doctor to configure the selling prices of the medicines under the doctor's favorite medicines list. The doctor will control the final selling prices to his local and overseas patients. This also affects the doctor's earnings from medicines.</div>
+                                </div>
+                              </div>
+
+                            <div class="form-group">
+                                {% if doctor.profilePhotoUrl |length %}
+                                <div class="col-md-4">
+                                    <h4 class="block">Profile Photo</h4>
+                                    <div class="fileinput fileinput-new" data-provides="fileinput" id='doctor-profile' >
+                                        <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                            {% if doctor.profilePhotoUrl |length %}
+                                                <img src="{{ asset(doctor.profilePhotoUrl) }}&{{ date().timestamp }}" alt="" />
+                                                <input type="hidden" id="doctor-profile-input" value="{{ asset(doctor.profilePhotoUrl) }}" />
+                                            {% else %}
+                                                <img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&amp;text=no+image" alt=""  />
+                                                <input type="hidden" id="doctor-profile-input" value="" />
+                                            {% endif %}
+                                        </div>
+                                        <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"> </div>
+
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% if doctor.signatureUrl |length %}
+                                    <div class="col-md-4">
+                                        <h4 class="block">E-Signature <span class="required" aria-required="true"> * </span></h4>
+                                        <div class="fileinput fileinput-new" data-provides="fileinput" id='doctor-signature'>
+                                            <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                                {% if doctor.signatureUrl |length %}
+                                                    <img src="{{ asset(doctor.signatureUrl) }}&{{ date().timestamp }}" alt=""  />
+                                                {% else %}
+                                                    <img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&amp;text=no+image" alt="" />
+                                                {% endif %}
+                                            </div>
+                                            <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"> </div>
+
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <a  href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit" id='btnvalidateInfo' > Continue
+                                        <i class="fa fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+            <form class="form-horizontal" action="#" id="admin-register-doctor-form-step2" method="POST" style="display: none">
+                <div class="form-wizard">
+                    <div class="form-body">
+                        <div class="form-content">
+                            <div class='addition-content'>
+                                <div class="form-content form-repeat">
+                                    <h4 class="block">Doctor's Main Clinic Details</h4>
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            <label>{{ form.mainClinicName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                            {{ form_widget(form.mainClinicName,{'attr':{'class':'form-control'} })}}
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-grid">
+                                        <div class="col-md-4">
+                                            <label>{{ form.mainClinicEmail.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                            {{ form_widget(form.mainClinicEmail,{'attr':{'class':'form-control'} })}}
+                                        </div>
+                                        <div class="col-md-8">
+                                            <label>{{ form.mainClinicTelephoneLocation.vars.label }}<span class="required" aria-required="true"> * </span></label>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class=" dropdown-parent" id="dropdown-parent">
+                                                        <div class="form-float clearfix">
+                                                            <div class="col-md-5">
+                                                                {{ form_widget(form.mainClinicTelephoneLocation,{'attr':{'class':'form-control select2'} } ) }}
+                                                            </div>
+                                                            <div class="col-md-7">
+                                                                {{ form_widget(form.mainClinicPhone,{'attr':{'class':'form-control phone-num'} } ) }}
+                                                                <div class="phone-error-notice">
+                                                                    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-grid">
+                                        <div class="col-md-4">
+                                            <label>{{form.mainClinicAddressLine1.vars.label}} <span class="required" aria-required="true"> * </span></label>
+                                            {{ form_widget(form.mainClinicAddressLine1,{'attr':{'class':'form-control'} } ) }}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>{{form.mainClinicAddressLine2.vars.label}}</label>
+                                            {{ form_widget(form.mainClinicAddressLine2,{'attr':{'class':'form-control'} } ) }}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>{{form.mainClinicAddressLine3.vars.label}}</label>
+                                            {{ form_widget(form.mainClinicAddressLine3,{'attr':{'class':'form-control'} } ) }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-grid">
+                                        <div class="col-md-4">
+                                            <label>{{ form.mainClinicCountry.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                            {{ form_widget(form.mainClinicCountry,{'attr':{'class':'form-control select2'} } ) }}
+
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>{{ form.mainClinicState.vars.label }}</label>
+                                            {{ form_widget(form.mainClinicState,{'attr':{'class':'form-control select2'} } ) }}
+
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label>{{ form.mainClinicCity.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                            {{ form_widget(form.mainClinicCity,{'attr':{'class':'form-control select2'} } ) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-grid">
+                                        <div class="col-md-4">
+                                            <label>{{ form.mainClinicZipCode.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                            {{ form_widget(form.mainClinicZipCode,{'attr':{'class':'form-control'} })}}
+                                        </div>
+                                    </div>
+
+                                    <h4 class="block">GST Settings</h4>
+
+                                    <div class="form-group mb-grid">
+                                        <div class="col-md-4">
+                                            <label>{{ form.gstSetting.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                            <div class="mt-radio-inline mt-radio-inline-grid">
+                                                {{ form_widget(form.gstSetting)}}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label>{{ form.mainClinicGstNo.vars.label }}</label>
+                                            {{ form_widget(form.mainClinicGstNo,{'attr':{'class':'form-control'} })}}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>{{ form.mainClinicGstDate.vars.label }}
+
+                                            </label>
+                                            <div class="input-group date date-picker  bs-datetime" id="date-picker-gst">
+                                                {{ form_widget(form.mainClinicGstDate,{'attr':{'class':'form-control'} }) }}
+                                               <span class="input-group-addon">
+                                                    <button class="btn default date-set" type="button">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="{% if form.gstSetting.vars.value == 0 %}hide{% endif %}" id="gst-apply">
+
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                              <label>GST of Fees for <strong>Local Patients</strong></label>
+                                              <table class="table table-striped table-bordered table-hover order-column dataTable no-footer table-checkable">
+                                                <thead>
+                                                  <tr role="row">
+
+                                                    <th class="sorting" width="10%"> Has GST </th>
+                                                    <th class="sorting" width="40%"> Fee Type </th>
+                                                    <th class="sorting" width="20%"> GST Code </th>
+                                                    <th class="sorting" width="30%"> Effective Date </th>
+
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  <tr role="row">
+
+                                                    <td>
+                                                    </td>
+                                                    <td> Medicines</td>
+                                                    <td> Based on Medicine GST Code</td>
+                                                    <td></td>
+
+                                                  </tr>
+                                                  <tr role="row">
+
+                                                    <td>
+                                                      <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                                        {{ form_widget(form.applyGstReviewLocal, {'attr':{'class': 'icheck'}}) }}
+
+                                                      </label>
+                                                    </td>
+                                                    <td> Doctor Fee - Prescribing Fee</td>
+                                                    <td>
+
+                                                        {{ form_widget(form.gstCodeReviewLocal, {'attr': {'class': 'form-control select-gst-code select2'}}) }}
+
+                                                    </td>
+                                                    <td>
+                                                      <div class="input-group date date-picker bs-datetime">
+                                                        {{ form_widget(form.reviewLocalDate,{'attr':{'class':'form-control'} }) }}
+                                                          <span class="input-group-addon">
+                                                              <button class="btn default date-set" type="button">
+                                                                  <i class="fa fa-calendar"></i>
+                                                              </button>
+                                                          </span>
+                                                      </div>
+                                                    </td>
+
+                                                  </tr>
+
+                                                  <tr role="row">
+
+                                                    <td>
+                                                      <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                                        {{ form_widget(form.applyGstConsultLocal, {'attr':{'class': 'icheck'}}) }}
+
+                                                      </label>
+                                                    </td>
+                                                    <td> Doctor Fee - Liveconsult</td>
+                                                    <td>
+
+                                                        {{ form_widget(form.gstCodeConsultLocal, {'attr': {'class': 'form-control select-gst-code select2'}}) }}
+
+                                                    </td>
+                                                    <td>
+                                                      <div class="input-group date date-picker bs-datetime">
+                                                            {{ form_widget(form.consultLocalDate,{'attr':{'class':'form-control'} }) }}
+                                                          <span class="input-group-addon">
+                                                              <button class="btn default date-set" type="button">
+                                                                  <i class="fa fa-calendar"></i>
+                                                              </button>
+                                                          </span>
+                                                      </div>
+                                                    </td>
+
+                                                  </tr>
+
+                                                </tbody>
+                                              </table>
+                                            </div>
+                                          </div>
+
+                                        <div class="form-group">
+                                            <div class="col-md-12">
+                                              <label>GST of Fees for <strong>International Patients</strong></label>
+                                              <table class="table table-striped table-bordered table-hover order-column dataTable no-footer table-checkable">
+                                                <thead>
+                                                  <tr role="row">
+
+                                                    <th class="sorting" width="10%"> Has GST </th>
+                                                    <th class="sorting" width="40%"> Fee Type </th>
+                                                    <th class="sorting" width="20%"> GST Code </th>
+                                                    <th class="sorting" width="30%"> Effective Date </th>
+
+                                                  </tr>
+                                                </thead>
+                                                <tbody>
+                                                  <tr role="row">
+
+                                                    <td></td>
+                                                    <td> Medicines</td>
+                                                    <td>
+
+                                                        {{ form_widget(form.gstCodeMedicineInternational, {'attr': {'class': 'form-control select-gst-code select2'}}) }}
+
+                                                    </td>
+                                                    <td>
+                                                      <div class="input-group date date-picker bs-datetime">
+                                                            {{ form_widget(form.medicineInternationalDate,{'attr':{'class':'form-control'} }) }}
+                                                          <span class="input-group-addon">
+                                                              <button class="btn default date-set" type="button">
+                                                                  <i class="fa fa-calendar"></i>
+                                                              </button>
+                                                          </span>
+                                                      </div>
+                                                    </td>
+
+                                                  </tr>
+                                                  <tr role="row">
+
+                                                    <td>
+                                                      <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                                        {{ form_widget(form.applyGstReviewInternational, {'attr':{'class': 'icheck'}}) }}
+
+                                                      </label>
+                                                    </td>
+                                                    <td> Doctor Fee - Prescribing Fee</td>
+                                                    <td>
+
+                                                        {{ form_widget(form.gstCodeReviewInternational, {'attr': {'class': 'form-control select-gst-code select2'}}) }}
+
+                                                    </td>
+                                                    <td>
+                                                      <div class="input-group date date-picker bs-datetime">
+                                                            {{ form_widget(form.reviewInternationalDate,{'attr':{'class':'form-control'} }) }}
+                                                          <span class="input-group-addon">
+                                                              <button class="btn default date-set" type="button">
+                                                                  <i class="fa fa-calendar"></i>
+                                                              </button>
+                                                          </span>
+                                                      </div>
+                                                    </td>
+
+                                                  </tr>
+
+                                                  <tr role="row">
+
+                                                    <td>
+                                                      <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                                        {{ form_widget(form.applyGstConsultInternational, {'attr':{'class': 'icheck'}}) }}
+
+                                                      </label>
+                                                    </td>
+                                                    <td> Doctor Fee - Liveconsult</td>
+                                                    <td>
+
+                                                        {{ form_widget(form.gstCodeConsultInternational, {'attr': {'class': 'form-control select-gst-code select2'}}) }}
+
+                                                    </td>
+                                                    <td>
+                                                      <div class="input-group date date-picker bs-datetime">
+                                                            {{ form_widget(form.consultInternationalDate,{'attr':{'class':'form-control'} }) }}
+                                                          <span class="input-group-addon">
+                                                              <button class="btn default date-set" type="button">
+                                                                  <i class="fa fa-calendar"></i>
+                                                              </button>
+                                                          </span>
+                                                      </div>
+                                                    </td>
+
+                                                  </tr>
+
+                                                </tbody>
+                                              </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h4 class="block">Clinic Logo <span class="text-normal">(for E-prescription)</span> </h4>
+
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            <label>Upload Clinic logo <span class="required" aria-required="true"> * </span></label>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="fileinput fileinput-new" data-provides="fileinput" data-max-size="1" id='main-clinic-logo'>
+                                                        <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                                            {% if clinic.businessLogoUrl|length %}
+                                                                <img src="{{ asset(clinic.businessLogoUrl)}}&{{ date().timestamp }}" alt="" />
+                                                            {% else %}
+                                                                <img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&amp;text=no+image" alt="" />
+                                                            {% endif %}
+                                                            </div>
+                                                        <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"> </div>
+                                                        <div>
+                                                            <span class="btn btn-outline blue btn-ahalf-circle btn-sm text-uppercase btn-file">
+                                                                <span class="fileinput-new"> Select image </span>
+                                                                <span class="fileinput-exists"> Change </span>
+                                                                {{ form_widget(form.mainClinicLogo)}}
+                                                            </span>
+                                                            <a href="javascript:;" class="btn btn-outline red btn-ahalf-circle btn-sm text-uppercase fileinput-exists" data-dismiss="fileinput"> Remove </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions form-link">
+                                <a href="" class="btn btn-link link-special" id='btnAddClinicBlock'>Click here if you want to add another clinic</a>
+                            </div>
+                            <div class="form-actions">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <a href="admin-register-doctor.html" class="btn grey-dark btn-ahalf-circle text-uppercase btn-sm button-back" id="btnBackToStep1"> Back
+                                        </a>
+                                        <a href="admin-register-doctor-step3.html" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit" id="btnvalidateClinic"> Continue
+                                            <i class="fa fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <form id="admin-register-doctor-form-step3" style="display: none">
+                <div class="form-content">
+                </div>
+                <div class="form-actions">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href="javascript:void(0);" class="btn grey-dark btn-ahalf-circle text-uppercase btn-sm button-back" id="btnBackToStep2"> Back
+                            </a>
+                            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit" id="btSubmitData" > Submit
+                                <i class="fa fa-check"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="pt-20 pb-20">
+        {% set module = 'doctors' %}
+        <a href="#modal-doctor-view-logs" id="view_logs_anchor"
+        data-toggle="modal"
+        data-module="{{ module }}"
+        data-template-view="AdminBundle:admin\logs:doctor_log.html.twig"
+        data-template-print="AdminBundle:admin\logs:doctor_pdf.html.twig"
+        data-breadcrumb-title="Doctors"
+        data-file-name="Doctor_Log"
+        data-entity-id ="{{ doctorId }}"
+        class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm">View Log</a>
+    </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+

@@ -1,0 +1,37 @@
+<table class="table table-hover table-light_">
+  <thead>
+    <tr class="uppercase">
+      <th>Date</th>
+      <th>User</th>
+      <th>Changes</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for log in logs %}
+    <tr>
+      <td>{{ log.createdOn|date('d M y') }}</td>
+      <td>{{ log.user ? log.user.firstName ~ " " ~ log.user.lastName : '' }}</td>
+      <td>
+        {% if log.priceType == 'cost_price' %}
+        {{ log.drug.name }} GMEDES Cost Price updated
+        {% elseif log.priceType == 'list_price_domestic' %}
+        {%  if log.isPercent %}
+        GMEDES Local Percentage updated
+        {%  else %}
+        {{ log.drug.name }} GMEDES Local Selling Price updated
+        {%  endif %}
+        {% else %}
+        {%  if log.isPercent %}
+        GMEDES Oversea Percentage updated
+        {%  else %}
+        {{ log.drug.name }} GMEDES Overseas Selling Price updated
+        {%  endif %}
+        {% endif %}
+        <br />Old Value: {{ log.oldCostPrice }}{{ log.isPercent ? '%' : '' }}
+        <br />New Value: {{ log.newCostPrice }}{{ log.isPercent ? '%' : '' }}
+        <br />Effective Date: {{ log.takeEffectOn ? log.takeEffectOn|date('d M y') : '' }}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>

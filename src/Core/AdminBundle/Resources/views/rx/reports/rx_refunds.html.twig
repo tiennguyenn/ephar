@@ -1,0 +1,175 @@
+{% extends '@Admin/layout.html.twig' %}
+
+{% block stylesheets %}
+  {{ parent () }}
+  {% stylesheets
+      '@AdminBundle/Resources/public/assets/global/plugins/ion.rangeslider/css/ion.rangeSlider.css'
+      '@AdminBundle/Resources/public/assets/global/plugins/ion.rangeslider/css/ion.rangeSlider.skinFlat.css'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-markdown/css/bootstrap-markdown.min.css'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-summernote/summernote.css'
+      '@AdminBundle/Resources/public/assets/global/plugins/icheck/skins/minimal/_all.css'
+      '@AdminBundle/Resources/public/assets/global/plugins/typeahead/typeahead.css'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+      filter='cssrewrite'
+      output='css/s3.libs.css'
+  %}
+
+  <link rel="stylesheet" href="{{ asset_url }}" />
+{% endstylesheets %}
+{% endblock %}
+
+{% block pageTitle %}
+  <h1>RX Refunds</h1>
+{% endblock %}
+
+{% block breadcrumb %}
+  <li> <a href="index.html">Home</a> <i class="fa fa-circle"></i> </li>
+  <li> <a href="#.html">Report</a> <i class="fa fa-circle"></i> </li>
+  <li> <span class="active">RX Refunds</span> </li>
+{% endblock %}
+
+{% block content %}
+  <div class="portlet light">
+      <div class="portlet-body form">
+        <form id='frm-rx-report-filter' class="form-wizard">
+          <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+            <div class="show-grid mb-grid mod-filter-range mt-20">
+              <div class="row">
+                <div class="col-lg-4 col-md-6">
+                  <div class="input-icon right"> <i class="icon-magnifier auto-suggest"></i>
+                    <input id="doctor_auto_suggest_txb" data-searched='false' type="text" class="form-control on-suggestion doctor" placeholder="Search Doctor Name / Code">
+                  </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                  <div class="input-icon right"> <i class="icon-magnifier auto-suggest"></i>
+                    <input id="patient_auto_suggest_txb" data-searched='false' type="text" class="form-control on-suggestion patient" placeholder="Search Patient Name / Code">
+                  </div>
+                </div>
+				
+                <div class="col-lg-4 col-md-6">
+                  <div class="input-icon right"> <i class="icon-magnifier auto-suggest"></i>
+                    <input id="order_auto_suggest_txb" data-searched='false' type="text" class="form-control on-suggestion order" placeholder="Search Order ID">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row show-grid module-filter">
+              <div class="col-lg-9">
+                <div class="mod-filter">
+                  <span class="filter-label">Filter by:</span>
+                      <div class="entry filter-changing primary" id="rx_report_filter_status">
+                          <a href="javascript:void(0);" class="active" data-patientType="all">All</a>
+                          <a href="javascript:void(0);" data-patientType="{{ constant('UtilBundle\\Utility\\Constant::AREA_TYPE_LOCAL') }}">Local Patient</a>
+                          <a href="javascript:void(0);" data-patientType="{{ constant('UtilBundle\\Utility\\Constant::AREA_TYPE_OVERSEA') }}">Overseas Patient</a
+                          <input type="hidden" name="rx_report_filter[status]" value="all">
+                      </div>
+                </div>
+              </div>
+              
+              <div class="col-lg-3 text-right">
+                {% set perPage = constant('UtilBundle\\Utility\\Constant::PER_PAGE_DEFAULT') %}
+                {% set perPageList = constant('UtilBundle\\Utility\\Constant::PER_PAGE_LIST') %}
+                <label>
+                  <select name="rx_report_filter[perPage]" id="rx_report_filter_per_page" aria-controls="sample_1" class="form-control input-sm input-xsmall input-inline">
+                  {% for key, value in perPageList %}
+                      <option value="{{ value }}" {{ value == perPage ? 'selected' : '' }}>{{ value }}</option>
+                  {% endfor %}
+                  </select>
+                  entries</label>
+              </div>
+            </div>
+            
+            <div class="advanced_search mb-15"> 
+              <div class="portlet">
+                <div class="portlet-title">
+                  <div class="tools pull-left pt-5 advance-search">
+                    <a href="javascript:;" class="expand link-icon" title="">Advanced Search</a>
+                  </div>
+                  
+                  <div class="pull-right">
+                    <a href="javascript:void(0);" class="btn-download btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">Download RX Refunds History <i class="fa fa-download"></i></a>
+                  </div>
+                </div>
+                <div class="portlet-body" style="display: none;">
+                  <div class="form-body advanced-search-filter">
+                    <input type="hidden" name="from_date" value="">
+                    <input type="hidden" name="to_date" value="">
+                    <div class="text-right mb-20">
+                      <a href="javascript:void(0);" class="btn-clear-filter btn btn-ahalf-circle text-uppercase btn-default btn-outline btn-xs">Reset Search</a>
+                      <a href="javascript:void(0);" class="btn-update-filter btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-left ml-10" data-searched='false'>Update Search Result</a>
+                    </div>
+                    <div class="row mb-grid">
+                      <div class="col-lg-4 col-md-6">
+                        <div class="mb-15"><strong>Date</strong></div>
+                        <div id="reportrange2" class="btn default">
+                          <i class="fa fa-calendar"></i> &nbsp;
+                          <span> </span>
+                          <b class="fa fa-angle-down"></b>
+                        </div>
+                      </div>
+                      {{ countryDropDownList() }}
+
+                      <div class="col-lg-5 mb-10">
+                        <div class="mb-15"><strong class="block">Order Value ({{ getCurrencyCode() }})<span class="txt-grey-9d9">(Amount Range)</span></strong></div>
+                        <div class="form-inline">
+                          <div class="form-group">
+                            <div class="input-group input-small">
+                              <span class="input-group-addon">$</span>
+                              <input id='order_value_gte' type="email" class="form-control">
+                            </div>
+                            
+                          </div>
+                          <span class="input-group-addon-label">to</span>
+                          <div class="form-group">
+                            <div class="input-group input-small">
+                              <span class="input-group-addon">$</span>
+                              <input id='order_value_lte' type="email" class="form-control">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="content-table doctor-container">
+                {{ render(controller( 'AdminBundle:Report:ajaxRxRefunds')) }}
+            </div>
+            {% block hiddenfields %} 
+              <input type="hidden" id="current_sort_info" data-column='' data-direction='' value="">
+              <input type="hidden" id="url_doctor_report_transaction_history" value="{{ path('admin_report_rx_refunds_ajax') }}">
+              <input type="hidden" id="url_suggestion_search" value="{{ path('admin_rx_report_auto_suggest_ajax') }}">
+               <input type="hidden" id="url_ajax_download_sales_report" value="{{ path('admin_report_rx_refunds_csv') }}">
+            {% endblock %}
+          </div>
+        </form>
+      </div>
+  </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+        '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+        
+        '@AdminBundle/Resources/public/assets/global/plugins/ion.rangeslider/js/ion.rangeSlider.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-markdown/lib/markdown.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-markdown/js/bootstrap-markdown.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-summernote/summernote.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/icheck/icheck.min.js'
+        '@AdminBundle/Resources/public/js/transaction_report.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/typeahead/typeahead.bundle.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/typeahead/handlebars.min.js'
+         %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

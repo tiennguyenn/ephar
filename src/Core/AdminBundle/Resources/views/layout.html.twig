@@ -1,0 +1,65 @@
+{% extends '@Admin/master_layout.html.twig' %}
+
+{% block body %}  
+
+    {% include '@Admin/header.html.twig' %}
+    <div class="page-container">
+        {% include '@Admin/left-menu.html.twig' with { 'mainMenu': '', 'subMenu': '' } %}
+        <div class="page-content-wrapper">
+            <!-- BEGIN CONTENT BODY -->
+            <div class="page-content">
+
+                <!-- BEGIN PAGE HEAD-->
+                <div class="page-head"> 
+                    <!-- BEGIN PAGE TITLE -->
+
+                    <div class="page-title">
+                        {% block pageTitle %}
+                        {% endblock %}
+                    </div>
+                    <!-- END PAGE TITLE --> 
+
+                </div>
+                <!-- END PAGE HEAD--> 
+                <!-- BEGIN PAGE BREADCRUMB -->
+                <ul class="page-breadcrumb breadcrumb">
+
+                    {% block breadcrumb %}
+
+                    {% endblock %}
+                </ul>
+                <!-- END PAGE BREADCRUMB --> 
+                <!-- BEGIN PAGE BASE CONTENT -->            
+                <div class="row">
+                    <div class="col-md-12"> 
+                        {% if ajaxURL is defined %}
+                            <input type='hidden' id='ajax-url' value="{{ path(ajaxURL) }}" />
+                        {% endif %}
+                        <input type='hidden' id='base-url' value="{{ app.request.getBaseURL() }}" />
+                        
+                        {% block content %}
+
+                        {% endblock %}
+                    </div>
+                </div>   
+            </div>
+            <!-- END PAGE BASE CONTENT --> 
+
+        </div>
+    </div>
+    <div class="printarea"></div>
+    {% include '@Admin/modals/view-log.html.twig'%}
+
+{% endblock %}
+{% block javascriptsMenu %}
+    {% javascripts
+        '@AdminBundle/Resources/public/js/admin_left_menu.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js' 
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+
+        debug=true
+
+    %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

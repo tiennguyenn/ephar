@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Setting Agent's Information</title>
+<style>
+</style>
+</head>
+<body style="margin:0; padding:0;background-color: #ebebeb"> 
+<table width="100%" height="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="margin: 0; padding: 0; background-color: #ebebeb; font-family: Arial, Helvetica, sans-serif;">
+  <tr>
+    <td valign="top">
+      <table width="960" border="0" cellpadding="0" align="center" cellspacing="0" style="background-color: #ffffff;">
+        <tr colspan="3"><td height="15"></td></tr>
+        <tr>
+          <td colspan="3">
+            <table width="100%" border="0" cellpadding="0" cellspacing="0">
+            	<tr>
+              	<td width="30"></td>
+                <td>
+                  <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                  	<tr>
+                    	<td width="50%"><img src="{{ logoUrl|default('') }}" style="display:block;border:0;margin:0;" ></td>
+                      <td width="50%" align="right">
+                      </td>
+                    </tr>            	
+                  </table>
+                </td>
+                <td width="30"></td>
+              </tr>            	
+            </table>
+          </td>
+        </tr>    
+      <tr>
+        <td width="30"></td>
+        <td>
+            <table width="100%"  border="0" cellpadding="0" cellspacing="0">
+              <tr><td height="30"></td></tr>
+              <tr><td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 14px">Dear <strong> {{name}}</strong>,</font></td></tr>
+              <tr><td height="20"></td></tr>
+              <tr><td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 14px">Welcome to G-MEDS!</font></td></tr>
+              <tr><td height="20"></td></tr>
+              {% if masterAgentName != '' %}
+                  <tr><td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 14px">You have been successfully registered as a user under Agent {{masterAgentName}}'s account</font></td></tr>
+              {% else %}
+                  <tr><td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 14px">You are successfully registered as an agent under {{masterComName}}</font></td></tr>
+              {% endif %}
+              <tr><td height="20"></td></tr>
+              <tr><td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 14px">Click on the button below to set up your G-MEDS account password.</font></td></tr>
+              <tr><td height="20"></td></tr>
+              <tr><td align="center">
+                  <table border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td bgcolor="#c42639" style="padding: 12px 18px 12px 18px; -webkit-border-radius:3px; border-radius:3px" align="center">
+                        <a href="{{ base ~ path('login_doctor_setting_password',{'id':user.id,'type':2}) }}" style="font-family: Arial, Helvetica, sans-serif;font-weight: normal; color: #ffffff; text-decoration: none; display: inline-block;">G-MEDS Account Setup</a>
+                      </td>
+                    </tr>
+                  </table>
+              </td></tr>
+              <tr><td height="20"></td></tr>
+              <tr><td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 14px">If the button is not working, copy and paste the following URL into your browser's address field:</font></td></tr>
+              <tr><td height="20"></td></tr>
+              <tr><td><a href="{{ base ~ path('login_doctor_setting_password',{'id':user.id, 'type':2}) }}" style="color: black;">{{ base ~ path('login_doctor_setting_password',{'id':user.id, 'type':2}) }}</a></td></tr>
+              <tr><td height="20"></td></tr>
+              <tr><td>Contact <a href="mailto:agentshelp@gmedes.com" style="color: black;">agentshelp@gmedes.com</a> if you require assistance.</td></tr>
+              <tr><td height="40"></td></tr>
+              <tr><td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 14px">Sincerely,</font></td></tr>    
+              <tr><td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 14px">The G-MEDS Team.</font></td></tr>
+              <tr><td height="40"></td></tr>
+            </table>
+        </td>
+        <td width="30"></td>
+      </tr>
+      <tr>
+        <td colspan="3">
+          {% include '@Admin/emails/footer-doctor.html.twig' %}
+        </td>
+      </tr>
+      </table> 
+    </td>
+  </tr>
+</table>
+</body>
+</html>

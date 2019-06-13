@@ -1,0 +1,48 @@
+{% block utilbundle_rxremindersetting_widget %}
+<div class="form-group mb-grid">
+  <div class="col-md-4">
+    <label>Reminder {{ time }} Duration <span class="required" aria-required="true"> * </span></label>
+    <div class="form-float">
+      <div class="col-md-6">
+        {{ form_widget(form.durationTime, {'attr':{'class':'form-control'}}) }}
+      </div>
+      <div class="col-md-6">
+        {{ form_widget(form.timeUnit, {'attr':{'class':'form-control select2'}}) }}
+      </div>
+    </div>
+  </div>
+</div>
+{% if 'reminder3' == form.vars.name %}
+<div class="form-group mb-grid">
+  <div class="col-md-4">
+    <label>Expire Time <span class="required" aria-required="true"> * </span></label>
+    <div class="form-float">
+      <div class="col-md-6">
+        {{ form_widget(form.expiredTime, {'attr':{'class':'form-control'}}) }}
+      </div>
+      <div class="col-md-6">
+        {{ form_widget(form.timeUnitExpire, {'attr':{'class':'form-control select2'}}) }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+<div class="form-group">
+  <div class="col-md-12">
+    <label>Reminder {{ time }} Mail Subject</label>
+    {{ form_widget(form.templateSubjectEmail,{'attr':{'class':'form-control'}}) }}
+  </div>
+</div>
+<div class="form-group">
+  <div class="col-md-12">
+    <label>Reminder {{ time }} Mail Message</label>
+    {{ form_widget(form.templateBodyEmail,{'attr':{'class':'form-control max-height wysihtml5'}}) }}
+  </div>
+</div>
+<div class="form-group">
+  <div class="col-md-12">
+    <label>Reminder {{ time }} Mail SMS Message</label>
+    {{ form_widget(form.templateSms,{'attr':{'class':'form-control max-height wysihtml5'}}) }}
+  </div>
+</div>
+{% endblock utilbundle_rxremindersetting_widget %}

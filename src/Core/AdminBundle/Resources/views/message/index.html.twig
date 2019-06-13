@@ -1,0 +1,70 @@
+{% extends '@Admin/layout.html.twig' %}
+
+{% block stylesheets %}
+    {% stylesheets 
+        'bundles/admin/assets/global/plugins/fancybox/source/jquery.fancybox.css'
+        'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+        'bundles/admin/assets/global/plugins/jquery-file-upload/blueimp-gallery/blueimp-gallery.min.css'
+        'bundles/admin/assets/global/plugins/jquery-file-upload/css/jquery.fileupload.css'
+        'bundles/admin/assets/global/plugins/jquery-file-upload/css/jquery.fileupload-ui.css'
+        'bundles/admin/assets/global/plugins/fancybox/source/jquery.fancybox.css'
+        'bundles/admin/assets/global/plugins/fancybox/source/jquery.fancybox.css'
+        'bundles/admin/assets/apps/css/inbox.min.css'
+    filter='cssrewrite'  
+    debug=false
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    <!-- do not move it into stylesheet block -->
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block pageTitle %}<h1>Messages</h1>{% endblock %}
+
+{% block breadcrumb %}
+  <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+  <li> <span class="active">Messages</span> </li>
+{% endblock %}
+
+{% block content %}
+<!-- BEGIN PAGE BASE CONTENT -->
+<div class="inbox">
+  <div class="row">
+      {% include '@Admin/message/sidebar.html.twig' with {type: type|default('inbox')} %}
+      <div class="col-lg-10 col-md-9">
+          <div class="inbox-body">
+            {{ display_messages()|raw }}
+            <form id="frm-message-filter">
+                <div class="inbox-header">
+                    <h1 class="pull-left">{{ type|default('inbox') }}</h1>
+                    <div class="form-inline pull-right">
+                      <div class="input-icon right"> <i class="icon-magnifier btn-term-search"></i>
+                          <input type="text" name="filter[term]" id="filter_term" class="form-control" placeholder="Search">
+                      </div>
+                    </div>
+                </div>
+                <div class="content-table inbox-content">
+                    {{ render(controller( 'AdminBundle:Message:ajaxList', { type: type|default('inbox')} )) }}
+                </div>
+                <input type="hidden" name="filter[type]" value="{{ type|default('inbox') }}">
+                <input type="hidden" name="filter[read_date]" value="{{ read_date|default('') }}">
+                <input type="hidden" name="sort_name" value="{{ sort_name|default('sentDate') }}">
+                <input type="hidden" name="sort_order" value="{{ sort_order|default('DESC') }}">
+                <input type="hidden" id="url_message_list" value="{{ path('message_list') }}">
+                <input type="hidden" id="url_message_change" value="{{ path('message_change') }}">
+            </form>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- END PAGE BASE CONTENT --> 
+{% endblock %}
+{% block javascripts %}
+  {{ parent () }}
+  {% javascripts  
+    '@AdminBundle/Resources/public/js/message.js'
+     debug=false
+  %}  
+  <script type="text/javascript" src="{{ asset_url }}"></script>
+  {% endjavascripts %}
+{% endblock %}

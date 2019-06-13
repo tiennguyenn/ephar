@@ -1,0 +1,76 @@
+{{ form_start(form, {'attr': {'id': formId,'class': 'form-horizontal form-margin-share'}}) }}
+    <div class="form-group">
+        <label for="bufferRate" class="col-md-4 control-label">Singapore (Local)</label>
+        <div class="col-md-8">
+            <div class="input-medium-wrapper">
+                <div class="input-medium-wrap">
+                    <div class="input-group input-small">
+                        {{ form_widget(form.feeLocal, {'attr': {'class': 'form-control on-digit-percent on-number-only', 'disabled': is_active? false: true}}) }}
+                        <span class="input-group-addon">SGD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="bufferRate" class="col-md-4 control-label">East Malaysia</label>
+        <div class="col-md-8">
+            <div class="input-medium-wrapper">
+                <div class="input-medium-wrap">
+                    <div class="input-group input-small">
+                        {{ form_widget(form.feeEastMalay, {'attr': {'class': 'form-control on-digit-percent on-number-only', 'disabled': is_active? false: true}}) }}
+                        <span class="input-group-addon">SGD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="bufferRate" class="col-md-4 control-label">West Malaysia</label>
+        <div class="col-md-8">
+            <div class="input-medium-wrapper">
+                <div class="input-medium-wrap">
+                    <div class="input-group input-small">
+                        {{ form_widget(form.feeWestMalay, {'attr': {'class': 'form-control on-digit-percent on-number-only', 'disabled': is_active? false: true}}) }}
+                        <span class="input-group-addon">SGD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="bufferRate" class="col-md-4 control-label">Indonesia</label>
+        <div class="col-md-8">
+            <div class="input-medium-wrapper">
+                <div class="input-medium-wrap">
+                    <div class="input-group input-small">
+                        {{ form_widget(form.feeIndo, {'attr': {'class': 'form-control on-digit-percent on-number-only', 'disabled': is_active? false: true}}) }}
+                        <span class="input-group-addon">SGD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="bufferRate" class="col-md-4 control-label">International</label>
+        <div class="col-md-8">
+            <div class="input-medium-wrapper">
+                <div class="input-medium-wrap">
+                    <div class="input-group input-small">
+                        {{ form_widget(form.feeInternational, {'attr': {'class': 'form-control on-digit-percent on-number-only', 'disabled': is_active? false: true}}) }}
+                        <span class="input-group-addon">SGD</span>
+                    </div>
+                </div>
+            </div>
+            <div class="btn-update-margin">
+                {% if is_active %}
+                    <input class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm" type="submit" value="Update" />
+                {% else %}
+                    <input class="btn btn-ahalf-circle text-uppercase disabled btn-sm" type="submit" value="Update" disabled />
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="type" value="{{ type }}"/>
+    
+{{ form_end(form) }}

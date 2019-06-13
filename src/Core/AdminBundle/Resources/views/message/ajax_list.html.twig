@@ -1,0 +1,78 @@
+<table class="table table-striped table-advance table-hover">
+    <thead>
+      <tr>
+        <th colspan="2">
+          <input type="hidden" name="ids_picked" value="">
+          <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+            <input type="checkbox" class="mail-group-checkbox" />
+            <span></span>
+          </label>
+          {% if type != 'trash' %}
+          <div class="btn-group input-actions">
+              <a class="btn btn-sm text-uppercase dropdown-toggle sbold" href="javascript:;" data-toggle="dropdown">Actions&nbsp;&nbsp;<i class="fa fa-angle-down"></i></a>
+              <ul class="dropdown-menu">
+                {% if type == 'inbox' %}
+                <li><a href="javascript:void(0);" class="actions" data-value="1">Mark as Read</a></li>
+                {% endif %}
+                <li><a href="javascript:void(0);" class="actions" data-value="2">Delete</a></li>
+              </ul>
+          </div>
+          {% endif %}
+          <div class="btn-group input-actions">
+            <a class="btn btn-sm text-uppercase dropdown-toggle sbold" href="javascript:;" data-toggle="dropdown">Filter&nbsp;&nbsp;<i class="fa fa-angle-down"></i></a>
+            <ul class="dropdown-menu">
+              <li><a href="javascript:void(0);" class="read-date" data-value="">All</a></li>
+              <li><a href="javascript:void(0);" class="read-date" data-value="unread">Unread</a></li>
+              <li>
+                <a href="javascript:;" class="sub-dropdown-toggle">Sort by <i class="fa fa-angle-right"></i></a>
+                <ul class="dropdown-menu dropdown-sortby">
+                  <li class="{% if sort_name == 'createdOn' %}active sortby-icon{% endif %}">
+                    {% if sort_name == 'createdOn' %}
+                      <i class="fa fa-arrow-{% if sort_order == 'DESC' %}up{% else %}down{% endif %}"></i>
+                    {% endif %}
+                    <a href="javascript:void(0);" class="sort" data-order="{{sort_order}}" data-value="createdOn">Date</a>
+                  </li>
+                  <li class="{% if sort_name == 'senderName' %}active sortby-icon{% endif %}">
+                    {% if sort_name == 'senderName' %}
+                      <i class="fa fa-arrow-{% if sort_order == 'DESC' %}up{% else %}down{% endif %}"></i>
+                    {% endif %}
+                    
+                    <a href="javascript:void(0);" class="sort" data-order="{{sort_order}}" data-value="senderName">From</a>
+                  </li>
+                  <li class="{% if sort_name == 'receiverName' %}active sortby-icon{% endif %}">
+                    {% if sort_name == 'receiverName' %}
+                      <i class="fa fa-arrow-{% if sort_order == 'DESC' %}up{% else %}down{% endif %}"></i>
+                    {% endif %}
+                    <a href="javascript:void(0);" class="sort" data-order="{{sort_order}}" data-value="receiverName ">To</a>
+                  </li>
+                  <li class="{% if sort_name == 'subject' %}active sortby-icon{% endif %}">
+                    {% if sort_name == 'subject' %}
+                      <i class="fa fa-arrow-{% if sort_order == 'DESC' %}up{% else %}down{% endif %}"></i>
+                    {% endif %}
+                    <a href="javascript:void(0);" class="sort" data-order="{{sort_order}}" data-value="subject">Subject</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </th>
+        <th class="pagination-control" colspan="3">
+          {% if data %}
+              {% set fromRecord = currentPage > 0? currentPage*perPage: currentPage %}
+              {% set toRecored = fromRecord + perPage %}
+              <div class="ajax_paging">
+                  <span class="pagination-info"> {{ fromRecord + 1 }} - {{ toRecored < totalResult? toRecored: totalResult }} of {{ totalResult }} </span>
+                  {{ paginationHTML|raw }}
+              </div>
+          {% endif %}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if data %}
+          {% for item in data %}
+              {% include '@Admin/message/rows.html.twig' with {data: item, type: type} %}
+          {% endfor %}
+      {% endif %}
+    </tbody>
+</table>

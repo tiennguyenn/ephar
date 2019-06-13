@@ -1,0 +1,34 @@
+<table class="table table-hover table-light_">
+    <thead>
+        <tr class="uppercase">
+            <th style="width: 20%">Date</th>
+            <th style="width: 20%">User</th>
+            <th>Changes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+            {% if log.oldValue.taxValue != log.newValue.taxValue or log.oldValue.effectDate != log.newValue.effectDate %}
+            <tr>
+                <td>{{ log.createdOn|date('d M y') }}</td>
+                <td>{{ log.createdBy }}</td>
+                <td>
+                    Tax Name: {{ log.newValue.description }}
+                    {% if log.oldValue.taxValue != log.newValue.taxValue %}
+                    <br>Tax Value is updated
+                    <br>Old Value: {{ log.oldValue.taxValue }}
+                    <br>New Value: {{ log.newValue.taxValue }}<br />
+                    {% endif %}
+                    {% if log.oldValue.effectDate != log.newValue.effectDate %}
+                    <br>Effective Date is updated
+                    <br>Old Value: {{ log.oldValue.effectDate }}
+                    <br>New Value: {{ log.newValue.effectDate }}<br />
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+<input type='hidden' id='print_log_url' value="{{ printUrl }}" />
+<input type='hidden' id='breadcrumb_title' value="{{ breadcrumbTitle }}" />

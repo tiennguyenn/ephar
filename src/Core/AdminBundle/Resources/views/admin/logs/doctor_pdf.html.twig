@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Doctors</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1" name="viewport" />
+<meta content="Preview page of Metronic Admin Theme #4 for blank page layout" name="description" />
+<meta content="" name="author" />
+<style>
+    body {
+        color: #333;
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+    }
+    .portlet-title {
+        border-left: 1px solid #e7ecf1;
+        border-right: 1px solid #e7ecf1;
+        border-top: 1px solid #e7ecf1;
+        min-height: 41px;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 18px;
+        padding: 10px;
+    }
+    table {
+        width: 100%;
+        border: 1px solid #e7ecf1;
+    }
+    th {
+        padding: 10px;
+        font-weight: 600;
+        vertical-align: bottom;
+    }
+    td {
+        border-top: 1px solid #e7ecf1;
+        padding: 10px;
+    }
+    .chinese {
+        font-family: DroidSansFallback, sans-serif;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        text-align: justify-all !important;
+        font-weight: 400;
+    }
+    .font-chinese {
+        font-family: simsun;
+    }
+</style>
+</head>
+<body>
+<div class="portlet">
+    <div class="portlet-title">
+        <div class="caption">Doctors</div>
+    </div>
+    <div class="portlet-body">
+        <table class="table table-hover table-light_">
+            <thead>
+                <tr class="uppercase">
+                    <th style="width: 20%">Date</th>
+                    <th style="width: 20%">User</th>
+                    <th>Changes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.createdOn|date('d M y') }}</td>
+                    <td>{{ log.createdBy }}</td>
+                    {% if log.title == 'new_doctor_created' %}
+                        <td><strong>{{ log.title|replace({'_': ' '})|title }}</strong></td>
+                    {% else %}
+                        <td>
+                            {{ item_log(log, 'title', 'Doctor\'s Title')|raw }}
+                            {{ item_log(log, 'firstName', 'First Name')|raw }}
+                            {{ item_log(log, 'lastName', 'Last Name (Surename)')|raw }}
+                            {{ item_log(log, 'gender', 'Gender')|raw }}
+                            {{ item_log(log, 'displayName', 'Doctor Name to appear on the Prescription Advice and Invoice')|raw }}
+                            {{ item_log(log, 'passportNum', 'Local Identity Card')|raw }}
+                            {{ item_log(log, 'passportCountry', 'Local Identity Card - Country of Issue')|raw }}
+                            {{ item_log(log, 'passportdate', 'Local Identity Card - Date of Issue')|raw }}
+                            {{ item_log(log, 'medicalNumber', 'Medical Licence No')|raw }}
+                            {{ item_log(log, 'medicalCountry', 'Medical Licence No - Country of Issue')|raw }}
+                            {{ item_log(log, 'medicalIssueDate', 'Medical Licence No - Year of Issue')|raw }}
+                            {{ item_log(log, 'medicalSpecialty', 'Doctor\'s Specialization')|raw }}
+                            {{ item_log(log, 'email', 'Email')|raw }}
+                            {{ item_log(log, 'doctorPhone', 'Mobile Number')|raw }}
+                            {{ item_log(log, 'bankName', 'Bank Name')|raw }}
+                            {{ item_log(log, 'bankcode', 'Bank Swift Code')|raw }}
+                            {{ item_log(log, 'bankCountry', 'Bank Country')|raw }}
+                            {{ item_log(log, 'bankState', 'Bank Branch (State)')|raw }}
+                            {{ item_log(log, 'bankCity', 'Bank Branch (City)')|raw }}
+                            {{ item_log(log, 'accountName', 'Account Name')|raw }}
+                            {{ item_log(log, 'accountNum', 'Account Number')|raw }}
+                            {{ item_log(log, 'listRxReviewFeeLocal', 'Doctor Fees - Prescribing Fee - Local SG Patients')|raw }}
+                            {{ item_log(log, 'listRxReviewFeeInternational', 'Doctor Fees - Prescribing Fee - International Patients')|raw }}
+                            {{ item_log(log, 'listRxFeeLiveConsultLocal', 'Doctor Fees - LiveConsult - Local SG Patients')|raw }}
+                            {{ item_log(log, 'listRxFeeLiveConsultInternational', 'Doctor Fees - LiveConsult - International Patients')|raw }}
+                            {{ item_log(log, 'profilePicture', 'Doctor Profile Photo')|raw }}
+                            {{ item_log(log, 'signature', 'Doctor e-signature')|raw }}
+                            {{ item_log(log, 'clinicName', 'Clinic Name')|raw }}
+                            {{ item_log(log, 'clinicEmail', 'Clinic Email')|raw }}
+                            {{ item_log(log, 'clinicPhone', 'Clinic Telephone Number')|raw }}
+                            {{ item_log(log, 'clinicLogo', 'Clinic Logo')|raw }}
+                            {{ item_log(log, 'mainLine1', 'Address Line 1')|raw }}
+                            {{ item_log(log, 'mainLine2', 'Address Line 2')|raw }}
+                            {{ item_log(log, 'mainLine3', 'Address Line 3')|raw }}
+                            {{ item_log(log, 'mainZipCode', 'Zip / Postal Code')|raw }}
+                            {{ item_log(log, 'clinicCountry', 'Clinic Country')|raw }}
+                            {{ item_log(log, 'clinicState', 'Clinic State')|raw }}
+                            {{ item_log(log, 'clinicCity', 'Clinic City')|raw }}
+                            {{ item_log(log, 'gstSetting', 'GST Registered')|raw }}
+                            {{ item_log(log, 'gstNo', 'GST Registration No.')|raw }}
+                            {{ item_log(log, 'gstEffectDate', 'GST Effective Date')|raw }}
+                            {{ item_log(log, 'gstFeesLocal', 'GST of Fees for Local Patients')|raw }}
+                            {{ item_log(log, 'gstFeesInternational', 'GST of Fees for International Patients')|raw }}
+                            {{ item_log(log, 'subClinics', 'Details of Doctor\'s Sub-Clinic')|raw }}
+                            {% if log.oldValue.isActive is defined and log.oldValue.isActive != log.newValue.isActive %}
+                                Status is changed
+                                <br />Old Value: {% if log.oldValue.isActive == 1 %}ACTIVE{% else %}DEACTIVATED{% endif %}
+                                <br />New Value: {% if log.newValue.isActive == 1 %}ACTIVE{% else %}DEACTIVATED{% endif %}
+                                <br /><br />
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

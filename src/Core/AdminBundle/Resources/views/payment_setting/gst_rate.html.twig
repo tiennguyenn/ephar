@@ -1,0 +1,427 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {{ parent () }}
+    {% stylesheets
+    'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+    'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+    'bundles/admin/assets/global/plugins/ladda/ladda-themeless.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-select/css/bootstrap-select.css'
+    'bundles/admin/assets/global/plugins/jquery-multi-select/css/multi-select.css'
+    'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+    'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+    'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+    'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+    filter='cssrewrite'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block pageTitle %}
+    <h1>GST rates</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+    <li> <span class="active">GST rates</span> </li>
+{% endblock %}
+{% block content %}
+<div class="portlet light">
+    <div class="portlet-body form">
+        <div class="form-body">
+            {{ display_messages()|raw }}
+            <form class="form-horizontal form-margin-share" method='POST'>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label control-label-2lines valign-middle"><span>Set Country GST Rate</span></label>
+                        <div class="col-md-8">
+                            <div class="input-medium-wrapper">
+                                <div class="input-medium-wrap">
+                                    <div class="input-group input-small">
+                                        {{ form_widget(gstRateForm.newGstRate, {'attr': {'class': 'form-control on-digit-percent', 'placeholder': '0.00'}}) }}
+                                        <span class="input-group-addon">%</span>
+                                    </div>
+                                </div>
+                                <span class="help-inline">Current Rate: {{ data.gstRate|number_format(2, '.', ',') }} %</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label control-label-2lines valign-middle"><span>Percentage change will take effect on:</span></label>
+                        <div class="col-md-8">
+                            <div class="input-group date date-picker" data-date-format="dd-mm-yyyy" data-date-start-date="+0d">
+                                {{ form_widget(gstRateForm.gstRateAffectDate, {'attr': {'class': 'form-control'}}) }}
+                                <span class="input-group-btn">
+                                    <button class="btn default" type="button">
+                                        <i class="fa fa-calendar"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm" type="submit" value="Update" />
+                    </div>
+                </div>
+            </div>
+          </form>
+        </div>
+        <div class="form-body form-repeat">
+            <div><strong>GST: Doctor's Invoice to Local Transactions</strong></div>
+            <p class="mt-5 mb-20">Note: GST setting on the fees below are applied to the local patient's tax Invoice only if the doctor is GST registered.</p>
+            <form class="form-horizontal form-margin-share" method='POST'>
+              <div class="row">
+                <div class="col-md-7">
+                  <div class="form-group">
+                    <label class="col-md-4 control-label pt-0 mt-0">Medicines:</label>
+                    <div class="col-md-8"><span class="bold-medium">Based on GST Code & Doctor's GST Setting</span></div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-4 control-label pt-0 mt-0">Doctor's Prescribing Fee:</label>
+                    <div class="col-md-8"><span class="bold-medium">Based on Doctor's GST Setting</span></div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-md-4 control-label pt-0 mt-0">Doctor's LiveConsult Fee:</label>
+                    <div class="col-md-8"><span class="bold-medium">Based on Doctor's GST Setting</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Shipping and Handling:</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeLocalForm.sf_patient_local, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                  <input class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm" type="submit" value="Update" />
+              </div>
+            <input type='hidden' name="gst_type" value="{{ constant('UtilBundle\\Utility\\Constant::DOCTOR_TO_PATIENT_LOCAL') }}">
+            </form>
+        </div>
+        <!-- overseas -->
+        <div class="form-body form-repeat">
+          <div><strong>GST: Doctor's Invoice to Overseas Transactions</strong></div>
+          <p class="mt-5 mb-20">Note: GST setting on the fees below are applied to the local patient's tax Invoice only if the doctor is GST registered.</p>
+          <form class="form-horizontal form-margin-share" method='POST'>
+            <div class="row">
+              <div class="col-md-7">
+                <div class="form-group">
+                  <label class="col-md-4 control-label pt-0 mt-0">Medicine:</label>
+                  <div class="col-md-8"><span class="bold-medium">Based on GST Code & Doctor's GST Setting</span></div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-4 control-label pt-0 mt-0">Doctor's Prescribing Fee:</label>
+                  <div class="col-md-8"><span class="bold-medium">Based on Doctor's GST Setting</span></div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-4 control-label pt-0 mt-0">Doctor's LiveConsult Fee:</label>
+                  <div class="col-md-8"><span class="bold-medium">Based on Doctor's GST Setting</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4" >
+                {# <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Custom Clearance Admin Fee - MD:</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeOverseaForm.ccaf_sg, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                </div> #}
+                <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Custom Clearance Admin Fee - INDO:</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeOverseaForm.ccaf_id, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                </div>
+              </div>
+
+
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Shipping and Handling:</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeOverseaForm.sf_patient_oversea, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                </div>
+              </div>
+            </div>
+            <input type='hidden' name="gst_type" value="{{ constant('UtilBundle\\Utility\\Constant::DOCTOR_TO_PATIENT_OVERSEA') }}">
+              <div class="form-group">
+                  <input class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm" type="submit" value="Update" />
+              </div>
+          </form>
+        </div>
+        <!-- end of oversea section -->
+
+
+        <!-- start Gmed setting -->
+        <div class="form-body form-repeat">
+          <h4 class="block">G-MEDS GST Settings</h4>
+          <form class="form-horizontal form-margin-share" method="POST" id='gmeds_gst_setting_frm'>
+            <div class="row form-group mb-grid mb-40">
+              <div class="col-md-4">
+                <label>GST Registered</label>
+                {{ form_widget(pSForm.isGst, {'attr': {'class': 'mt-radio-inline mt-radio-inline-grid'}}) }}
+              </div>
+              <div class="col-md-4">
+                <label>GST Registration No.</label>
+                {# <input type="text" placeholder="Enter Gst Registration No." class="form-control">  #}
+                {{ form_widget(pSForm.gstNo, {'attr': {'class': 'form-control', 'placeholder': 'Enter Gst Registration No.'}}) }}
+              </div>
+              <div class="col-md-4">
+                <label>GST Effective Date</label>
+                <div class="input-group date date-picker bs-datetime" data-date-format="dd-mm-yyyy" data-date-start-date="+0d">
+                  {{ form_widget(pSForm.gstAffectDate, {'attr': {'class': 'form-control'}}) }}
+                  <span class="input-group-addon">
+                  <button class="btn default date-set" type="button">
+                      <i class="fa fa-calendar"></i>
+                  </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          <div class="mb-20"><strong>GST: GMEDES Invoice to Doctor</strong></div>
+            <div class="row">
+              {# <div class="col-md-7">
+                <div class="form-group">
+                  <label class="col-md-4 control-label pt-0 mt-0">Medicine:</label>
+                  <div class="col-md-8"><span class="bold-medium">Based on GST Code &amp; Doctor's GST Setting</span></div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-4 control-label pt-0 mt-0">Doctor's Prescribing Fee:</label>
+                  <div class="col-md-8"><span class="bold-medium">Based on Doctor's GST Setting</span></div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-4 control-label pt-0 mt-0">Doctor's LiveConsult Fee:</label>
+                  <div class="col-md-8"><span class="bold-medium">Based on Doctor's GST Setting</span></div>
+                </div>
+              </div> #}
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Custom Clearance Admin Fee - MY:</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeGmedsForm.gm_ccaf_sg, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Custom Clearance Admin Fee - INDO:</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeGmedsForm.gm_ccaf_id, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>SG Custom IG Permit Fee:</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeGmedsForm.gm_sgcig_pf, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Payment Gateway (Bank Variable):</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeGmedsForm.gm_pgb_mdr, {'attr': {'class': 'form-control select2', 'disabled': 'disabled'}}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Payment Gateway (Variable):</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeGmedsForm.gm_pgb_variable, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Payment Gateway (Fixed):</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeGmedsForm.gm_pgb_fixed, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Medicines Gross Margin Share:</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeGmedsForm.gm_mgms, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Prescribing Fees Revenue Share:</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeGmedsForm.gm_pfrs, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Live Consult Revenue Share:</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeGmedsForm.gm_lcrs, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Shipping and Handling:</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeGmedsForm.gm_sf, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Import Tax/VAT - MY:</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeGmedsForm.gm_ct_sg, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-7 control-label control-label-2lines valign-middle"><span>Import Tax/VAT - INDO:</span></label>
+                    <div class="col-md-5">
+                        {{ form_widget(gstCodeGmedsForm.gm_ct_id, {'attr': {'class': 'form-control select2'}}) }}
+                    </div>
+                </div>
+              </div>
+            </div>
+              <div class="form-group">
+                  <input class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm" type="submit" value="Update" />
+              </div>
+            <input type='hidden' name="gst_type" value="{{ constant('UtilBundle\\Utility\\Constant::GMEDS_TO_DOCTOR') }}">
+          </form>
+        </div>
+        <!-- end of Gmed setting -->
+        <div class="form-body form-repeat">
+        <div class="mt-40">
+            <div class="mb-5"><strong>Legend:</strong></div>
+            <div class="table-scrollable">
+                <table class="table table-striped table-bordered table-hover dataTable no-footer">
+                    <thead>
+                    <tr role="row">
+                        <th></th>
+                        <th>Tax code in Gmedes System</th>
+                        <th>Tax Setting in Xero System</th>
+                        <th>In the Patient Invoice</th>
+                        <th class="bg-light-blue">For GMedes Pte Ltd</th>
+                        <th class="bg-light-blue" style="min-width: 150px;">Singapore</th>
+                    </tr>
+                    <tr role="row">
+                        <th></th>
+                        <th>Categories</th>
+                        <th>GST Types</th>
+                        <th>GST CODE</th>
+                        <th class="bg-light-blue">GST CODE</th>
+                        <th class="bg-light-blue">TAX RATE</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr role="row">
+                        <td>1a</td>
+                        <td>Taxable Supplies (Output Tax)</td>
+                        <td>Standard-Rated Supplies</td>
+                        <td>SRS</td>
+                        <td>SRSGM</td>
+                        <td>(7% GST)</td>
+                    </tr>
+                    <tr role="row">
+                        <td>1b</td>
+                        <td></td>
+                        <td>Zero-Rated Supplies</td>
+                        <td>ZRS</td>
+                        <td>ZRSGM</td>
+                        <td>(0% GST)</td>
+                    </tr>
+                    <tr role="row">
+                        <td>2a</td>
+                        <td>Non-Taxable Supplies</td>
+                        <td>Exempt Supplies</td>
+                        <td>EXS</td>
+                        <td>EXSGM</td>
+                        <td>(GST is not applicable)</td>
+                    </tr>
+                    <tr role="row">
+                        <td>2b</td>
+                        <td></td>
+                        <td>Out-of-Scope Supplies</td>
+                        <td>OOS</td>
+                        <td>OOSGM</td>
+                        <td>(GST is not applicable)</td>
+                    </tr>
+                    <tr role="row">
+                        <td>3a</td>
+                        <td>Taxable Purchase (Input Tax)</td>
+                        <td>Standard-Rated Purchase</td>
+                        <td>SRP</td>
+                        <td>SRMGM</td>
+                        <td>(7% GST)</td>
+                    </tr>
+                    <tr role="row">
+                        <td>3b</td>
+                        <td></td>
+                        <td>Zero-Rated Purchase</td>
+                        <td>ZRP</td>
+                        <td>ZRPGM</td>
+                        <td>(0% GST)</td>
+                    </tr>
+                    <tr role="row">
+                        <td>4a</td>
+                        <td>Non-Taxable Purchase</td>
+                        <td>NO GST</td>
+                        <td>NGP</td>
+                        <td>NGPGM</td>
+                        <td>(GST is not applicable)</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="form-group mt-40 form-actions">
+        {% set module = constant('UtilBundle\\Utility\\Constant::GST_RATE_MODULE_NAME') %}
+        <a href="#modal-doctor-view-logs" id="view_logs_anchor"
+        data-toggle="modal"
+        data-module="{{ module }}"
+        data-breadcrumb-title="GST RATES"
+        data-modal-title='GST RATES'
+        data-template-view="AdminBundle:payment_setting\Logs:gst_rate_log.html.twig"
+        data-template-print="AdminBundle:payment_setting\Logs:gst_rate_pdf.html.twig"
+        data-file-name="gst_rate_log"
+        class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm">View Log</a>
+    </div>
+</div>
+{% include '@Admin/payment_setting/modal.html.twig' with {modalType: 'gstRate'} %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/additional-methods.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/ladda/spin.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/ladda/ladda.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/ui-buttons-spinners.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/table-datatables-managed.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-select/js/bootstrap-select.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/clockface/js/clockface.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-multi-select.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/form-icheck.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+    '@AdminBundle/Resources/public/js/payment.settings.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

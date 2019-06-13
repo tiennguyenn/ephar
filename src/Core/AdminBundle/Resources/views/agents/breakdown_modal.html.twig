@@ -1,0 +1,48 @@
+<div class="portlet-title">
+  <div class="caption">
+    <span class="caption-subject sbold"># Invoice no: {{ invoiceNo }}</span>
+  </div>
+</div>
+<div class="portlet-body">
+  <div class="table-scrollable table-scrollable-borderless">
+    <table class="table table-hover table-white">
+      <thead>
+        <tr>
+          <th class="pl-20 span40p">Prescription details</th>
+          <th class="span20p text-right">Amount (SGD)</th>
+          <th class="span20p text-right">Margin (SGD)</th>
+          <th class="span20p text-right">Agent Fee (SGD)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set total = 0 %}
+        {% set totalM = 0 %}
+        {% set totalA = 0 %}
+        {% for item in data %}
+        <tr>
+          <td class="pl-20">{{ item.name }}</td>
+          <td class="text-right">{{ item.listPrice|number_format(2, '.', ',') }}</td>
+          {% if constant('UtilBundle\\Utility\\Constant::RX_LINE_TYPE_DRUG') == item.lineType %}
+          {% set value = item.listPrice - item.originPrice * item.quantity %}
+          <td class="text-right">{{ value|number_format(2, '.', ',') }}</td>
+          {% set totalM = totalM + value %}
+          <td class="text-right">{{ item.agentMedicineFee|number_format(2, '.', ',') }}</td>
+          {% set totalA = totalA + item.agentMedicineFee|number_format(2, '.', ',') %}
+          {% else %}
+          <td class="text-right">-</td>
+          <td class="text-right">{{ item.agentServiceFee|number_format(2, '.', ',') }}</td>
+          {% set totalA = totalA + item.agentServiceFee|number_format(2, '.', ',') %}
+          {% endif %}
+        </tr>
+        {% set total = total + item.listPrice %}
+        {% endfor %}
+        <tr>
+          <td class="text-right"><strong>Subtotal per order</strong></td>
+          <td class="text-right"><strong>{{ total|number_format(2, '.', ',') }}</strong></td>
+          <td class="text-right"><strong>{{ totalM|number_format(2, '.', ',') }}</strong></td>
+          <td class="text-right"><strong>{{ totalA|number_format(2, '.', ',') }}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

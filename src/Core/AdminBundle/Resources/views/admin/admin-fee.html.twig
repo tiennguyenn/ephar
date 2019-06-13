@@ -1,0 +1,167 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {{ parent () }}
+    {% stylesheets
+        'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+        'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+        'bundles/admin/assets/global/plugins/ladda/ladda-themeless.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-select/css/bootstrap-select.css'
+        'bundles/admin/assets/global/plugins/jquery-multi-select/css/multi-select.css'
+        'bundles/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+        'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+        'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+        filter='cssrewrite'
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/additional-methods.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/ladda/spin.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/ladda/ladda.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/ui-buttons-spinners.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/table-datatables-managed.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/icheck/icheck.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+        '@AdminBundle/Resources/public/js/admin_admin_fee.js'
+    %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+
+{% block pageTitle %}
+    <h1>{{ title}}</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard')}}">Home</a> <i class="fa fa-circle"></i> </li>
+
+    <li> <span class="active">{{ title}}</span> </li>
+    {% endblock %}
+{% block content %}
+    <div class="portlet light bordered" id="form_wizard_1" enctype="multipart/form-data"  >
+        <div class="portlet-body form">
+            <div class="form-body form-repeat">
+                <div id="notification">
+                </div>
+                <div class="row">
+                    <form class="form-horizontal form-margin-share" id="admin-fee-2">
+                        <input type="hidden" name="id" value="{{country2}}">
+                        <div class="col-md-4">
+                            <div class="mb-20"><strong>For Indonesia</strong></div>
+                            <div class="form-group">
+                                <label class="col-md-6 control-label control-label-2lines valign-middle"><span>Set Admin Fee</span></label>
+                                <div class="col-md-6">
+                                    <div class="input-medium-wrapper">
+                                        <div class="input-medium-wrap">
+                                            <div class="input-group input-small">
+                                                {{ form_widget(form.fee2,{'attr':{'class':'form-control  on-digit-percent'} }) }}
+                                                <span class="input-group-addon">%</span>
+                                            </div>
+                                            <div class="current-data">
+                                                {% if fee2 > 0 %}
+                                                    <span id="" class="">Current value is {{ fee2 }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-6 control-label control-label-2lines valign-middle"><span>Percentage change will take effect on:</span></label>
+                                <div class="col-md-6">
+                                    <div class="input-group date date-picker" data-date-format="dd-mm-yyyy" data-date-start-date="+0d" value="30 Jul 2017">
+                                        {{ form_widget(form.date2,{'attr':{'class':'form-control'} })}}
+                                        <span class="input-group-btn">
+                                            <button class="btn default" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+
+                                    <div class="btn-update-margin"><a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm update">Update</a></div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </form>
+                </div>
+            </div>
+
+            {% if formCustomCAF1 is not null%}
+                <div class="form-body">
+                    <div class="col-md-6">
+                        <div class="icheck-inline mb-20">
+                            <label><input type="checkbox" class="icheck" {% if isActiveLocal %}checked="checked"{% endif %} value="1" />Local Patients</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="icheck-inline mb-20">
+                            <label><input type="checkbox" class="icheck" {% if isActiveOversea %}checked="checked"{% endif %} value="2">Overseas Patients</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-body form-repeat">
+                    <div id="notification">
+                        {{ display_messages()|raw }}
+                    </div>
+                    <div class="mb-20"><strong>Customs Clearance Admin Fee</strong></div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {% include '@Admin/payment_setting/gms_form.html.twig' with { 'form': formCustomCAF1, 'formId': 'frm-custom-caf1', 'area_type': 1, 'ms_type': 3, 'inactive_agent': true, 'is_active': isActiveLocal } %}
+                        </div>
+                        <div class="col-md-6">
+                            {% include '@Admin/payment_setting/gms_form.html.twig' with { 'form': formCustomCAF2, 'formId': 'frm-custom-caf2', 'area_type': 2, 'ms_type': 3, 'inactive_agent': true, 'is_active': isActiveOversea } %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+
+            <div class="pt-20 pb-20">
+                {% set module = constant('UtilBundle\\Utility\\Constant::CUSTOM_CLEARANCE_ADMIN_FEE_MODULE_NAME') %}
+                <a href="#modal-gms-view-logs" id="view_logs_anchor"
+                data-module="{{ module }}"
+                data-template-view="AdminBundle:payment_setting\Logs:caf_log.html.twig"
+                data-template-print="AdminBundle:payment_setting\Logs:caf_pdf.html.twig"
+                data-breadcrumb-title="CUSTOM CLEARANCE ADMIN FEE"
+                data-modal-title="CUSTOM CLEARANCE ADMIN FEE"
+                data-file-name="Custom_Clearance_AdminFee"
+                data-toggle="modal" class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm">View Log</a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="blink-loader">
+        <div class="load1-wrap"><div class="load1"><div class="loader">Loading...</div></div></div>
+    </div>
+    <input type='hidden' id="caf_view_log_url" value="{{ path('admin_payment_margin_gst_view_logs') }}" />
+    <input type='hidden' id="module_name_hf" value="{{ module }}" />
+    <input type="hidden" id="url_payment_gms_new_update_active" value="{{ path('payment_gms_new_update_active') }}">
+    <input type="hidden" id="url_admin_custom_clearance_fee" value="{{ path('admin_custom_clearance_fee') }}">
+
+
+
+
+{% endblock %}
+
+

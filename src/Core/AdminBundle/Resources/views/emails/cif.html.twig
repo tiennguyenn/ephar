@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>CIF</title>
+</head>
+<body style="margin:0; padding:0;">
+<table width="100%" height="100%" border="0" align="center" cellpadding="0" cellspacing="0" style="margin: 0; padding: 0;font-family: Arial, Helvetica, sans-serif;">
+    <tr>
+        <td valign="top">
+            <table width="960" border="0" cellpadding="0" align="center" cellspacing="0" style="background-color: #ffffff;">
+                <tr colspan="3"><td height="15"></td></tr>
+                <tr>
+                    <td colspan="3">
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td width="30"></td>
+                                <td>
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                            <td width="50%"><img src="{{ logoUrl|default('') }}" style="display:block;border:0;margin:0;" ></td>
+                                            <td width="50%" align="right">
+                                                <div style="margin-bottom: 5px;"><a href="http://www.gmedes.com" style="color:#c42639;">About GMEDES</a></div>
+                                                <div><a href="mailto:doctorshelp@gmedes.com" style="color:#c42639;">Contact us</a></div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td width="30"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="30"></td>
+                    <td>
+                        <table width="100%"  border="0" cellpadding="0" cellspacing="0">
+                            <tr><td height="30"></td></tr>
+                            <tr><td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 14px">Dear <strong>{{ name }}</strong>,</font></td></tr>
+                            <tr><td height="20"></td></tr>
+                            <tr><td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 14px">Attached is your CIF for {{ date }}.</font></td></tr>
+                            <tr><td height="20"></td></tr>
+                            <tr><td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 14px">Please contact <a href="mailto:finance@gmedes.com" style="color: black;">finance@gmedes.com</a> if you have any concerns.</font></td></tr>
+                            <tr><td height="20"></td></tr>
+                            <tr><td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 14px">This is a system generated email. Please do not reply.</font></td></tr>
+                            <tr><td height="20"></td></tr>
+                            <tr><td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 14px">From,</font></td></tr>
+                            <tr><td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 14px">GMEDES Pte Ltd</font></td></tr>
+                            <tr><td height="40"></td></tr>
+                        </table>
+                    </td>
+                    <td width="30"></td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="background-color: #d6d6d6;">
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td width="30"></td>
+                                <td>
+                                    <table width="100%"  border="0" cellpadding="0" cellspacing="0">
+                                        <tr><td height="10"></td></tr>
+                                        <tr>
+                                            <td><font color="#000000" face="Arial, Helvetica, sans-serif" style="font-size: 12px">Please add our email to your Safe Sender list to ensure that we can reach you.</font></td>
+                                        </tr>
+                                        <tr><td height="10"></td></tr>
+                                    </table>
+                                </td>
+                                <td width="30"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="background-color: #c42639;">
+                        {% include '@Admin/emails/footer.html.twig' %}
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

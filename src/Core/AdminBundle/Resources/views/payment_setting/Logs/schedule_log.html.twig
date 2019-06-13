@@ -1,0 +1,63 @@
+<table class="table table-hover table-light_">
+  <thead>
+    <tr>
+        <th style="width: 20%">Date</th>
+        <th style="width: 20%">User</th>
+        <th>Changes</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% if logs %}
+        {% for log in logs %}
+            <tr>
+                <td>{{ log.createdOn|date('d M y') }}</td>
+                <td>{{ log.createdBy }}</td>
+                <td>
+                    {% if log.oldValue.doctorStatementDate != log.newValue.doctorStatementDate  %}
+                        Doctor Statement is updated
+                        <br>Old Value: {{ log.oldValue.doctorStatementDate }} of the Month
+                        <br>New Value: {{ log.newValue.doctorStatementDate }} of the Month <br><br>
+                    {% endif %}
+
+                    {% if log.oldValue.agentStatementDate != log.newValue.agentStatementDate  %}
+                        Agent Statement is updated
+                        <br>Old Value: {{ log.oldValue.agentStatementDate }} of the Month
+                        <br>New Value: {{ log.newValue.agentStatementDate }} of the Month<br><br>
+                    {% endif %}
+
+                    {% if log.oldValue.pharmacyWeeklyPoDay !=  log.newValue.pharmacyWeeklyPoDay %}
+                        Pharmacy Weekly PO is updated
+                        <br>Statement is sent on
+                        <br>Old Value: {{ get_day_of_week(log.oldValue.pharmacyWeeklyPoDay) }}
+                        <br>New Value: {{ get_day_of_week(log.newValue.pharmacyWeeklyPoDay) }}<br>
+                        {% if log.oldValue.pharmacyWeeklyPoTime ==  log.newValue.pharmacyWeeklyPoTime %}
+                            <br>
+                        {% endif %}
+                    {% endif %}
+                    {% if log.oldValue.pharmacyWeeklyPoTime !=  log.newValue.pharmacyWeeklyPoTime %}
+                        At time
+                        <br>Old Value: {{ get_timeslot(log.oldValue.pharmacyWeeklyPoTime) }}
+                        <br>New Value: {{ get_timeslot(log.newValue.pharmacyWeeklyPoTime) }}<br><br>
+                    {% endif %}
+
+
+                    {% if log.oldValue.deliveryFortnightlyPoDay !=  log.newValue.deliveryFortnightlyPoDay %}
+                        Delivery Weekly PO is updated
+                        <br>Statement is sent on
+                        <br>Old Value: {{ get_day_of_week(log.oldValue.deliveryFortnightlyPoDay) }}
+                        <br>New Value: {{ get_day_of_week(log.newValue.deliveryFortnightlyPoDay) }}<br>
+                    {% endif %}
+                    {% if log.oldValue.deliveryFortnightlyPoTime !=  log.newValue.deliveryFortnightlyPoTime %}
+                        At time
+                        <br>Old Value: {{ get_timeslot(log.oldValue.deliveryFortnightlyPoTime) }}
+                        <br>New Value: {{ get_timeslot(log.newValue.deliveryFortnightlyPoTime) }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+  </tbody>
+</table>
+<input type='hidden' id='print_log_url' value="{{ printUrl|default('') }}" />
+<input type='hidden' id='breadcrumb_title' value="{{ breadcrumbTitle|default('') }}" />
+<input type='hidden' id='entity_id' value="{{ entityId|default('') }}" />

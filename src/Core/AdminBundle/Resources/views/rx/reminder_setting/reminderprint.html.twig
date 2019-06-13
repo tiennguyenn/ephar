@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>{{ title }}</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="Preview page of Metronic Admin Theme #4 for blank page layout" name="description" />
+        <meta content="" name="author" />
+        <style>
+            body {
+                color: #333;
+                padding: 0;
+                margin: 0;
+                font-size: 14px;
+                font-family: Arial, sans-serif;
+            }
+            .portlet-title {
+                border-left: 1px solid #e7ecf1;
+                border-right: 1px solid #e7ecf1;
+                border-top: 1px solid #e7ecf1;
+                min-height: 41px;
+                font-weight: 600;
+                font-size: 14px;
+                line-height: 18px;
+                padding: 10px;
+            }
+            table {
+                width: 100%;
+                border: 1px solid #e7ecf1;
+            }
+            th {
+                padding: 10px;
+                font-weight: 600;
+                vertical-align: bottom;
+            }
+            td {
+                border-top: 1px solid #e7ecf1;
+                padding: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="portlet">
+            <div class="portlet-title">
+                <div class="caption">{{ title }}</div>
+            </div>
+            <div class="portlet-body">
+                <table class="table table-hover table-light_">
+                    <thead>
+                        <tr class="uppercase">
+                            <th style="width: 80px">Date</th>
+                            <th style="width: 140px">User</th>
+                            <th>Changes</th>
+                        </tr>
+                    </thead>
+    <tbody>
+        {% if  logType == "one" %}
+            {% for log in logs %}
+                <tr>
+                    <td>{{ log.createdOn|date('d M y') }}</td>
+                    <td>{{ log.createdBy }}</td>
+                    <td>
+                        {# <strong>Reminder 1 for Patient </strong><br> #}
+                        {% if log.oldValue.RCC1P1.durationTime != log.newValue.RCC1P1.durationTime %}
+                            Reminder 1 Duration is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P1.durationTime }} {{ log.oldValue.RCC1P1.timeUnit }}s
+                            <br>New Value: {{ log.newValue.RCC1P1.durationTime }} {{ log.newValue.RCC1P1.timeUnit }}s<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.RCC1P1.templateSubjectEmail != log.newValue.RCC1P1.templateSubjectEmail %}
+                            Reminder 1 Mail Subject is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P1.templateSubjectEmail }}
+                            <br>New Value: {{ log.newValue.RCC1P1.templateSubjectEmail }}<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.RCC1P1.templateBodyEmail != log.newValue.RCC1P1.templateBodyEmail %}
+                            Reminder 1 Mail Message is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P1.templateBodyEmail|raw }}
+                            <br>New Value: {{ log.newValue.RCC1P1.templateBodyEmail|raw }}<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.RCC1P1.templateSms != log.newValue.RCC1P1.templateSms %}
+                            Reminder 1 Mail SMS Message is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P1.templateSms }}
+                            <br>New Value: {{ log.newValue.RCC1P1.templateSms }}<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.RCC1P1.templateSms != log.newValue.RCC1P1.templateSms %}
+                            Reminder 1 Mail SMS Message is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P1.templateSms }}
+                            <br>New Value: {{ log.newValue.RCC1P1.templateSms }}<br><br>
+                        {% endif %}
+
+                        {# <strong>Reminder 2 for Patient </strong><br> #}
+                        {% if log.oldValue.RCC1P2.durationTime != log.newValue.RCC1P2.durationTime %}
+                            Reminder 2 Duration is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P2.durationTime }} {{ log.oldValue.RCC1P2.timeUnit }} s
+                            <br>New Value: {{ log.newValue.RCC1P2.durationTime }} {{ log.newValue.RCC1P2.timeUnit }}s<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.RCC1P2.templateSubjectEmail != log.newValue.RCC1P2.templateSubjectEmail %}
+                            Reminder 2 Mail Subject is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P2.templateSubjectEmail }}
+                            <br>New Value: {{ log.newValue.RCC1P2.templateSubjectEmail }}<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.RCC1P2.templateBodyEmail != log.newValue.RCC1P2.templateBodyEmail %}
+                            Reminder 2 Mail Message is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P2.templateBodyEmail|raw }}
+                            <br>New Value: {{ log.newValue.RCC1P2.templateBodyEmail|raw }}<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.RCC1P2.templateSms != log.newValue.RCC1P2.templateSms %}
+                            Reminder 2 Mail SMS Message is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P2.templateSms }}
+                            <br>New Value: {{ log.newValue.RCC1P2.templateSms }}<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.RCC1P2.templateSms != log.newValue.RCC1P2.templateSms %}
+                            Reminder 2 Mail SMS Message is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P2.templateSms }}
+                            <br>New Value: {{ log.newValue.RCC1P2.templateSms }}<br><br>
+                        {% endif %}
+
+                        {# <strong>Reminder 3 for Patient </strong><br> #}
+                        {% if log.oldValue.RCC1P3.durationTime != log.newValue.RCC1P3.durationTime %}
+                            Reminder 3 Duration is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P3.durationTime }} {{ log.oldValue.RCC1P3.timeUnit }}s
+                            <br>New Value: {{ log.newValue.RCC1P3.durationTime }} {{ log.newValue.RCC1P3.timeUnit }}s<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.RCC1P3.templateSubjectEmail != log.newValue.RCC1P3.templateSubjectEmail %}
+                            Reminder 3 Mail Subject is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P3.templateSubjectEmail }}
+                            <br>New Value: {{ log.newValue.RCC1P3.templateSubjectEmail }}<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.RCC1P3.templateBodyEmail != log.newValue.RCC1P3.templateBodyEmail %}
+                            Reminder 3 Mail Message is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P3.templateBodyEmail|raw }}
+                            <br>New Value: {{ log.newValue.RCC1P3.templateBodyEmail|raw }}<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.RCC1P3.templateSms != log.newValue.RCC1P3.templateSms %}
+                            Reminder 3 Mail SMS Message is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P3.templateSms }}
+                            <br>New Value: {{ log.newValue.RCC1P3.templateSms }}<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.RCC1P3.templateSms != log.newValue.RCC1P3.templateSms %}
+                            Reminder 3 Mail SMS Message is updated
+                            <br>Old Value: {{ log.oldValue.RCC1P3.templateSms }}
+                            <br>New Value: {{ log.newValue.RCC1P3.templateSms }}<br><br>
+                        {% endif %}
+
+                        {# <strong>Cycle 1 Failed Email for Patient</strong><br> #}
+                        {% if log.oldValue.RCC1FP.templateSubjectEmail != log.newValue.RCC1FP.templateSubjectEmail%}
+                            Mail Subject for Patient is updated
+                            <br>Old Value: {{ log.oldValue.RCC1FP.templateSubjectEmail }}
+                            <br>New Value: {{ log.newValue.RCC1FP.templateSubjectEmail }}<br><br>
+                        {% endif %}
+
+                        {% if log.oldValue.RCC1FP.templateBodyEmail != log.newValue.RCC1FP.templateBodyEmail%}
+                            Mail Message for Patient is updated
+                            <br>Old Value: {{ log.oldValue.RCC1FP.templateBodyEmail|raw }}
+                            <br>New Value: {{ log.newValue.RCC1FP.templateBodyEmail|raw }}<br><br>
+                        {% endif %}
+
+                        {# <strong>Cycle 1 Failed Email for Doctor</strong><br> #}
+                        {% if log.oldValue.RCC1FD.templateSubjectEmail != log.newValue.RCC1FD.templateSubjectEmail %}
+                            Mail Subject for Doctor is updated
+                            <br>Old Value: {{ log.oldValue.RCC1FD.templateSubjectEmail }}
+                            <br>New Value: {{ log.newValue.RCC1FD.templateSubjectEmail }}<br><br>
+                        {% endif %}
+                        {% if log.oldValue.RCC1FD.templateBodyEmail != log.newValue.RCC1FD.templateBodyEmail %}
+                            Mail Message for Doctor is updated
+                            <br>Old Value: {{ log.oldValue.RCC1FD.templateBodyEmail|raw }}
+                            <br>New Value: {{ log.newValue.RCC1FD.templateBodyEmail|raw }}<br><br>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% elseif logType == "two" %}
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.createdOn|date('d M y') }}</td>
+                <td>{{ log.createdBy }}</td>
+                <td>
+                    {% if log.oldValue.RCC2FOS.durationTime != log.newValue.RCC2FOS.durationTime%}
+                        Keep failed order active is updated
+                        <br>Old Value: {{ log.oldValue.RCC2FOS.durationTime }} {{ log.oldValue.RCC2FOS.timeUnit }}s
+                        <br>New Value: {{ log.newValue.RCC2FOS.durationTime }} {{ log.oldValue.RCC2FOS.timeUnit }}s<br><br>
+                    {% endif %}
+
+                    {% if log.oldValue.RCC2FOS.expiredTime != log.newValue.RCC2FOS.expiredTime%}
+                         Display dead orders (Archive schedule) is updated
+                        <br>Old Value: {{ log.oldValue.RCC2FOS.expiredTime }} {{ log.oldValue.RCC2GPS.timeUnit }}s
+                        <br>New Value: {{ log.newValue.RCC2FOS.expiredTime }} {{ log.oldValue.RCC2GPS.timeUnit }}s<br><br>
+                    {% endif %}
+
+
+                    {% if log.oldValue.RCC2GPS.durationTime  != log.newValue.RCC2GPS.durationTime %}
+                         Grace Period for Patient is updated
+                        <br>Old Value: {{ log.oldValue.RCC2GPS.durationTime }} {{ log.oldValue.RCC2GPS.timeUnit }}s
+                        <br>New Value: {{ log.newValue.RCC2GPS.durationTime }} {{ log.oldValue.RCC2GPS.timeUnit }}s<br><br>
+                    {% endif %}
+                    {% if log.oldValue.RCC2GPS.templateSubjectEmail  != log.newValue.RCC2GPS.templateSubjectEmail %}
+                         Grace Period Subject Line is updated
+                        <br>Old Value: {{ log.oldValue.RCC2GPS.templateSubjectEmail }}
+                        <br>New Value: {{ log.newValue.RCC2GPS.templateSubjectEmail }}<br><br>
+                    {% endif %}
+                    {% if log.oldValue.RCC2GPS.templateBodyEmail  != log.newValue.RCC2GPS.templateBodyEmail %}
+                         Grace Period Message is updated
+                        <br>Old Value: {{ log.oldValue.RCC2GPS.templateBodyEmail|raw }}
+                        <br>New Value: {{ log.newValue.RCC2GPS.templateBodyEmail|raw }}<br><br>
+                    {% endif %}
+                    {% if log.oldValue.RCC2GPS.templateSms  != log.newValue.RCC2GPS.templateSms %}
+                         Grace Period SMS Message is updated
+                        <br>Old Value: {{ log.oldValue.RCC2GPS.templateSms }}
+                        <br>New Value: {{ log.newValue.RCC2GPS.templateSms }}<br><br>
+                    {% endif %}
+
+                    {% if log.oldValue.RCC2FP.templateSubjectEmail  != log.newValue.RCC2FP.templateSubjectEmail %}
+                         Cycle 2 Failed Order Subject Line for Patient is updated
+                        <br>Old Value: {{ log.oldValue.RCC2FP.templateSubjectEmail }}
+                        <br>New Value: {{ log.newValue.RCC2FP.templateSubjectEmail }}<br><br>
+                    {% endif %}
+
+                    {% if log.oldValue.RCC2FP.templateBodyEmail  != log.newValue.RCC2FP.templateBodyEmail %}
+                         Cycle 2 Failed Order Mail Message For Patient is updated
+                        <br>Old Value: {{ log.oldValue.RCC2FP.templateBodyEmail|raw }}
+                        <br>New Value: {{ log.newValue.RCC2FP.templateBodyEmail|raw }}<br><br>
+                    {% endif %}
+
+
+                    {% if log.oldValue.RCC2FD.templateSubjectEmail  != log.newValue.RCC2FD.templateSubjectEmail %}
+                         Cycle 2 Failed Order Subject Line for Doctor is updated
+                        <br>Old Value: {{ log.oldValue.RCC2FD.templateSubjectEmail }}
+                        <br>New Value: {{ log.newValue.RCC2FD.templateSubjectEmail }}<br><br>
+                    {% endif %}
+                    {% if log.oldValue.RCC2FD.templateBodyEmail  != log.newValue.RCC2FD.templateBodyEmail %}
+                         Cycle 2 Failed Order Mail Message For Doctor is updated
+                        <br>Old Value: {{ log.oldValue.RCC2FD.templateBodyEmail|raw }}
+                        <br>New Value: {{ log.newValue.RCC2FD.templateBodyEmail|raw }}<br><br>
+                    {% endif %}
+
+
+                    {% if log.oldValue.RCC2FA.templateSubjectEmail  != log.newValue.RCC2FA.templateSubjectEmail %}
+                         Cycle 2 Failed Order Subject Line for GMEDES Admin is updated
+                        <br>Old Value: {{ log.oldValue.RCC2FA.templateSubjectEmail }}
+                        <br>New Value: {{ log.newValue.RCC2FA.templateSubjectEmail }}<br><br>
+                    {% endif %}
+                    {% if log.oldValue.RCC2FA.templateBodyEmail  != log.newValue.RCC2FA.templateBodyEmail %}
+                         Cycle 2 Failed Order Mail Message for GMEDES Admin is updated
+                        <br>Old Value: {{ log.oldValue.RCC2FA.templateBodyEmail|raw }}
+                        <br>New Value: {{ log.newValue.RCC2FA.templateBodyEmail|raw }}<br><br>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

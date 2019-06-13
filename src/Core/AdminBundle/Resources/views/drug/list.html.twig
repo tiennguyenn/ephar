@@ -1,0 +1,224 @@
+<div class="row show-grid mb-grid">
+  <div class="col-lg-4 col-md-8">
+    <div id="search">
+      <div class="input-icon right"> <i class="icon-magnifier"></i>
+        <input style="padding-right: 30px;" id="name" type="text" class="form-control on-suggestion" placeholder="Search Product Name" value="{{params.name}}">
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8 col-md-4">
+    <div class="text-right">
+      <label>
+        <select id="limit" class="form-control input-sm input-xsmall input-inline">
+          <option value="10" {{ params.limit == 10 ? 'selected=""' : '' }}>10</option>
+          <option value="20" {{ params.limit == 20 ? 'selected=""' : '' }}>20</option>
+          <option value="50" {{ params.limit == 50 ? 'selected=""' : '' }}>50</option>
+        </select>
+        entries</label>
+    </div>
+  </div>
+</div>
+
+<div class="row show-grid module-filter">
+  <div class="col-lg-9">
+    <div class="mod-filter">
+      <span class="filter-label">Filter by Pharmacy cost price status:</span>
+      <div class="entry filter-changing primary">
+        <a href="javascript:void(0)" data-value="all" class="status {{ params.status == 'all' ? 'active' : '' }}">All</a>
+        <a href="javascript:void(0)" data-value="pending" class="status {{ params.status == 'pending' ? 'active' : '' }}">Pending approval <span class="badge badge-danger">{{ pending > 0 ? pending : '' }}</span></span></a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-lg-3 text-right">
+    <a id="logs" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">View Log</a>
+    <!--<a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">Add Product <i class="fa fa-plus"></i> </a>-->
+  </div>
+</div>
+
+<div class="table-scrollable">
+  <table class="table table-striped table-bordered table-checkable table-hover dataTable no-footer dtr-inline table-edit" id="sample_1" role="grid" aria-describedby="sample_1_info" style="width: 1562px;">
+    <thead>
+      <tr role="row">
+        <th valign="middle" style="vertical-align: middle">
+          <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+            <input type="checkbox" class="group-checkable" data-set="#sample_1 .checkboxes">
+            <span></span>
+          </label>
+        </th>
+        <th valign="middle" style="vertical-align: middle" class="sorting {{ params.sort == 'name' ? 'sorting_' ~ params.dir: 'sorting' }}" tabindex="0" rowspan="1" colspan="1" data-sort="name" data-dir="{{ params.sort == 'name' ? params.dir : 'asc' }}"> Product Name </th>
+        <th valign="middle" style="vertical-align: middle" class="sorting {{ params.sort == 'costPrice' ? 'sorting_' ~ params.dir: 'sorting' }}" tabindex="0" rowspan="1" colspan="1" data-sort="costPrice" data-dir="{{ params.sort == 'costPrice' ? params.dir : 'asc' }}"> Pharmacy Cost Price ({{ getCurrencyCode() }})</th>
+        <th valign="middle" style="vertical-align: middle">GST Code</th>
+        <th class="price" id="list_price_domestic">
+          {% if audits.list_price_domestic is defined %}
+          <a href="javascript:;" class="editablePopup" data-action="update_prices" data-field="list_price_domestic" data-value="{{ settings.local ? settings.local : 0 }}" data-original-title="Change Percentage">{{ settings.local ? settings.local : 0 }}%</a>
+          <a href="javascript:;" data-toggle="tooltip" title="New value {{audits.list_price_domestic.new_value}}% will be effective on {{ audits.list_price_domestic.take_effect_on|date('d M y') }}" class="icon-tooltip"><i class="fa fa-exclamation-circle"></i></a> GMEDS Selling Price <br> for Local Patients ({{ getCurrencyCode() }})
+          {% else %}
+          <!--<a href="javascript:;" class="editablePopup mr-10" data-action="update_prices" data-field="list_price_domestic" data-value="{{ settings.local ? settings.local : 0 }}" data-original-title="Change Percentage">{{ settings.local ? settings.local : 0 }}%</a> GMEDS Selling Price <br> for Local Patients ({{ getCurrencyCode() }}) -->
+		  <a href="javascript:;" class="mr-10">{{ settings.local ? settings.local : 0 }}%</a> GMEDS Selling Price <br> for Local Patients ({{ getCurrencyCode() }})
+          {% endif %}
+          <!--<div class="js-edit">-->                            
+            <!--<span class="value">10%</span>
+            <div class="action">
+              <a href="javascript:void(0);" class="edit">EDIT</a>
+              <a href="javascript:void(0);" class="cancel">CANCEL</a>
+              <a href="javascript:void(0);" class="save">SAVE</a>
+            </div>
+          </div>-->
+        </th>
+        <th class="price" id="list_price_international">
+          <!--<div class="js-edit">-->
+            {% if audits.list_price_international is defined %}
+            <a href="javascript:;" class="editablePopup" data-action="update_prices" data-field="list_price_international" data-value="{{ settings.overseas ? settings.overseas : 0 }}" data-original-title="Change Percentage">{{ settings.overseas ? settings.overseas : 0 }}%</a>
+            <a href="javascript:;" data-toggle="tooltip" title="New value {{audits.list_price_international.new_value}}% will be effective on {{ audits.list_price_international.take_effect_on|date('d M y') }}" class="icon-tooltip"><i class="fa fa-exclamation-circle"></i></a> GMEDS Selling Price <br> for Overseas Patients ({{ getCurrencyCode() }})
+            {% else %}
+            <!--<a href="javascript:;" class="editablePopup mr-10" data-action="update_prices" data-field="list_price_international" data-value="{{ settings.overseas ? settings.overseas : 0 }}" data-original-title="Change Percentage">{{ settings.overseas ? settings.overseas : 0 }}%</a> GMEDS Selling Price <br> for Overseas Patients ({{ getCurrencyCode() }}) -->
+			<a href="javascript:;" class="mr-10">{{ settings.overseas ? settings.overseas : 0 }}%</a> GMEDS Selling Price <br> for Overseas Patients ({{ getCurrencyCode() }})
+            {% endif %}
+            <!--<span class="value">20%<input type="text" class="form-control input-inline" value=""></span>
+            <div class="action">
+              <a href="javascript:void(0);" class="edit">EDIT</a>
+              <a href="javascript:void(0);" class="cancel">CANCEL</a>
+              <a href="javascript:void(0);" class="save">SAVE</a>
+            </div>
+          </div>-->
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for drug in data.list %}
+      <tr role="row" class="row-item rowItem">
+        <td>
+          <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+            <input type="checkbox" class="checkboxes" value="1">
+            <span></span>
+          </label>
+        </td>
+        <td>{{ drug.name }}</td>
+        <td>
+			<div class="js-edit clearfix">
+				{% if drug.oldCostPrice is not empty and drug.newCostPrice is not empty and drug.status == 0 and drug.priceType == 'cost_price' %}
+				<div class="action">
+					  <a href="javascript:void(0);" class="rowItemBtn">VIEW</a>
+				</div>
+				{% endif %}
+				<span class="value pull-right" id="cost_price_{{drug.id}}">
+					{% if drug.oldCostPrice is not empty and drug.newCostPrice is not empty and drug.status == 0 and drug.priceType == 'cost_price' %}
+					<span class="badge badge-danger ml-10">PENDING</span>
+					{% endif %}
+					{{ drug.costPrice|number_format(2, '.', ',') }}
+					{% if drug.audits is defined and drug.audits.cost_price is defined %}
+					<a href="javascript:;" data-toggle="tooltip" title="New value {{drug.audits.cost_price.new_value|number_format(2, '.', ',')}} will be effective on {{ drug.audits.cost_price.take_effect_on|date('d M y') }}" class="icon-tooltip"><i class="fa fa-exclamation-circle"></i></a>
+					{% endif %}	
+				</span>	
+			</div>
+        </td>
+        <td>{{ drug.gstCode }}</td>
+        <td class="price list_price_domestic text-right" id="list_price_domestic_{{drug.id}}">
+          <a href="javascript:;" class="editableInline" data-action="update_price" data-id="{{ drug.id }}" data-field="list_price_domestic" data-name="{{ drug.name }}" data-value="{{ drug.listPriceDomestic|number_format(2, '.', ',') }}">{{ drug.listPriceDomestic|number_format(2, '.', ',') }}</a>
+          {% if drug.audits is defined and drug.audits.list_price_domestic is defined %}
+          <a href="javascript:;" data-toggle="tooltip" title="New value {{drug.audits.list_price_domestic.new_value|number_format(2, '.', ',')}} will be effective on {{ drug.audits.list_price_domestic.take_effect_on|date('d M y') }}" class="icon-tooltip"><i class="fa fa-exclamation-circle"></i></a>
+          {% endif %}
+          <!--<div class="js-edit">
+            <span class="value"><a href="javascript:;" id="lastname" class="mr-10">14.00</a></span>
+            <div class="action">
+              <a href="javascript:void(0);" class="edit">EDIT</a>
+              <a href="javascript:void(0);" class="cancel">CANCEL</a>
+              <a href="javascript:void(0);" class="save">SAVE</a>
+            </div>
+          </div>-->
+        </td>
+        <td class="price list_price_international text-right" id="list_price_international_{{drug.id}}">
+          <a href="javascript:;" class="editableInline" data-action="update_price" data-id="{{ drug.id }}" data-field="list_price_international" data-name="{{ drug.name }}" data-value="{{ drug.listPriceInternational|number_format(2, '.', ',') }}">{{ drug.listPriceInternational|number_format(2, '.', ',') }}</a>
+          {% if drug.audits is defined and drug.audits.list_price_international is defined %}
+          <a href="javascript:;" data-toggle="tooltip" title="New value {{drug.audits.list_price_international.new_value|number_format(2, '.', ',')}} will be effective on {{ drug.audits.list_price_international.take_effect_on|date('d M y') }}" class="icon-tooltip"><i class="fa fa-exclamation-circle"></i></a>
+          {% endif %}
+          <!--<div class="js-edit">
+            <span class="value">11.00</span>
+            <div class="action">
+              <a href="javascript:void(0);" class="edit">EDIT</a>
+              <a href="javascript:void(0);" class="cancel">CANCEL</a>
+              <a href="javascript:void(0);" class="save">SAVE</a>
+            </div>
+          </div>-->
+        </td>
+        <!--<td><a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs">Edit <i class="fa fa-edit"></i> </a></td>-->
+      </tr>
+      {%    if drug.oldCostPrice is not empty and drug.newCostPrice is not empty and drug.status == 0 and drug.priceType == 'cost_price' %}
+      <tr class="row-item-expand hide-item rowItemExpand">
+        <td colspan="6">
+            <div class="price-changing-wrap text-left">
+                <div class="price-changing">
+                    <p><strong>Pharmacy cost price changes</strong></p>
+                    <p class="txt-grey-555"><strong>Old Price = ${{ drug.oldCostPrice|number_format(2, '.', ',') }}</strong></p>
+                    <p class="txt-green-new"><strong>New Price = ${{ drug.newCostPrice|number_format(2, '.', ',') }}</strong></p>
+                    <div class="mb-10">Price change will take effect on:</div>
+                    <div class="datepicker-wrap">
+                        <div class="wrap">
+                          <div class="input-group date date-pickers bs-datetime">
+                            <input type="text" size="16" class="form-control">
+                            <span class="input-group-addon">
+                              <button class="btn default date-set mr-0" type="button">
+                                <i class="fa fa-calendar"></i>
+                              </button>
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <a href="javascript:;" data-id="{{ drug.id }}" class="reject btn btn-ahalf-circle text-uppercase btn-danger btn-sm btn-icon-right">Reject <i class="fa fa-remove"></i></a>
+                        <a href="javascript:;" data-id="{{ drug.id }}" class="approve btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right">Approve <i class="fa fa-check"></i></a>
+                    </div>
+                </div>
+            </div>  
+        </td>
+      </tr>
+      {%    endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="row">
+    <div class="col-md-5 col-sm-12">
+        <div class="dataTables_info" role="status" aria-live="polite">Showing {{ data.total ? (data.page - 1) * data.limit + 1 : 0 }} to {{ (data.page * data.limit) < data.total ? data.page * data.limit : data.total }} of {{ data.total }} entries</div>
+    </div>
+    <div class="col-md-7 col-sm-12">
+        <div class="dataTables_paginate paging_bootstrap_number">
+            <ul class="pagination" style="visibility: {{ data.pages > 1 ? 'visible' : 'hidden' }};">
+                <li class="prev {{ data.page == 1 ? 'disabled' : '' }}">
+                    {% if (data.page == 1) %}
+                    <span><i class="fa fa-angle-left"></i></span>
+                    {% else %}
+                    <a href="javascript:void(0)" data-params="{{ jsonPageParams(data.page - 1, params) }}" title="Prev"><i class="fa fa-angle-left"></i></a>
+                    {% endif %}
+                </li>
+				{% if data.start > 1 %}
+                <li class="disabled">
+                    <span>...</span>
+                </li>
+				{% endif %}
+                {% for i in data.start..data.end %}
+                <li class="{{ i == data.page ? 'active' : '' }}">
+                    {% if (i == data.page) %}
+                    <span>{{ i }}</span>
+                    {% else %}
+                    <a href="javascript:void(0)" data-params="{{ jsonPageParams(i, params) }}">{{ i }}</a>
+                    {% endif %}
+                </li>
+                {% endfor %}
+				{% if data.end < data.pages %}
+                <li class="disabled">
+                    <span>...</span>
+                </li>
+				{% endif %}
+                <li class="next {{ data.page == data.pages ? 'disabled' : '' }}">
+                    {% if (data.page == data.pages) %}
+                    <span><i class="fa fa-angle-right"></i></span>
+                    {% else %}
+                    <a href="javascript:void(0)" data-params="{{ jsonPageParams(data.page + 1, params) }}" title="Next"><i class="fa fa-angle-right"></i></a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

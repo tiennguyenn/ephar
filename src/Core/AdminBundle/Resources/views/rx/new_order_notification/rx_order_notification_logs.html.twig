@@ -1,0 +1,42 @@
+<table class="table table-hover table-light_">
+    <thead>
+    <tr class="uppercase">
+        <th style="width: 80px">Date</th>
+        <th style="width: 140px">User</th>
+        <th>Changes</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for log in logs %}
+        <tr>
+            <td>{{ log.createdOn|date('d M y') }}</td>
+            <td>{{ log.createdBy }}</td>
+            <td>
+                {% if log.oldValue.duration_time != log.newValue.duration_time %}
+                    New Rx Order Notification Reminder Delay is updated
+                    <br><strong>Old Value:</strong> {{ log.oldValue.duration_time }} {{ log.oldValue.duration_unit }}s
+                    <br><strong>New Value:</strong> {{ log.newValue.duration_time }} {{ log.newValue.duration_unit }}s<br><br>
+                {% endif %}
+
+                {% if log.oldValue.email_subject != log.newValue.email_subject %}
+                    New Rx Order Notification Email Subject is updated
+                    <br><strong>Old Value:</strong> {{ log.oldValue.email_subject }}
+                    <br><strong>New Value:</strong> {{ log.newValue.email_subject }}<br><br>
+                {% endif %}
+
+                {% if log.oldValue.email_message != log.newValue.email_message %}
+                    New Rx Order Notification Email Template is updated
+                    <br><strong>Old Value:</strong><br /> {{ log.oldValue.email_message|raw }}
+                    <br><strong>New Value:</strong><br /> {{ log.newValue.email_message|raw }}<br><br>
+                {% endif %}
+
+                {% if log.oldValue.sms_message != log.newValue.sms_message %}
+                    New Rx Order Notification SMS Template is updated
+                    <br><strong>Old Value:</strong><br /> {{ log.oldValue.sms_message|raw }}
+                    <br><strong>New Value:</strong><br /> {{ log.newValue.sms_message|raw }}<br><br>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

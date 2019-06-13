@@ -1,0 +1,83 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {{ parent () }}
+    {% stylesheets
+    'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+    'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+    'bundles/admin/assets/global/plugins/ladda/ladda-themeless.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-select/css/bootstrap-select.css'
+    'bundles/admin/assets/global/plugins/jquery-multi-select/css/multi-select.css'
+    'bundles/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+    'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+    'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+    filter='cssrewrite'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block pageTitle %}
+    <h1>Indonesia Import Tax</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+    <li> <span class="active">Indonesia Import Tax</span> </li>
+{% endblock %}
+{% block content %}
+<div class="portlet light">
+    <div class="portlet-body form">
+        {{ display_messages()|raw }}
+        <div class="form-body form-repeat">
+            <div class="mb-20"><strong>Variables to calculate the Indonesia import tax:</strong></div>
+            {{ form_start(form, {'attr': {'id': 'itForm','class': 'form-horizontal' }}) }}
+                {% include '@Admin/payment_setting/indo_tax_form.html.twig' with { field_name: 'freightCost', unit: 'USD', 'label': 'Freight Cost' } %}
+                {% include '@Admin/payment_setting/indo_tax_form.html.twig' with { field_name: 'insuranceVariable', unit: '', 'label': 'Insurance Variable' } %}
+                {% include '@Admin/payment_setting/indo_tax_form.html.twig' with { field_name: 'bmImportDuty', unit: '%', 'label': 'BM Import Duty' } %}
+                {% include '@Admin/payment_setting/indo_tax_form.html.twig' with { field_name: 'ppnVat', unit: '%', 'label': 'PPN - VAT' } %}
+                {% include '@Admin/payment_setting/indo_tax_form.html.twig' with { field_name: 'pphWithTaxId', unit: '%', 'label': 'PPH With Tax ID' } %}
+                {% include '@Admin/payment_setting/indo_tax_form.html.twig' with { field_name: 'pphWithoutTaxId', unit: '%', 'label': 'PPH Without Tax ID' } %}
+                <div class="btn-update-margin">
+                    <input class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm" type="submit" value="Update" />
+                </div>
+            {{ form_end(form) }}
+        </div>
+        <div class="pt-20 pb-20">
+            {% set module = constant('UtilBundle\\Utility\\Constant::INDONESIA_IMPORT_TAX_MODULE_NAME') %}
+            <a href="#modal-gms-view-logs" id="view_logs_anchor"
+               data-module="{{ module }}"
+               data-template-view="AdminBundle:payment_setting\Logs:indonesia_import_tax_log.html.twig"
+               data-template-print="AdminBundle:payment_setting\Logs:indonesia_import_tax_pdf.html.twig"
+               data-breadcrumb-title="INDONESIA IMPORT TAXT"
+               data-modal-title='INDONESIA IMPORT TAXT'
+               data-file-name="Indonesia_Import_Tax_Log"
+               data-toggle="modal" class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm">View Log</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/additional-methods.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/ladda/spin.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/ladda/ladda.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/ui-buttons-spinners.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/table-datatables-managed.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/icheck/icheck.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+    '@AdminBundle/Resources/public/js/payment.settings.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {{ parent () }}
+    {% stylesheets
+    'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+    'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+    'bundles/admin/assets/global/plugins/ladda/ladda-themeless.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-select/css/bootstrap-select.css'
+    'bundles/admin/assets/global/plugins/jquery-multi-select/css/multi-select.css'
+    'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+    'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+    'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+    'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+    filter='cssrewrite'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block pageTitle %}
+    <h1>Statements and PO Schedule</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+    <li> <span class="active">Statements and PO Schedule</span> </li>
+{% endblock %}
+{% block content %}
+<div class="portlet light">
+    <div class="portlet-body form">
+        <div class="form-body">
+            {{ display_messages()|raw }}
+            <div class="mb-20"><strong>Schedule dates for sending statements and purchase orders:</strong></div>
+            {{ form_start(form, {'attr': {'id': 'frm-schedule','class': 'form-horizontal' }}) }}
+                <div class="form-group">
+                    <label for="doctorStatementDate" class="col-md-3 control-label">Doctor Statement</label>
+                    <div class="col-md-9">
+                        <div class="input-medium-wrapper">
+                            <div class="input-medium-wrap">
+                                <div class="input-group input-medium">
+                                    {{ form_widget(form.doctorStatementDate, {'attr': {'class': 'form-control on-number-only'}}) }}
+                                    <span class="input-group-addon">working days</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="agentStatementDate" class="col-md-3 control-label">Agent Statement</label>
+                    <div class="col-md-9">
+                        <div class="input-medium-wrapper">
+                            <div class="input-medium-wrap">
+                                <div class="input-group input-medium">
+                                    {{ form_widget(form.agentStatementDate, {'attr': {'class': 'form-control on-number-only'}}) }}
+                                    <span class="input-group-addon">working days</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pwPO" class="col-md-3 control-label">Pharmacy Weekly PO</label>
+                    <div class="col-md-9">
+                        <div class="row">
+                            <div class="col-md-3">
+                                {{ form_widget(form.pharmacyWeeklyPoDay, {'attr': {'class': 'form-control select2'}}) }}
+                            </div>
+                            <div class="col-md-3">
+                                {{ form_widget(form.pharmacyWeeklyPoTime, {'attr': {'class': 'form-control select2'}}) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="dfPO" class="col-md-3 control-label">Delivery Weekly PO</label>
+                    <div class="col-md-9">
+                        <div class="row">
+                            <div class="col-md-3">
+                                {{ form_widget(form.deliveryFortnightlyPoDay, {'attr': {'class': 'form-control select2'}}) }}
+                            </div>
+                            <div class="col-md-3">
+                                {{ form_widget(form.deliveryFortnightlyPoTime, {'attr': {'class': 'form-control select2'}}) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm" type="submit" value="save" />
+            {{ form_end(form) }}
+        </div>
+        <div class="form-actions">
+            {% set module = constant('UtilBundle\\Utility\\Constant::PAYMENT_SCHEDULE_MODULE_NAME') %}
+            <a href="#modal-doctor-view-logs" id="view_logs_anchor" 
+            data-toggle="modal" 
+            data-module="{{ module }}" 
+            data-template-view="AdminBundle:payment_setting\Logs:schedule_log.html.twig"
+            data-template-print="AdminBundle:payment_setting\Logs:schedule_pdf.html.twig"
+            data-breadcrumb-title="Statements and PO Schedule" 
+            data-modal-title="STATEMENTS AND PO SCHEDULE" 
+            data-file-name="schedule_log" 
+            class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm">View Log</a>
+        </div>
+    </div>
+</div>
+{% include '@Admin/payment_setting/modal.html.twig' with {modalType: 'schedule'} %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/additional-methods.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/ladda/spin.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/ladda/ladda.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/ui-buttons-spinners.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/table-datatables-managed.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-select/js/bootstrap-select.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/clockface/js/clockface.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-multi-select.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/form-icheck.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+    '@AdminBundle/Resources/public/js/payment.settings.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

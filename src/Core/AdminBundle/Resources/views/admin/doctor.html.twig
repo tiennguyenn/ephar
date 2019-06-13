@@ -1,0 +1,157 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {% stylesheets 
+        'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+        'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+    filter='cssrewrite'  
+    debug=false
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    <!-- do not move it into stylesheet block -->
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+{% endblock %}
+{% block javascripts %}
+    {% javascripts 
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js' 
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/typeahead/typeahead.bundle.min.js'
+        '@AdminBundle/Resources/public/js/base.js'
+        '@AdminBundle/Resources/public/js/admin_doctor_list.js' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+{% endblock %}
+{% block pageTitle %}
+    <h1>List Doctors</h1>
+{% endblock %}
+{% block breadcrumb %}
+     <li> <a href="{{ path('admin_dashboard')}}">Home</a> <i class="fa fa-circle"></i> </li>
+    <li> <span class="active">List Doctors</span> </li>
+ {% endblock %}
+ {% block content %}
+    <div class="portlet light">
+        <input type="hidden" value="{{path(updateStatusUrl)}}" id="ajaxUrlUpdateStatus" />
+        <input type="hidden" value="{{path('admin_resend_doctor_welcome_email')}}" id="ajaxResendWelcomeDoctor">
+		<input type='hidden' value="{{ path('admin_doctor_login',{'id':'id'})}}" id='login-doctor-path' />
+        <div class="portlet-body">
+            <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+                <div class="row show-grid mb-grid">
+                    <div class="col-lg-4 col-md-8">
+                        <div id="sample_1_filter">
+                            <div class="input-icon right"> <i class="icon-magnifier"></i>
+                                <input type="text" class="form-control on-suggestion" placeholder="Search Doctor Code / Name" id="table-search-data">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-md-4">
+                        <div class="text-right" id="sample_1_length">
+                            <label>
+                                <select id="table-length" name="sample_1_length" aria-controls="sample_1" class="form-control input-sm input-xsmall input-inline">
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                </select>
+                                entries</label>
+                        </div>
+                    </div>
+                </div>
+                <input type='hidden' value="{{ path('admin_reactivate_doctor', {'id':'id'})}}" id='reactivate-path' />
+                <input type='hidden' value="{{ path('admin_doctor_edit',{'id':'id'})}}" id='edit-path' />
+                <input type="hidden" value="{{ path('admin_doctor_autocomplete') }}" id="auto-complete-url" />
+                <div class="row show-grid mb-grid">
+                    <div class="col-md-8">
+                        <div class="filter-changing primary">
+                            <a href="javascript:void(0);" class="active" data='2'>All</a>
+                            <a href="javascript:void(0);" data='1'>Active</a>
+                            <a href="javascript:void(0);" data='0'>Deactived</a>
+                            <a href="javascript:void(0);" data='-1'>Deleted</a>
+                        </div>
+                    </div> 
+                    <div class="col-md-4 text-right">
+                        <a href="{{ path('admin_doctor_create')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-icon-right btn-sm">
+                            Add Doctor <i class="fa fa-plus"></i> </a>
+                    </div>
+
+                </div>
+                             <div class="table-scrollable">
+                  <table class="table table-striped table-bordered table-hover order-column dataTable no-footer" id="sample_1" role="grid" aria-describedby="sample_1_info" style="width: 1562px;">
+                      <thead>
+                          <tr role="row">
+                              <th class="sorting" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-colum-sort="doctorCode" data-column-index="0"aria-sort="ascending" aria-label=" Dr Code : activate to sort column descending"> Dr Code </th>
+                              <th class="sorting" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-colum-sort="doctorName" data-column-index="1" aria-label=" Dr Name : activate to sort column ascending"> Dr Name </th>
+                              <th class="sorting" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-colum-sort="registerDate" data-column-index="2" aria-label=" Register Date : activate to sort column ascending"> Register Date </th>
+                              <th class="sorting" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-colum-sort="emailAddress" data-column-index="3" aria-label=" Email Address : activate to sort column ascending"> Email Address </th>
+                              <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Status : activate to sort column ascending"> Status </th>
+                              <th tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" Action : activate to sort column ascending"> Action </th>
+                          </tr>
+                      </thead>
+                    <tbody id="table-body-doctor">
+                                    
+                    </tbody>
+                  </table>
+                </div>
+             
+               <div class="row">
+                  <div class="col-md-5 col-sm-12">
+                    <div class="dataTables_info" id="list-tables-info" role="status" aria-live="polite"></div>
+                  </div>
+                  <div class="col-md-7 col-sm-12">
+                    <div class="dataTables_paginate paging_bootstrap_number" id="sample_1_paginate">
+                      <ul class="pagination" style="visibility: visible;" id="list-table-pagin">
+                        
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              
+            </div>
+        </div>
+    </div>
+    <div id="modal-delete" class="modal fade modal-new" tabindex="-1" data-width="760" data-backdrop="static">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+            <h4 class="modal-title">Delete</h4>
+        </div>
+        <div class="modal-body">    
+          <div class="text-center mt-20">
+            <i class="fa fa-exclamation-circle icon-check-lg txt-red"></i>
+            <p>Are you sure you want to delete?</p>
+
+            <div>
+              <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10" data-dismiss="modal" id="cancelDeleteDoctor">Cancel</a>
+              <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase red btn-sm ml-10" data-dismiss="modal" id="deleteDoctor" >Delete</a>
+            </div>      
+          </div>
+        </div>
+    </div>
+    <div id="modal-reactivate" class="modal fade modal-new" tabindex="-1" data-width="760" data-backdrop="static">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+            <h4 class="modal-title">Reactivate</h4>
+        </div>
+        <div class="modal-body">
+          <div class="text-center mt-20">
+            <i class="fa fa-exclamation-circle icon-check-lg txt-red"></i>
+            <p>Are you sure you want to re-activate this doctor?</p>
+
+            <div>
+              <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10" data-dismiss="modal" id="cancelReactivateDoctor">Cancel</a>
+              <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm ml-10" data-dismiss="modal" id="reactivateDoctor" >Re-activate</a>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div id="modal-resend-email" class="modal fade modal-new modal-updated-profile" data-width="500">
+      <div class="modal-body">
+        <div class="text-center mt-15">
+          <p class="update-profile-info"><i class="fa fa-check txt-green-new"></i> Welcome Email has been resent to the Doctor successfully.</p>
+          <div>
+            <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm ml-10" data-dismiss="modal">Close</a>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}

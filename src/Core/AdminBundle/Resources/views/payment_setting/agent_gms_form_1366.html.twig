@@ -1,0 +1,42 @@
+{{ form_start(form, {'attr': {'id': formId,'class': 'form-horizontal form-margin-share' }}) }}
+    {{ form_widget(form.module) }}
+    {{ form_widget(form.title) }}
+<div class="form-group"{% if inactive_agent is defined and inactive_agent == true %} style="display: none;"{% endif %}>
+    <label for="agentPercentage" class="col-md-4 control-label">Primary Agent Fee</label>
+    <div class="col-md-8">
+        <div class="input-medium-wrapper">
+            <div class="input-medium-wrap">
+                <div class="input-group input-small">
+                    {{ form_widget(form.agentPercentage, {'attr': {'class': 'form-control on-digit-percent', 'placeholder': '0.00', 'disabled': is_active? false: true }}) }}
+                    <span class="input-group-addon">SGD</span>
+                </div>
+                {% if form.vars.value.agentPercentage is defined and form.vars.value.agentPercentage != form.vars.value.newAgentPercentage %}
+                <div class="current-data">Current value is {{ form.vars.value.agentPercentage }} SGD</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label for="takeEffectOn" class="col-md-4 control-label">Effective date</label>
+    <div class="col-md-8">
+        <div class="input-group date date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+            {{ form_widget(form.takeEffectOn, {'attr': {'class': 'form-control', 'disabled': is_active? false: true }}) }}
+            <span class="input-group-btn">
+            <button class="btn default" type="button">
+            <i class="fa fa-calendar"></i>
+            </button>
+            </span>
+        </div>
+        <div class="btn-update-margin">
+            {% if is_active %}
+                <input class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm" type="submit" value="Update" />
+            {% else %}
+                <input class="btn btn-ahalf-circle text-uppercase disabled btn-sm" type="submit" value="Update" disabled />
+            {% endif %}
+        </div>
+    </div>
+</div>
+{{ form_widget(form.areaType, {'value': area_type}) }}
+{{ form_widget(form.marginShareType, {'value': ms_type}) }}
+{{ form_end(form) }}

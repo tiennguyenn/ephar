@@ -1,0 +1,177 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {% stylesheets
+        'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+        'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+        'bundles/admin/assets/global/plugins/bootstrap-markdown/css/bootstrap-markdown.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-summernote/summernote.css'
+        'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+        'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+        'bundles/admin/assets/global/plugins/icheck/skins/all.css'
+        filter='cssrewrite'
+        debug=false
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        <!-- do not move it into stylesheet block -->
+        <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts
+
+        '@AdminBundle/Resources/public/assets/global/plugins/clockface/js/clockface.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-markdown/lib/markdown.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-markdown/js/bootstrap-markdown.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-summernote/summernote.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/lib/js/wysihtml5-0.3.0.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery.mockjax.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/icheck/icheck.min.js'
+        '@AdminBundle/Resources/public/js/admin_mpa_edit.js'
+        debug=false
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+{% endblock %}
+
+
+{% block pageTitle %}
+    <h1>{{ title }}</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard')}}">Home</a> <i class="fa fa-circle"></i> </li>
+    {% if id != '' %}
+        <li> <a href="{{ path('admin_mpa_dashboard')}}">List Master Proxy Account</a> <i class="fa fa-circle"></i> </li>
+    {% endif %}
+    <li> <span class="active">{{ title }}</span> </li>
+{% endblock %}
+{% block content %}
+    <input type="hidden" value="{{path('admin_validate_email_mpa')}}" id="validate-email-url"/>
+    <input type="hidden" value="{{id}}" id="current-mpa-id"/>
+    <div class="portlet light bordered">
+        <div class="portlet-body form">
+            <form class="form-horizontal" action="" id="admin-add-mpa" method="POST" enctype="multipart/form-data">
+                <div class="form-wizard">
+                    <div class="form-body">
+                        <div class="form-content">
+                            <div class="alert alert-danger display-none">
+                                <button class="close" data-dismiss="alert"></button> You have some form errors. Please check below. </div>
+                            <div class="alert alert-success display-none">
+                                <button class="close" data-dismiss="alert"></button> Your form validation is successful! </div>
+
+                            <h4 class="block mt-0 pt-0">Clinic Details</h4>
+
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.clinicName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.clinicName,{'attr':{'class':'form-control'} })}}
+                                </div>
+
+                            </div>
+
+                            <h4 class="block mt-40">Personal Information</h4>
+
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.familyName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.familyName,{'attr':{'class':'form-control'} })}}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.givenName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.givenName,{'attr':{'class':'form-control'} })}}
+                                </div>
+
+                            </div>
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.email.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.email,{'attr':{'class':'form-control'} })}}
+                                </div>
+                                <div class="col-md-8">
+                                    <label>{{ form.phoneLocation.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class=" dropdown-parent" id="dropdown-parent">
+                                                <div class="form-float clearfix">
+                                                    <div class="col-md-4">
+                                                        {{form_widget(form.phoneLocation,{'attr':{'class':'form-control'} }) }}
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        {{ form_widget(form.phone, {'attr':{'class':'form-control'}})}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <span id="admin_mpa_phoneLocation-error"></span>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+
+
+                            <div class="form-group">
+                                <div class="col-md-4">
+                                    <label class="display-block">Profile Photo <span class="required" aria-required="true"> * </span></label>
+                                    <label class="display-block">Upload Profile Image</label>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="fileinput fileinput-new" data-provides="fileinput">
+                                                <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                                    {% if profile|length > 0 %}
+                                                        <img src="/{{ profile }}" alt="" />
+                                                    {% else %}
+                                                        <img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&amp;text=no+image" alt="" />
+                                                    {% endif %}
+                                                </div>
+                                                <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"> </div>
+                                                <div>
+                                                    <span class="btn btn-outline blue btn-ahalf-circle btn-sm text-uppercase btn-file">
+                                                        <span class="fileinput-new"> Select image </span>
+                                                        <span class="fileinput-exists"> Change </span>
+                                                        {% if profile|length > 0 %}
+                                                            {{ form_widget(form.profile,{'attr':{'require':false}})}}
+                                                        {% else %}
+                                                            {{ form_widget(form.profile )}}
+                                                        {% endif %}
+                                                    </span>
+                                                    <a href="javascript:;" class="btn btn-outline red btn-ahalf-circle btn-sm text-uppercase fileinput-exists" data-dismiss="fileinput"> Remove </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <a href="{{ path('admin_mpa_dashboard')}}" class="btn grey-dark btn-ahalf-circle text-uppercase btn-sm button-back">Cancel</a>
+                                    <a href="" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit" id="btn-save-mpa">Save Profile</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+

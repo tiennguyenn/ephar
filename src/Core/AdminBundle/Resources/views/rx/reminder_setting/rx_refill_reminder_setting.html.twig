@@ -1,0 +1,221 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+{% stylesheets
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+    filter='cssrewrite'
+    debug=false
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+{% endstylesheets %}
+{% endblock %}
+{% block body %}
+    {% include '@Admin/header.html.twig' %}
+    <div class="page-container">
+        {% include '@Admin/left-menu.html.twig' with { 'mainMenu': 'remindersettings', 'subMenu': '' } %}
+        <div class="page-content-wrapper">
+            <!-- BEGIN CONTENT BODY -->
+            <div class="page-content">
+                <!-- BEGIN PAGE HEAD-->
+                <div class="page-head">
+                    <!-- BEGIN PAGE TITLE -->
+                    <div class="page-title">
+                        <h1>Rx Refill Reminders Setting</h1>
+                    </div>
+                    <!-- END PAGE TITLE -->
+                </div>
+                <!-- END PAGE HEAD-->
+                <!-- BEGIN PAGE BREADCRUMB -->
+                <ul class="page-breadcrumb breadcrumb">
+                    <li> <a href="{{ path('admin_dashboard')}}">Home</a> <i class="fa fa-circle"></i> </li>
+                    <li> <span class="active">Rx Refill Reminders Setting</span> </li>
+                </ul>
+                <!-- END PAGE BREADCRUMB -->
+                <!-- BEGIN PAGE BASE CONTENT -->
+                {{ display_messages()|raw }}
+                <div class="row">
+                    <div class="col-md-12">
+                        {{ form_start(formreminderthirty, {'attr': {'id': 'frm-reminder-thirty'}}) }}
+                        <div class="portlet light reminder-setting">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <span class="caption-subject font-dark sbold uppercase">Reminders for supply length of <strong>30 days</strong></span>
+                                </div>
+                                <div class="text-right">
+                                    <a id="logs_30" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">View Log</a>
+                                </div>
+                            </div>
+                            <div class="portlet-body">
+                                <div class="form-wizard">
+                                    <div class="form-body">
+                                        <div class="form-group">
+                                            <div class="reminder-text">Send reminder email to patient
+                                                {{ form_widget(formreminderthirty.reminderthirtydays, {'attr': {'class': 'form-control number'}})}}
+                                                days before the 30-day supply runs out.</div>
+                                        </div>
+                                        <div class="form-actions">
+                                            {{ form_widget(formreminderthirty.savethirtydays, {'attr': {'class': 'btn btn-ahalf-circle text-uppercase green-seagreen btn-sm'}}) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{ form_end(formreminderthirty) }}
+                        {{ form_start(formremindersixty, {'attr': {'id': 'frm-reminder-sixty'}}) }}
+                        <div class="portlet light reminder-setting">
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <span class="caption-subject font-dark sbold uppercase">Reminders for supply length of <strong>60 days</strong> and above</span>
+                                </div>
+                                <div class="text-right">
+                                    <a id="logs_60" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">View Log</a>
+                                </div>
+                            </div>
+                            <div class="portlet-body">
+                                <div class="form-wizard">
+                                    <div class="form-body">
+                                        <div class="form-group">
+                                            <div class="reminder-text">Send reminder email to patient
+                                                {{ form_widget(formremindersixty.remindersixtydays, {'attr': {'class': 'form-control number'}})}}
+                                                days before the 60-day & above supply runs out.</div>
+                                        </div>
+                                        <div class="form-actions">
+                                            {{ form_widget(formremindersixty.savesixtydays, {'attr': {'class': 'btn btn-ahalf-circle text-uppercase green-seagreen btn-sm'}}) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{ form_end(formremindersixty) }}
+						{{ form_start(formreminderemails, {'attr': {'id': 'frm-reminder-emails'}}) }}
+						<div class="portlet light reminder-setting">
+						  <div class="portlet-title"><div class="caption"><span class="caption-subject font-dark sbold uppercase">Email Reminders for Patient and Doctors</span></div></div>
+						  <div class="portlet-body">
+							<div class="form-wizard">
+							  <div class="form-body">
+								<p>This setting is to schedule the emails to sent to patients and doctors if a patient does not reply to a refill reminder.</p>
+								<h4 class="block">1st Reminder to Patient</h4>
+								<div class="form-group" style="display: none;">
+								  <p class="reminder-text">Send an email and SMS to patient {{ form_widget(formreminderemails.first_patient_days, {'attr': {'class': 'form-control'}})}} days after the first refill alert.</p>
+								</div>
+								<div class="form-group">
+								  <label>Email Subject:</label>
+								  {{ form_widget(formreminderemails.first_patient_subject, {'attr': {'class': 'form-control'}})}}
+								</div>
+								<div class="form-group">
+								  <label>Email Body:</label>
+								  {{ form_widget(formreminderemails.first_patient_email, {'attr': {'class': 'form-control max-height'}})}}
+								</div>
+								<div class="form-group">
+								  <label>SMS Message:</label>
+								  {{ form_widget(formreminderemails.first_patient_sms, {'attr': {'class': 'form-control'}})}}
+								</div>
+								
+								<h4 class="block">1st Reminder to Doctor</h4>
+								<div class="form-group">
+								  <p class="reminder-text">Send an message to doctor after {{ form_widget(formreminderemails.first_doctor_days, {'attr': {'class': 'form-control'}})}} days, if the patient has not replied.</p>
+								</div>
+								<div class="form-group">
+								  <label>Message Subject:</label>
+								  {{ form_widget(formreminderemails.first_doctor_subject, {'attr': {'class': 'form-control'}})}}
+								</div>
+								<div class="form-group">
+								  <label>Message Body:</label>
+								  {{ form_widget(formreminderemails.first_doctor_email, {'attr': {'class': 'form-control max-height'}})}}
+								</div>
+								
+								<h4 class="block">2nd Reminder to Patient</h4>
+								<div class="form-group">
+								  <p class="reminder-text">Send an email and SMS to patient {{ form_widget(formreminderemails.second_patient_days, {'attr': {'class': 'form-control'}})}} the 1st Patient Reminder.</p>
+								</div>
+								<div class="form-group">
+								  <label>Email Subject:</label>
+								  {{ form_widget(formreminderemails.second_patient_subject, {'attr': {'class': 'form-control'}})}}
+								</div>
+								<div class="form-group">
+								  <label>Email Body:</label>
+								  {{ form_widget(formreminderemails.second_patient_email, {'attr': {'class': 'form-control max-height'}})}}
+								</div>
+								<div class="form-group">
+								  <label>SMS Message:</label>
+								  {{ form_widget(formreminderemails.second_patient_sms, {'attr': {'class': 'form-control'}})}}
+								</div>
+								
+								<h4 class="block">2nd Reminder to Doctor</h4>
+								<div class="form-group">
+								  <p class="reminder-text">Send an message to doctor after {{ form_widget(formreminderemails.second_doctor_days, {'attr': {'class': 'form-control'}})}} days, if the patient has not replied after the 2nd Reminder to Patient.</p>
+								</div>
+								<div class="form-group">
+								  <label>Message Subject:</label>
+								  {{ form_widget(formreminderemails.second_doctor_subject, {'attr': {'class': 'form-control'}})}}
+								</div>
+								<div class="form-group">
+								  <label>Message Body:</label>
+								  {{ form_widget(formreminderemails.second_doctor_email, {'attr': {'class': 'form-control max-height'}})}}
+								</div>
+								
+								<div class="form-actions mt-30">
+								{{ form_widget(formreminderemails.reminderemails, {'attr': {'class': 'btn btn-ahalf-circle text-uppercase green-seagreen btn-sm'}}) }}
+								</div>
+							  </div>
+							</div>  
+						  </div>
+						</div>
+						{{ form_end(formreminderemails) }}
+                    </div>
+                    <input type="hidden" id="logs_30_url" value="{{ path('rx_refill_reminder_logs', {'logType': 30}) }}"/>
+                    <input type="hidden" id="logs_60_url" value="{{ path('rx_refill_reminder_logs', {'logType': 60}) }}"/>
+                </div>
+                <!-- END PAGE BASE CONTENT -->
+            </div>
+            <!-- END CONTENT BODY -->
+        </div>
+    </div>
+
+    <div id="modal-view-logs" class="modal fade modal-new" tabindex="-1" data-width="900">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+            <h4 class="modal-title">View Log</h4>
+        </div>
+        <div class="modal-body">
+            <div class="portlet box white portlet-scroller">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="caption-subject uppercase sbold" id="title"></span>
+                    </div>
+                    <div class="actions">
+                        <a id="printLog30" href="{{ path('rx_refill_reminder_print_logs', {'logType': 30}) }}" target="_blank" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">Print<i class="fa fa-print"></i></a>
+                        <a id="printLog60" href="{{ path('rx_refill_reminder_print_logs', {'logType': 60}) }}" target="_blank" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">Print<i class="fa fa-print"></i></a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="scroller" style="height:280px" data-always-visible="1" data-rail-visible="1" data-rail-color="white" data-handle-color="green">
+                        <div class="table-scrollable table-scrollable-borderless" id="list-logs">
+                            <!-- logs -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ul class="page-breadcrumb breadcrumb">
+                <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+                <li> <span class="active">Rx Refill Reminders Setting</span> </li>
+            </ul>
+            <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" data-dismiss="modal">Close</a>
+        </div>
+    </div>
+    <div class="blink-loader">
+        <div class="load1-wrap"><div class="load1"><div class="loader">Loading...</div></div></div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+    '@AdminBundle/Resources/public/js/rx_refill_reminder.settings.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

@@ -1,0 +1,36 @@
+<div class="row form-group">
+    <div class="col-md-5">
+        <div class="form-group">
+            <label for="platformPercentage" class="col-md-5 control-label">{{ label }}:</label>
+            <div class="col-md-7">
+                <div class="input-medium-wrapper">
+                    <div class="input-medium-wrap">
+                        <div class="input-group input-small">
+                            {% if field_name == 'insuranceVariable' %}
+                                {{ form_widget(form[field_name], {'attr': {'class': 'form-control on-digit-extra', 'placeholder': '0.00' }}) }}
+                            {% else %}
+                                {{ form_widget(form[field_name], {'attr': {'class': 'form-control on-digit-percent', 'placeholder': '0.00' }}) }}
+                            {% endif %}
+                            {% if unit != '' %}<span class="input-group-addon">{{ unit }}</span>{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="form-group">
+            <label for="EffectOn" class="col-md-4 control-label">Effective Date:</label>
+            <div class="col-md-8">
+                <div class="input-group date full-date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+                    {{ form_widget(form[field_name ~ "Date"], {'attr': {'class': 'form-control' }}) }}
+                    <span class="input-group-btn">
+                    <button class="btn default" type="button">
+                        <i class="fa fa-calendar"></i>
+                    </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

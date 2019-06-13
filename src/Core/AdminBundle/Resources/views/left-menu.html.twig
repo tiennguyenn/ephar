@@ -1,0 +1,129 @@
+{% set currentPath = path(app.request.attributes.get('_route'),
+                       app.request.attributes.get('_route_params')) %}
+{% set curRoute = app.request.get('_route') %}
+<input type='hidden' id="current-route-data" value="{{ currentPath }}" />
+<div class="page-sidebar-wrapper" >
+    <div class="page-sidebar navbar-collapse collapse">
+        <ul class="page-sidebar-menu" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" id='admin-left-menu'>
+            <li class="nav-item start"> <a href="{{ path('admin_dashboard') }}" class="nav-link nav-toggle"> <i class="icon-home"></i> <span class="title">Dashboard</span> <span class="selected"></span> </a> </li>
+            <li class="nav-item"> <a href="javascript:;" class="nav-link nav-toggle"> <i class="icon-agent"></i> <span class="title">Agent</span> <span class="arrow"></span> </a>
+                <ul class="sub-menu">
+                    <li class="nav-item"> <a href="{{ path('admin_agent') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">List AGENTS</span> </a> </li>
+                    <li class="nav-item"> <a href="{{ path('admin_agent_create') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Register AGENT</span> </a> </li>
+                </ul>
+            </li>
+            <li class="nav-item"> <a href="javascript:;" class="nav-link nav-toggle"> <i class="icon-doctor"></i> <span class="title">Doctors</span> <span class="arrow"></span> </a>
+                <ul class="sub-menu">
+                    <li class="nav-item"> <a href="{{ path('admin_doctor_list')}}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">List Doctors</span> </a> </li>
+                    <li class="nav-item "> <a href="{{ path('admin_doctor_create') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Register Doctor</span> </a> </li>
+                </ul>
+            </li>
+
+            <li class="nav-item"> <a href="javascript:;" class="nav-link nav-toggle"> <i class="icon-agent"></i> <span class="title">Master Proxy Account</span> <span class="arrow"></span> </a>
+                <ul class="sub-menu">
+                    <li class="nav-item"> <a href="{{ path('admin_mpa_dashboard')}}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">List Master Proxy Accounts</span> </a> </li>
+                    <li class="nav-item"> <a href="{{ path('admin_mpa_register')}}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Register Master Proxy Accounts</span> </a> </li>
+                </ul>
+            </li>
+
+
+            {% if menu is defined and menu == 'pharmacy' %}
+            <li class="nav-item open">
+                <a href="javascript:;" class="nav-link nav-toggle"> <i class="fa fa-medkit"></i> <span class="title">Pharmacy</span> <span class="arrow open"></span> </a>
+                <ul class="sub-menu" style="display: block;">
+                    <li class="nav-item {{ sub_menu is defined and sub_menu == 'list' ? 'open' : '' }}">
+                        <a href="{{ path('admin_pharmacy_list') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">List Pharmacies</span> <span class="arrow {{ sub_menu is defined and menu_item is defined and sub_menu == 'list' ? 'open' : '' }}"></span> </a>
+                        <ul class="sub-menu" style="{{ sub_menu is defined and menu_item is defined and sub_menu == 'list' ? 'display: block;' : '' }}">
+                            {% if menu_item is defined %}
+                            <li class="nav-item active">
+                                <a href="javascript: void(0)" class="nav-link"> <span class="title">{{ menu_item.name }}</span> </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                    <li class="nav-item {{ sub_menu is defined and sub_menu == 'create' ? 'active' : '' }}"> <a href="{{ path('admin_pharmacy_create') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Register a Pharmacy</span> </a> </li>
+                </ul>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a href="javascript:;" class="nav-link nav-toggle"> <i class="fa fa-medkit"></i> <span class="title">Pharmacy</span> <span class="arrow"></span> </a>
+                <ul class="sub-menu" style="{{ menu is defined and menu == 'pharmacy' ? 'display: block;' : '' }}">
+                    <li class="nav-item {{ sub_menu is defined and sub_menu == 'list' ? 'open' : '' }}">
+                        <a href="{{ path('admin_pharmacy_list') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">List Pharmacies</span> <span class="arrow"></span> </a>
+                    </li>
+                    <li class="nav-item"> <a href="{{ path('admin_pharmacy_create') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Register a Pharmacy</span> </a> </li>
+                </ul>
+            </li>
+            {% endif %}
+
+            <li class="nav-item"> <a href="javascript:;" class="nav-link nav-toggle"> <i class="icon-delivery"></i> <span class="title">Delivery Partner</span> <span class="arrow"></span> </a>
+                <ul class="sub-menu">
+                    <li class="nav-item"> <a href="{{ path('admin_delivery_partner') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">List Delivery Partner</span> </a> </li>
+                    <li class="nav-item"> <a href="{{ path('admin_delivery_partner_create')}}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Add a Delivery Partner</span> </a> </li>
+                </ul>
+            </li>
+
+            <li class="nav-item"> <a href="{{path('message')}}" class="nav-link nav-toggle {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <i class="icon-messages"></i> <span class="title">Messages</span> <span id="it-total" class="badge badge-danger">{% if get_message_total(true) > 0 %}{{ get_message_total(true) }}{% endif %}</span></a>
+            </li>
+            <li class="nav-item {{ 'payment' == mainMenu ? 'active' : '' }}"> <a href="javascript:;" class="nav-link nav-toggle"> <i class="icon-payment"></i> <span class="title">Payment, Margin
+                        & GST</span> <span class="arrow"></span> </a>
+                <ul class="sub-menu">
+                    {% if platform_share_fee %}
+                    <li class="nav-item"> <a href="{{ path('payment_global_margin_share_fee') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Global Settings for Revenue on Medicines and Admin Service Fees</span> </a> </li>
+                    {% else %}
+                    <li class="nav-item"> <a href="{{ path('payment_gross_margin_share') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">gross margin share</span> </a> </li>
+                    {% endif %}
+
+                    <li class="nav-item"> <a href="{{ path('payment_schedule') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Statements and PO Schedule</span> </a> </li>
+
+                    <li class="nav-item"> <a href="{{ path('payment_gst_rate') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">GST rates</span> </a> </li>
+                    <li class="nav-item"> <a href="{{ path('admin_custom_clearance_fee') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Custom Clearance Admin Fee</span> </a> </li>
+                    <li class="nav-item"> <a href="{{ path('admin_gateway_fee') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Payment Gateway Fees</span> </a> </li>
+                    <li class="nav-item"> <a href="{{ path('admin_others_fee') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Other Fees</span> </a> </li>
+                    <li class="nav-item"> <a href="{{ path('payment_indonesia_import_tax') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Indonesia Import Tax</span> </a> </li>
+                </ul>
+            </li>
+            <li class="nav-item"> <a href="javascript:;" class="nav-link nav-toggle"> <i class="fa fa-edit"></i> <span class="title">G-MEDS Documents</span> <span class="arrow"></span> </a>
+                <ul class="sub-menu">
+                    <li class="nav-item  "> <a href="{{ path('admin_doctor_agreement_setting') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Doctor's Subscriber Agreement</span> </a> </li>
+                    <li class="nav-item  "> <a href="{{ path('admin_patient_terms_of_use_setting') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Patient's Term Of Use</span> </a> </li>
+                    <li class="nav-item  "> <a href="{{ path('admin_doctor_user_guide_setting') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Doctor's User Guide</span> </a> </li>
+                    <li class="nav-item  "> <a href="{{ path('admin_patient_faq_setting') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Patient's FAQ</span> </a> </li>
+                    <li class="nav-item  "> <a href="{{ path('admin_doctor_faq_setting') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Doctor's FAQ</span> </a> </li>
+                </ul>
+            </li>
+            <li class="nav-item"> <a href="javascript:;" class="nav-link nav-toggle"> <i class="fa fa-bar-chart"></i> <span class="title">Reports</span> <span class="arrow"></span> </a>
+                <ul class="sub-menu">
+                    <li class="nav-item  "> <a href="{{ path('admin_report_doctor') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }} "> <span class="title">Doctor Report <strong>(WIP)</strong></span> </a> </li>
+                    <li class="nav-item  "> <a href="{{ path('admin_report_agent') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }} "> <span class="title">Agent Report <strong>(WIP)</strong></span> </a> </li>
+                    <!-- <li class="nav-item  "> <a href="#" class="nav-link "> <span class="title">Patient Report</span> </a> </li> -->
+                    <li class="nav-item  "> <a href="{{ path('admin_report_transaction_history') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }} "> <span class="title">RX Transaction Report <strong>(WIP)</strong></span> </a> </li>
+                    <li class="nav-item  "> <a href="{{ path('admin_report_rx_refunds') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }} "> <span class="title">RX Refunds Report <strong>(WIP)</strong></span> </a> </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+            <a href="javascript:;" class="nav-link nav-toggle"> <i class="fa fa-cog"></i> <span class="title">GMEDS Notification Settings</span> <span class="arrow"></span> </a>
+            <ul class="sub-menu">
+            <li class="nav-item"> <a href="{{ path('admin_rx_order_notification_setting') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }} "> <span class="title">New RX Orders Notifications</span> </a> </li>
+            <li class="nav-item"> <a href="{{ path('admin_rx_reminder_setting') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }} "> <span class="title">RX Orders Reminders</span> </a> </li>
+            <li class="nav-item"> <a href="{{ path('admin_rx_refill_setting') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }} "> <span class="title">RX Refill Reminders</span> </a> </li>
+            <li class="nav-item"> <a href="{{ path('admin_future_rx_order_notification_setting') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }} "> <span class="title">Patient's Welcome Email (Future Rx Order)</span> </a> </li>
+            <li class="nav-item"> <a href="{{ path('admin_others_setting') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }} "> <span class="title">Other Settings</span> </a> </li>
+            </ul>
+          </li>
+        <!-- <li class="nav-item start"> <a href="{{ path('admin_create') }}" class="nav-link nav-toggle"> <i class="icon-home"></i> <span class="title">Register Admin Users</span> <span class="selected"></span> </a> </li>     -->
+        <li class="nav-item start {{ 'profile' == mainMenu ? 'open' : '' }}">
+          <a href="javascript:;" class="nav-link nav-toggle">
+            <i class="fa fa-user-secret"></i>
+            <span class="title">Profile</span>
+            <span class="arrow {{ 'profile' == mainMenu ? 'open' : '' }}"></span>
+          </a>
+          <ul class="sub-menu" {% if 'profile' == mainMenu %}style="display: block;"{% endif %}>
+            <li class="nav-item"> <a href="{{path('admin_profile')}}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Personal Info</span> </a> </li>
+            <li class="nav-item"> <a href="{{ path('admin_change_password') }}" class="nav-link {{ disabledAllMenu is defined ? 'disable-nav' : '' }}"> <span class="title">Change Password</span> </a> </li>
+          </ul>
+        </li>
+
+        </ul>
+    </div>
+</div>

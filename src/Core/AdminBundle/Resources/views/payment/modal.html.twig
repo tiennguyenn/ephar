@@ -1,0 +1,35 @@
+{% if modalType == 'paymentStatus' %}
+{#Modal Update Payment#}
+<div id="modal-update-payment" class="modal fade modal-new" tabindex="-1" data-width="760" data-backdrop="static">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+        <h4 class="modal-title">Update Payment</h4>
+    </div>
+    <div class="modal-body">
+        <div class="content-views"></div>
+    </div>
+</div>
+{#Modal Update Selected Payment#}
+<div id="modal-update-payment-multi" class="modal fade modal-new modal-update-multi" tabindex="-1" data-width="760" data-backdrop="static">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+        <h4 class="modal-title">Update Selected Payment</h4>
+    </div>
+    <div class="modal-body">
+        <div class="update-info-carousel">
+        </div>
+        <div class="slick-items"><span class="current">1</span> of <span class="total"></span></div>
+    </div>
+</div>
+{% endif %}
+{% if modalType == 'pg_settlement' %}
+<div id="modal-update-pg-settlement" class="modal fade modal-new" tabindex="-1" data-width="760"  data-backdrop="static">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+        <h4 class="modal-title">Update Payment Gateway Settlement</h4>
+    </div>
+    <div class="modal-body form-horizontal">
+        <div class="content-views"></div>
+    </div>
+</div>
+{% endif %}

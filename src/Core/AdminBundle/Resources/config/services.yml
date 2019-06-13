@@ -1,0 +1,26 @@
+parameters:
+    gmeds.user_provider.class: AdminBundle\Security\GmedsUserProvider
+    gmeds.controller_listener.class: AdminBundle\EventListener\ControllerListener
+
+services:	
+    gmeds.user_provider:
+        class: "%gmeds.user_provider.class%"
+        arguments: [@service_container, @doctrine.orm.entity_manager]
+    gmeds.controller_listener:
+        class: "%gmeds.controller_listener.class%"
+        arguments: [@security.context, @router, @service_container, @gmeds.user_provider]
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller }
+            - { name: kernel.event_listener, event: kernel.exception }
+    twig.extension.common:
+        class: AdminBundle\Twig\Extensions\TwigHelper
+        public: false
+        arguments: [@service_container, @session, @router]
+        tags:
+            - { name: twig.extension }
+    gmeds.rx_listener:
+        class: AdminBundle\EventListener\RxListener
+        arguments: [@service_container]
+        tags:
+            - { name: doctrine.event_listener, event: preUpdate }
+

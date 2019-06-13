@@ -1,0 +1,45 @@
+<table class="table table-hover table-light_">
+    <thead>
+        <tr class="uppercase">
+            <th style="width: 80px">Date</th>
+            <th style="width: 140px">User</th>
+            <th>Changes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+            <tr>
+                <td>{{ log.createdOn|date('d M y') }}</td>
+                <td>{{ log.createdBy }}</td>
+                {% if log.title == 'new_agent_created' %}
+                    <td>{{ log.title|replace({'_': ' '})|title }}</td>
+                {% else %}
+                    <td>
+                        
+                        {% if log.title == 'status_changed'%} 
+                            Status Updated
+                            <br /> Old Value: {{ log.oldValue.isActive == 1 ? 'Active' : 'Deactivate' }}
+                            <br /> New Value: {{ log.newValue.isActive == 1 ? 'Active' : 'Deactivate' }}
+                        {% else %}
+                            {% if log.oldValue.bankName != log.newValue.bankName %}
+                                Bank Name is updated
+                                <br />Old Value: {{ log.oldValue.bankName }}
+                                <br />New Value: {{ log.newValue.bankName }}
+                                <br /><br />
+                            {% endif %}
+                            {% if log.oldValue.accountNumber != log.newValue.accountNumber %}
+                                Account Number is updated
+                                <br />Old Value: {{ log.oldValue.accountNumber }}
+                                <br />New Value: {{ log.newValue.accountNumber }}
+                                <br /><br />
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<input type='hidden' id='print_log_url' value="{{ printUrl }}" />
+<input type='hidden' id='breadcrumb_title' value="{{ breadcrumbTitle }}" />
+<input type='hidden' id='entity_id' value="{{ entityId }}" />

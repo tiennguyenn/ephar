@@ -1,0 +1,35 @@
+{% extends '@Admin/layout.html.twig' %} 
+{% block classbody %} page-404-full-page{% endblock %}
+{% block body %}
+    
+   <div class="row">
+        <div class="col-md-12 page-404">
+            <div class="number font-red"> 403 </div>
+            <div class="details">
+                <h3>Access denied.</h3>
+                <p> You do not have permission to view this resource. </p>
+                <p>
+                    <a href="{{path('login')}}" class="btn red btn-outline"> Return home </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {% javascripts
+        '@AdminBundle/Resources/public/assets/global/scripts/app.min.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets
+        'bundles/admin/assets/pages/css/error.min.css'
+        filter='cssrewrite'
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}

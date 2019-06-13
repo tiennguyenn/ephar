@@ -1,0 +1,91 @@
+{% set sortColumn = sortInfo is not empty ? sortInfo.column : '' %}
+{% set sortDirection = sortInfo is not empty ? sortInfo.direction : '' %}
+
+<div class="table-scrollable">
+    <table class="table table-striped table-bordered table-hover dataTable no-footer dtr-inline" id="sample_1" role="grid" aria-describedby="sample_1_info" style="width: 1562px;">
+        <thead>
+          <tr role="row">
+            <th class="sorting {% if 'orderNumber' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="orderNumber" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending"># Order ID</th>
+
+            <th class="sorting {% if 'paidOn' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="paidOn" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Confirmed<br>Order Date</th>
+
+            <th class="sorting {% if 'doctorName' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="doctorName" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Doctor Name <br>& Code</th>
+
+            <th class="sorting {% if 'patientName' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="patientName" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Patient Name <br>& Code</th>
+
+            <th class="sorting {% if 'orderValue' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="orderValue" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Total Fee <br>(SGD)</th>
+
+            <th class="sorting {% if 'agentFee' == sortColumn %}sorting_{{ sortDirection }}{% endif %}" tabindex="0" data-colname="agentFee" rowspan="1" colspan="1" data-column-index="0" aria-sort="ascending" aria-label=" #Invoice : activate to sort column descending">Agent's Fee <br>(SGD)</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% if data %}
+            {% set total = 0 %}
+            {% set totalAgent = 0 %}
+            {% set total3rdAgent = 0 %}
+            {% for order in data %}
+                  <tr role="row" class="row-item rowItem">
+                    <td>
+                        <div class="nowrap"><a href="javascript:void(0);" class="rowItemBtn btn btn-circle green-seagreen btn-xs row-item-btn"><i data-loaded='false' data-url="{{ path('admin_rx_transaction_history_detail', { rxId: order.rxId }) }}" class="fa fa-plus"></i></a> {{ order.orderNumber }}</div>
+                    </td>
+                    <td>{{ order.paidOn|date("m/d/Y") }}</td>
+                    <td>{{ order.doctorName }}<br>{{ order.doctorCode }}</td>
+                    <td>{{ order.patientName }}<br>{{ order.patientCode }}</td>
+                    <td class="text-right">{{ (order.costOfMdc + order.grossMarginT + order.prescribingFeeT)|number_format(2, '.', ',') }}</td>
+                    <td class="text-right">{{ (order.agentFee + order.agent3paMedicineFee + order.agent3paServiceFee) |number_format(2, '.', ',') }}</td>
+                  </tr>
+
+                  <tr class="hide-item rowItemExpand">
+                    <td colspan="4" class="text-right">
+                        <p class="mt-20"><strong>Agent's Marketing Service (Primary Agent)</strong></p>
+                        <p><strong>Agent's Admin Service Fee Per Prescribing (Primary Agent)</strong></p>
+
+                        <p><strong>Agent's Marketing Service (Secondary Agent)</strong></p>
+                        <p><strong>Agent's Admin Service Fee Per Prescribing (Secondary Agent)</strong></p>
+                        {% if not platform_share_fee %}
+                            <a href="javascript:void(0);" data-url="{{ path('admin_report_agent_breakdown_ajax', {'id':order.rxId}) }}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs breakdownBtn">Breakdown</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <p class="mt-20 text-right">{{ (order.costOfMdc + order.grossMarginT)|number_format(2, '.', ',') }}</p>
+                        <p class="text-right">{{ order.prescribingFeeT|number_format(2, '.', ',') }}</p>
+                        <p class="text-right">N/A</p>
+                        <p class="text-right">N/A</p>
+                    </td>
+                    <td>
+                      <p class="mt-20 text-right">{{ order.agentMedicineFee|number_format(2, '.', ',') }}</p>
+                      <p class="text-right">{{ order.agentServiceFee|number_format(2, '.', ',') }}</p>
+                      <p class="text-right">{{ order.agent3paMedicineFee|number_format(2, '.', ',') }}</p>
+                      <p class="text-right">{{ order.agent3paServiceFee|number_format(2, '.', ',') }}</p>
+                    </td>
+                  </tr>
+                {% set total = total + order.orderValue %}
+                {% set totalAgent = totalAgent + order.agentFee + order.agent3paMedicineFee + order.agent3paServiceFee %}
+            {% endfor %}
+            <tr role="row">
+                <td colspan="4" class="text-right"><strong>Total:</strong></td>
+                <td class="text-right"><strong>{{ total|number_format(2, '.', ',') }}</strong></td>
+                <td class="text-right"><strong>{{ totalAgent|number_format(2, '.', ',') }}</strong></td>
+              </tr>
+        {% else %}
+                <tr><td colspan="7">{{ generateMessage('msgNoData') }}</td></tr>
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+{% if data|length > 0 %}
+    {% set fromRecord = currentPage > 0? currentPage*perPage: currentPage %}
+    {% set toRecored = fromRecord + perPage %}
+    <div class="row">
+        <div class="col-md-5 col-sm-12">
+            <div class="dataTables_info" role="status" aria-live="polite">Showing {{ fromRecord + 1 }} to {{ toRecored < totalResult? toRecored: totalResult }} of {{ totalResult }} entries</div>
+        </div>
+        <div class="col-md-7 col-sm-12">
+            <div class="dataTables_paginate paging_bootstrap_number ajax_paging">
+                {{ paginationHTML|raw }}
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="ps_filter[page]" value="{{ currentPage }}">
+{% endif %}
+

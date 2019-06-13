@@ -1,0 +1,26 @@
+{% for p in pharmacies %}
+<tr role="row">
+    <td>
+        <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+            <input type="checkbox" class="checkboxes" value="1">
+            <span></span>
+        </label>
+    </td>
+    <td tabindex="0" class="sorting_1">{{p.code}}</td>
+    <td>{{p.name}}</td>
+    <td>1060</td>                        
+    <td>
+        <a href="admin-pharmacy-product-list.html" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right">View Product List <i class="fa fa-file-text-o"></i></a>
+        <a href="admin-pharmacy-create.html" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right">Edit Details <i class="fa fa-edit"></i></a>
+    </td>
+</tr>
+{% endfor %}
+{% if pharmacies|length == 0 %}
+<tr role="row">
+    <td colspan="5">
+       Have no result 
+    </td>
+   
+</tr>
+ {% endif %}
+      

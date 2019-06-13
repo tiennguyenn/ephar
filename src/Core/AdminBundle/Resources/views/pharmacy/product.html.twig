@@ -1,0 +1,219 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+{% stylesheets
+    'bundles/admin/assets/global/plugins/bootstrap-editable/bootstrap-editable/css/bootstrap-editable.css'
+    'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+    'bundles/admin/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.css'
+    'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+    'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+    'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-editable/bootstrap-editable/css/bootstrap-editable.css'
+    'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+    'bundles/admin/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.css'
+    'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+    'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+    filter='cssrewrite'
+    debug=false
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+{% endstylesheets %}
+{% endblock %}
+{% block pageTitle %}
+    <h1>{{ pharmacy.name }}</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+    <li> <a href="{{ path('admin_pharmacy_group_drug') }}">Product Group</a> <i class="fa fa-circle"></i> </li>
+    <li> <span class="active">{{ group.name }}</span> </li>
+{% endblock %}
+{% block content %} 
+    <!-- Begin: life time stats -->
+  <div class="portlet light">
+    <div class="portlet-title">
+      <div class="caption"> 
+        <span class="caption-subject font-dark sbold uppercase">PRODUCT GROUP DETAILS</span> 
+      </div>
+    </div>
+    <div class="portlet-body">
+      {% if pending > 0 %}
+      <div class="alert alert-danger"><strong>Alert!</strong> You have {{ pending }} pending approval.</div>
+      {% endif %}                          
+      <div id="wrapper" class="dataTables_wrapper no-footer">
+         {{ render(controller( 'AdminBundle:Pharmacy:productList',{'id': group.id} )) }}
+      </div>
+    </div>
+  </div>
+<div id="modal-product-GMEDS" class="modal fade modal-new" tabindex="-1" data-width="760">
+  <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title" id="prices-title">G-MEDS Overseas Selling Price</h4>
+  </div>
+  <div class="modal-body text-center">
+    <form class="form-horizontal" id="prices-form">
+      <div class="price-changing-square">
+        <div>
+          Old Value: <span class="value" id="old-prices">10%</span>          
+        </div>
+        <i class="fa fa-long-arrow-right"></i>
+        <div class="new-value">
+          New Value: <span class="value" id="new-prices">20%</span>          
+        </div>
+      </div>
+      
+      <div class="row col-md-offset-2">
+        <div class="form-group col-md col-md-9 mod-take-effect">
+          <label for="inputEmail1" class="col-md-5 control-label" style="padding-top: 0; margin-top: -2px;">Percentage change will take effect on:</label>
+          <div class="col-md-7">
+            <div class="datepicker-wrap">
+              <div class="wrap">
+                <div class="input-group date date-pickers bs-datetime">
+                  <input id="prices-date" type="text" size="16" class="form-control">
+                  <span class="input-group-addon">
+                    <button class="btn default date-set mr-0" type="button">
+                      <i class="fa fa-calendar"></i>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <p id="prices-description">This will recalculate overseas selling prices for all medications, including prices of medications that were updated individually. This action cannot be undone.</p>
+      <p>Proceed?</p>
+      <p class="error"></p>
+      <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase btn-danger btn-sm" data-dismiss="modal">No</i></a>
+      <a href="javascript:;" id="prices-yes" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm ml-15">Update</a>
+    </form>
+  </div>
+</div>
+
+<div id="modal-GMEDS" class="modal fade modal-new" tabindex="-1" data-width="760">
+  <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title" id="price-title">Product 1 GMEDES Overseas Selling Price</h4>
+  </div>
+  <div class="modal-body text-center">
+    <form class="form-horizontal" id="price-form">
+      <div class="price-changing-square">
+        <div>
+          Old Value: <span class="value" id="old-price">12.00</span>          
+        </div>
+        <i class="fa fa-long-arrow-right"></i>
+        <div class="new-value">
+          New Value: <span class="value" id="new-price">14.00</span>          
+        </div>
+      </div>
+      
+      <div class="row col-md-offset-2">
+        <div class="form-group col-md col-md-9 mod-take-effect">
+          <label for="inputEmail1" class="col-md-5 control-label" style="padding-top: 0; margin-top: -2px;">Price change will take effect on:</label>
+          <div class="col-md-7">
+            <div class="datepicker-wrap">
+              <div class="wrap">
+                <div class="input-group date date-pickers bs-datetime">
+                  <input id="price-date" type="text" size="16" class="form-control">
+                  <span class="input-group-addon">
+                    <button class="btn default date-set mr-0" type="button">
+                      <i class="fa fa-calendar"></i>
+                    </button>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <p id="price-description">This will change the cost price of Product 1.</p>
+      <p>Proceed?</p>
+      <p class="error"></p>
+      <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase btn-danger btn-sm" data-dismiss="modal">No</i></a>
+      <a href="javascript:;" id="price-yes" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm ml-15">Update</a>
+    </form>
+  </div>
+</div>
+
+<div id="modal-view-logs" class="modal fade modal-new" tabindex="-1" data-width="900">
+  <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+      <h4 class="modal-title">View Logs</h4>
+  </div>
+  <div class="modal-body">    
+    <div class="portlet box white portlet-scroller">
+      <div class="portlet-title">
+        <div class="caption">
+          <span class="caption-subject uppercase sbold">{{ pharmacy.name }} Product List Logs</span>
+        </div>
+        <div class="actions">
+          <a href="{{ path('drug_print_logs', {'id': pharmacy.id}) }}" target="_blank" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">Print<i class="fa fa-print"></i></a>
+        </div>
+      </div>
+      <div class="portlet-body">
+        <div class="scroller" style="height:280px" data-always-visible="1" data-rail-visible="1" data-rail-color="white" data-handle-color="green">
+          <div class="table-scrollable table-scrollable-borderless" id="list-logs">
+            <!-- logs -->
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <ul class="page-breadcrumb breadcrumb">
+        <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+        <li> <a href="{{ path('admin_pharmacy_list') }}">List Pharmacies</a> <i class="fa fa-circle"></i> </li>
+        <li> <a href="{{ path('pharmacy_products', {'id': pharmacy.id}) }}">{{ pharmacy.name }}</a> <i class="fa fa-circle"></i> </li>
+        <li> <span class="active">Product List</span> </li>
+    </ul>
+    <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" data-dismiss="modal">Close</a>
+  </div>
+</div>
+<div class="blink-loader">
+  <div class="load1-wrap"><div class="load1"><div class="loader">Loading...</div></div></div>
+</div>
+{% include '@Admin/pharmacy/modal.html.twig' %}
+{% endblock %}
+{% block javascripts %} 
+    <input type="hidden" id="update_url" value="{{ path('drug_update_prices', {'id': group.id}) }}"/>
+    <input type="hidden" id="name_url" value="{{ path('drug_list_names', {'id': pharmacy.id}) }}"/>
+    <input type="hidden" id="logs_url" value="{{ path('drug_list_logs', {'id': pharmacy.id}) }}"/>
+    <input type="hidden" id="list_url" value="{{ path('pharmacy_products_list', {'id': group.id}) }}"/>
+    <input type="hidden" id="url_admin_pharmacy_group_drug_form" value="{{ path('admin_pharmacy_group_drug_form') }}">
+    <input type="hidden" id="url_admin_pharmacy_group_drug_move" value="{{ path('admin_pharmacy_group_drug_move') }}">
+    <input type="hidden" id="group_id" value="{{ group.id }}">
+    {% javascripts
+      '@AdminBundle/Resources/public/assets/global/plugins/ladda/spin.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/ladda/ladda.min.js'
+      '@AdminBundle/Resources/public/assets/pages/scripts/ui-buttons-spinners.min.js'
+      '@AdminBundle/Resources/public/assets/pages/scripts/table-datatables-managed.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/lib/js/wysihtml5-0.3.0.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/jquery.mockjax.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/bootstrap-editable/js/bootstrap-editable.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/wysihtml5/wysihtml5.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+      '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/typeahead/typeahead.bundle.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/typeahead/handlebars.min.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/bootstrap-editable/js/bootstrap-editable.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/wysihtml5/wysihtml5.js'
+      '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/additional-methods.min.js'
+      '@AdminBundle/Resources/public/js/drugs.js'
+      '@AdminBundle/Resources/public/js/admin_pharmacy_group_drug.js'
+    %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Customs Declaration Invoice</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1" name="viewport" />
+<meta content="Customs Declaration Invoice" name="description" />
+<meta content="" name="author" />
+<style>
+    html { margin: 0px}
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        line-height: 1.42857;
+        color: #000;
+        padding: 0;
+        margin: 0;
+    }
+    p {
+        margin: 0;
+    }
+    .wrapper-content {
+        background-color: #ffffff;
+    }
+    .bg-light-blue {
+        background-color: #f2f9ff;
+    }
+    .container {
+        padding: 0 10px;
+    }
+    .header {
+        padding: 10px 10px 0 10px;
+    }
+    .pt-0 {
+        padding-top: 0 !important;
+    }
+    .pb-0 {
+        padding-bottom: 0 !important;
+    }
+    table {
+        border-collapse: collapse;
+        border: 0;
+        width: 100%;
+    }
+    table td, th {
+        padding: 10px;
+        vertical-align: top;
+    }
+    table th {
+        text-align: left;
+    }
+    table.table-data td {
+        border: 0;
+    }
+    table.table-data th,
+    table.table-data td {
+        padding: 10px;
+    }
+    table.table-subdata td {
+        padding: 2px 0;
+    }
+    table.table-title {
+        border-bottom: 1px solid #c7cbce;
+    }
+    table.table-title table td {
+        padding: 0;
+    }
+    table.table-main {
+        border-bottom: 1px solid #d2d2d2;
+    }
+    table.table-main th{
+        background-color: #f2f9ff;
+        border-bottom: 1px solid #d2d2d2;
+    }
+    table.table-main th,
+    table.table-main td {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    table.table-main th:first-child,
+    table.table-main td:first-child {
+        padding-left: 20px;
+    }
+    table.table-main th:last-child,
+    table.table-main td:last-child {
+        padding-right: 20px;
+        text-align: right;
+    }
+    table.table-right {
+        text-align: right;
+    }
+    table.table-footer {
+        border-top: 1px solid #9d9d9d;
+    }
+    .logo {
+        margin: 10px 0 0;
+    }
+    .logo img {
+        max-width: 62px;
+    }
+
+    .left-info {
+        margin-right: 10px;
+    }
+    .info-big {
+        font-weight: 700;
+        font-size: 20px;
+    }
+    .info-bigest {
+        font-size: 24px;
+    }
+    .info-medium {
+        font-size: 18px;
+        font-weight: 700;
+    }
+    .info-mediumest {
+        font-size: 16px;
+    }
+    .info-small {
+        font-size: 12px;
+    }
+    .info-title {
+        padding: 20px 0 10px 10px;
+    }
+    .align-left {
+        text-align: left;
+    }
+    .align-right {
+        text-align: right;
+    }
+    .valign-bottom {
+        vertical-align: bottom;
+    }
+    .text-transform {
+        text-transform: uppercase;
+    }
+    .text-gray {
+        color: #555;
+    }
+    .text-light-gray {
+        color: #a1a1a1;
+    }
+    .right-info .info-big {
+        font-weight: 600;
+    }
+    .patient-info {
+        margin-top: 10px;
+        border-right: 1px solid #e0e0e0;
+        padding-right: 10px;
+    }
+    .medication-note {
+        text-transform: uppercase;
+        margin-top: 25px;
+    }
+    .has-paid-full {
+        position: relative;
+    }
+    .paid-full {
+        position: absolute;
+        top: 60px;
+        left: 130px;
+        width: 262px;
+        height: 70px;
+        color: #ca2826;
+        border: 4px solid #ca2826;
+        border-radius: 22px;
+        text-align: center;
+        padding: 14px 10px;
+    }
+    .paid-full .text-big {
+        font-weight: bolder;
+        text-transform: uppercase;
+        font-size: 34px;
+    }
+    .paid-full .text-small {
+        font-weight: 700;
+    }
+    .mt50{margin-top: 50px;}
+    .round-sign{font-size: 40px;}
+    .pl20{padding-left: 20px;}
+    .text-center{text-align: center;}
+    header { position: fixed; top: -60px; left: 0px; right: 0px; height: 50px; }
+    footer { position: fixed; bottom: 20px; height: 50px;}
+    .page_break { page-break-before: always; }
+    .chinese {
+        font-family: DroidSansFallback, sans-serif;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        text-align: justify-all !important;
+        font-weight: 400;
+    }
+    .font-chinese {
+        font-family: simsun;
+    }
+</style>
+</head>
+<body>
+{% for c in 0.. copy|default(0) %}
+{% if c > 0 %}<div class="page_break"></div>{% endif %}
+<div class="wrapper-content">
+    <div class="header bg-light-blue">
+        <table class="table-data table-title">
+            <tbody>
+            <tr>
+                <td>
+                    <table>
+                        <tr>
+                            <td width="50%">
+                                <table>
+                                    <tr>
+                                        <td width="20%">
+                                            <div class="logo"><img src="{% if clinic %}{{ clinic.businessLogoUrl }}{% endif %}" alt="" width="62" height="52"></div>
+                                        </td>
+                                        <td width="80%">
+                                            <div class="left-info">
+                                                <p class="info-big">
+                                                    {% if clinic %}
+                                                        {% if checkChineseFont(clinic.businessName ) == 1 %}
+                                                            <span class="font-chinese" >{{ clinic.businessName }}</span>
+                                                        {% else %}
+                                                            {{ clinic.businessName }}
+                                                        {% endif %}
+                                                    {% endif %}</p>
+                                                <p class="info-small text-gray">
+                                                    {% if clinic %}
+                                                        {% if checkChineseFont(clinic.line1 ) == 1 or checkChineseFont(clinic.line2 ) == 1 or checkChineseFont(clinic.line3 ) == 1 %}
+                                                            <span class="font-chinese" >
+                                                            {{ clinic.line1 }}{% if clinic.line2 != "" %}, {{ clinic.line2 }}{% endif %}{% if clinic.line3 != "" %}, {{ clinic.line3 }}{% endif %}
+                                                                <br> {{ clinic.postalCode }}, {{ clinic.city }}
+                                                                <br> {% if clinic.state != "" %}{{ clinic.state }}, {% endif %}{{ clinic.country }}
+                                                            </span>
+                                                        {% else %}
+                                                            {{ clinic.line1 }}{% if clinic.line2 != "" %}, {{ clinic.line2 }}{% endif %}{% if clinic.line3 != "" %}, {{ clinic.line3 }}{% endif %}
+                                                            <br> {{ clinic.postalCode }}, {{ clinic.city }}
+                                                            <br> {% if clinic.state != "" %}{{ clinic.state }}, {% endif %}{{ clinic.country }}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td width="50%">
+                                <div class="right-info align-right">
+                                    <p class="info-big">
+                                        {% if checkChineseFont(info.doctorName ) == 1 %}
+                                            <span class="font-chinese" >{{ info.doctorTitle }}. {{ info.doctorName }}</span>
+                                        {% else %}
+                                            {{ info.doctorTitle }}. {{ info.doctorName }}
+                                        {% endif %}
+                                    </p>
+                                    <p class="info-small text-gray">Med. License No:
+                                        {% if checkChineseFont(info.registrationNumber ) == 1 %}
+                                            <span class="font-chinese" >{{ info.registrationNumber }}</span>
+                                        {% else %}
+                                            {{ info.registrationNumber }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table>
+                        <tr>
+                            {% if subClinic %}
+                            <td width="10%"></td>
+                            {% for clinic in subClinic %}
+                            <td width="30%">
+                                <div class="left-info">
+                                    <p class="info-big">
+                                        {% if checkChineseFont(clinic.businessName ) == 1 %}
+                                            <span class="font-chinese" >{{ clinic.businessName }}</span>
+                                        {% else %}
+                                            {{ clinic.businessName }}
+                                        {% endif %}
+                                    </p>
+                                    <p class="info-small text-gray">
+                                        {% if checkChineseFont(clinic.line1 ) == 1 or checkChineseFont(clinic.line2 ) == 1 or checkChineseFont(clinic.line3 ) == 1 %}
+                                            <span class="font-chinese" >
+                                                {{ clinic.line1 }}{% if clinic.line2 != "" %}, {{ clinic.line2 }}{% endif %}{% if clinic.line3 != "" %}, {{ clinic.line3 }}{% endif %}
+                                                <br> {{ clinic.postalCode }}, {{ clinic.city }}
+                                                <br> {% if clinic.state != "" %}{{ clinic.state }}, {% endif %}{{ clinic.country }}
+                                            </span>
+                                        {% else %}
+                                            {{ clinic.line1 }}{% if clinic.line2 != "" %}, {{ clinic.line2 }}{% endif %}{% if clinic.line3 != "" %}, {{ clinic.line3 }}{% endif %}
+                                            <br> {{ clinic.postalCode }}, {{ clinic.city }}
+                                            <br> {% if clinic.state != "" %}{{ clinic.state }}, {% endif %}{{ clinic.country }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </td>
+                            {% endfor %}
+                            {% for item in 0..(3-subClinic|length) if item > 0 %}
+                            <td width="30%"></td>
+                            {% endfor %}
+                            {% endif %}
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="container bg-light-blue">
+        <table class="table-data">
+            <tbody>
+            <tr>
+                <td width="60%"> <p class="info-big text-transform text-gray">CUSTOMS DECLARATION INVOICE</p></td>
+                <td width="40%">
+                    <table class="table-subdata">
+                        <tr>
+                            <td width="42%" class="text-gray"><strong>Date:</strong></td>
+                            <td width="58%" align="right">{{ info.paidOn|date("d M Y") }}</td>
+                        </tr>
+                        <tr>
+                            <td class="text-gray"><strong>Order No:</strong></td>
+                            <td align="right"><strong>{{ info.orderNumber }}</strong></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="table-subdata">
+                        <tr>
+                            <td width="33%" class="text-gray"><strong>Patient Name:</strong></td>
+                            <td><strong>
+                                    {% if checkChineseFont(info.patientName ) == 1 %}
+                                        <span class="font-chinese" >{{ info.patientName }} ({{ info.patientCode }})</span>
+                                    {% else %}
+                                        {{ info.patientName }} ({{ info.patientCode }})
+                                    {% endif %}
+                                </strong>
+                            </td>
+                        </tr>
+                        {# <tr>
+                            <td class="text-gray"><strong>Age / Gender:</strong></td>
+                            <td>{% if info.dateOfBirth is not null %}{{ age_calculate(info.dateOfBirth) }} years, {% endif %}{{ info.gender? 'Male': 'Femail' }}</td>
+                        </tr> #}
+                        <tr>
+                            <td class="text-gray"><strong>Patient ID:</strong></td>
+                            <td>
+                                {% if checkChineseFont(info.passportNo ) == 1 %}
+                                    <span class="font-chinese" >{{ info.passportNo }}</span>
+                                {% else %}
+                                    {{ info.passportNo }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-gray"><strong>Country of Residence:</strong></td>
+                            <td>{{ info.countryName }}</td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    {% if info.countryCodeShipping == 'ID' %}
+                        <table class="table-subdata">
+                            <tr>
+                                <td width="55%" class="text-gray"><strong>Patient Tax ID (NPWP):</strong></td>
+                                <td align="right">{{ info.taxId }}</td>
+                            </tr>
+                        </table>
+                    {% endif %}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="content-detail">
+        <div class="bg-light-blue">
+            <div class="container">
+                <p class="info-mediumest text-transform info-title">ORDER DETAILS</p>
+            </div>
+        </div>
+        <div class="has-paid-full">
+            {% set sub_total = 0 %}
+            <table class="table-data table-main">
+                <tbody>
+                <tr>
+                    <th width="8%">Item No.</th>
+                    <th width="21%">Name</th>
+                    <th width="11%" class="align-right">Unit Price</th>
+                    <th width="10%" class="align-right">Qty/Unit</th>
+                    <th width="10%" class="align-right">GST Code</th>
+                    <th width="12%" class="align-right">Total</th>
+                </tr>
+                {% if lists %}
+                    {% for item in lists %}
+                        {% set sub_total = sub_total + item.listPrice %}
+                        <tr>
+                            <td style="padding-left: 20px;"> {{ loop.index }} </td>
+                            <td class="text-transform">{{ item.name }}</td>
+                            <td class="align-right">SGD {{ item.costPrice|number_format(2, '.', ',') }}</td>
+                            <td class="align-right">{% if item.quantity != '' %}{{ item.quantity }} {{ item.namePackingType }}{% else %}N/A{% endif %}</td>
+                            <td class="align-right">{{ hasZrsGST ? 'ZRS' : item.code }}</td>
+                            <td class="align-right">SGD {{ item.listPrice|number_format(2, '.', ',') }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="container mt50">
+        <table class="table-data">
+            <tr>
+                <td width="40%">
+                    <table class="table-subdata">
+                        <tr>
+                            <td class="text-gray" width="45%"><strong>Payment Terms</strong></td>
+                            <td>Prepayment</td>
+                        </tr>
+                        <tr>
+                            <td class="text-gray"><strong>Shipping Terms</strong></td>
+                            <td>{% if info.countryCodeShipping != 'ID' %}C.I.F{% else %}F.O.B{% endif %}</td>
+                        </tr>
+                    </table>
+                </td>
+                <td width="60%">
+                    <table class="table-subdata table-right">
+                        <tr>
+                            <td class="text-gray"><strong>Sub Total:</strong></td>
+                            <td class="text-gray" width="10%"><strong>SGD</strong></td>
+                            <td width="20%"><strong>{{ sub_total|number_format(2, '.', ',') }}</strong></td>
+                        </tr>
+                        {% if info.countryCodeShipping != 'ID' %}
+                        <tr>
+                            <td class="text-gray"><strong>Freight, Handling Charges & Insurance:</strong></td>
+                            <td class="text-gray"></td>
+                            <td>Included</td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td class="text-gray"><strong>Grand Total:</strong></td>
+                            <td class="text-gray"><strong>SGD</strong></td>
+                            <td><strong>{{ sub_total|number_format(2, '.', ',') }}</strong></td>
+                        </tr>
+                        {% set MYRCurrency = constant('UtilBundle\\Utility\\Constant::CURRENCY_MALAYSIA') %}
+                        {% set IDRCurrency = constant('UtilBundle\\Utility\\Constant::CURRENCY_INDONESIA') %}
+                        {% set USDCurrency = constant('UtilBundle\\Utility\\Constant::CURRENCY_USD') %}
+                        {% if info.countryCodeShipping != 'SG' %}
+                            <tr>
+                                <td class="text-gray"><strong>USD Equivalent:</strong></td>
+                                <td class="text-gray"><strong>USD</strong></td>
+                                <td><strong>
+                                        {% if info.countryCodeShipping != 'ID' %}
+                                            {{ (sub_total * fxRate[USDCurrency] * (1 + psBufferRate/100))|number_format(2, '.', ',') }}
+                                        {% else %}
+                                            {{ (sub_total * fxRate[USDCurrency])|number_format(2, '.', ',') }}
+                                        {% endif %}
+                                    </strong></td>
+                            </tr>
+                        {% endif %}
+                        {#{% if info.countryCodeShipping == 'SG' %}
+                            <tr>
+                                <td class="text-gray"><strong>SGD equivalent:</strong></td>
+                                <td class="text-gray"><strong>SGD</strong></td>
+
+                                <td><strong>{{ ((sub_total/fxRate[MYRCurrency]) * (1 + psBufferRate/100))|number_format(2, '.', ',') }}</strong></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td class="text-gray"><strong>USD Equivalent:</strong></td>
+                                <td class="text-gray"><strong>USD</strong></td>
+                                <td><strong>{{ (sub_total * fxRate[USDCurrency] * (1 + psBufferRate/100))|number_format(2, '.', ',') }}</strong></td>
+                            </tr>
+                        {% endif %}#}
+                        {% if info.countryCodeShipping != 'ID' %}
+                        <tr>
+                            <td class="text-gray"><strong>(For customs declaration purposes only)</strong></td>
+                            <td class="text-gray"></td>
+                            <td></td>
+                        </tr>
+                        {% endif %}
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <footer>
+        <div class="text-center">
+            <p class="collecting-agent">Collecting Agent: GMEDES Pte Ltd <span class="round-sign">.</span> Enquiries: patientshelp@gmedes.com</p>
+        </div>
+    </footer>
+</div>
+{% endfor %}
+</body>
+</html>

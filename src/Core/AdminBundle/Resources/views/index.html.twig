@@ -1,0 +1,28 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block body %}
+
+{% include '@Admin/header.html.twig' %}
+
+<div class="page-container">
+  {% include '@Admin/left-menu.html.twig' with { 'mainMenu': 'dashboard', 'subMenu': '' } %}
+  <div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+      <!-- BEGIN PAGE HEAD-->
+      <div class="page-head">
+        <!-- BEGIN PAGE TITLE -->
+        <div class="page-title">
+          <h1>Dashboard</h1>
+        </div>
+        <!-- END PAGE TITLE -->
+      </div>
+      <!-- END PAGE HEAD--> 
+      <!-- BEGIN PAGE BREADCRUMB -->
+      <ul class="page-breadcrumb breadcrumb">
+        <li> <a href="#">Dashboard</a></li>
+      </ul>
+      <!-- END PAGE BREADCRUMB -->
+    </div>
+  </div>
+</div>
+{% endblock %}

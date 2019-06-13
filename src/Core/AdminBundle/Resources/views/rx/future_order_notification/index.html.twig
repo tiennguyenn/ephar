@@ -1,0 +1,120 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {% stylesheets
+        'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+        filter='cssrewrite'
+        debug=false
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        <!-- do not move it into stylesheet block -->
+        <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block pageTitle %}
+    <h1>{{ title}}</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard')}}">Home</a> <i class="fa fa-circle"></i> </li>
+    <li> <span class="active">{{ title }}</span> </li>
+{% endblock %}
+{% block content %}
+    <div class="portlet light bordered">
+        <div class="portlet-title">
+            <div class="caption">
+                <h4 class="block mt-0">Welcome Email</h4>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <input type="hidden" id="ajax-url-save" value="{{ path('admin_ajax_save_future_rx_order_notification_setting') }}" />
+            <form class="form-horizontal" action="#" id="rx-notification-setting" method="POST" enctype="multipart/form-data">
+                <div class="form-body pt-0">
+                    <div class="form-content">
+                        <div class="form-group mb-grid">
+                            <div class="col-md-12">
+                                <label>Email Subject</label>
+                                <div class="form-float">
+                                    <div class="col-md-12">
+                                        <input type="text" id="email_subject" name="email_subject" class="form-control" value="{{ rx_notification_setting.templateSubjectEmail }}" autocomplete="off">
+                                    </div>
+                                    <span style="color: red; display: none" id="email-subject-error"><small>Email subject can't be blank</small></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-grid">
+                            <div class="col-md-12">
+                                <label>Email Body </label>
+                                <textarea id="email_message" class="form-control wysihtml5" style="height: 300px">{{ rx_notification_setting.templateBodyEmail }}</textarea>
+                                <span style="color: red; display: none" id="email-message-error"><small>Email body can't be blank</small></span>
+                            </div>
+                        </div>
+                        <div class="form-group mb-grid">
+                            <div class="col-md-12 mt-10">
+                                <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit" id="rx-notification-setting-email-submit">Save</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="portlet-title">
+            <div class="caption">
+                <h4 class="block mt-0">Welcome SMS</h4>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <form class="form-horizontal" action="#" method="POST" enctype="multipart/form-data">
+                <div class="form-body pt-0">
+                    <div class="form-content">
+                        <div class="form-group mb-grid">
+                            <div class="col-md-12">
+                                <label>SMS Message </label>
+                                <textarea id="sms_message" class="form-control" style="height: 100px">{{ rx_notification_setting.templateSms }}</textarea>
+                                <span style="color: red; display: none" id="sms-message-error"><small>SMS message can't be blank</small></span>
+                            </div>
+                        </div>
+                        <div class="form-group mb-grid">
+                            <div class="col-md-12 mt-10">
+                                <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit" id="rx-notification-setting-sms-submit">Save</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="modal-rx-notification-setting" class="modal fade modal-new" data-backdrop="static" data-keyboard="false" tabindex="-1" data-width="500">
+        <div class="modal-header">
+            <h4 class="modal-title" id="rx-notification-setting-title"></h4>
+        </div>
+        <div class="modal-body">
+            <div class="text-center">
+                <p id="rx-notification-setting-information"></p>
+
+                <button type="button" data-dismiss="modal" aria-hidden="true" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10">Close</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/lib/js/wysihtml5-0.3.0.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+        '@AdminBundle/Resources/public/js/rx_reminder_setting.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+        '@AdminBundle/Resources/public/js/admin_future_rx_order_setting.js'
+        debug=false
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

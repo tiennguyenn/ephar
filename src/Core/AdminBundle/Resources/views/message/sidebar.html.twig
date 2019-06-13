@@ -1,0 +1,21 @@
+{% set type = (type is defined)? type: "" %}
+{% set msg_total = get_message_total() %}
+<div class="col-lg-2 col-md-3">
+  <div class="inbox-sidebar">
+    <a href="{{ path('message_compose') }}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs compose-btn btn-block"><i class="fa fa-edit"></i> Compose</a>
+    <ul class="inbox-nav">
+      <li {% if type == 'inbox' %}class="active"{% endif %}>
+        <a href="{{ path('message', {type: 'inbox'}) }}" data-type="inbox" data-title="Inbox"> Inbox <span id="it-inbox" class="badge badge-info">{% if msg_total.inbox > 0 %}{{ msg_total.inbox }}{% endif %}</span></a>
+      </li>
+      <li {% if type == 'sent' %}class="active"{% endif %}>
+        <a href="{{ path('message', {type: 'sent'}) }}" data-type="sent" data-title="Sent"> Sent</a></li>
+      <li {% if type == 'draft' %}class="active"{% endif %}>
+        <a href="{{ path('message', {type: 'draft'}) }}" data-type="draft" data-title="Draft"> Draft <span id="it-draft" class="badge badge-info">{% if msg_total.draft > 0 %}{{ msg_total.draft }}{% endif %}</span></a>
+      </li>
+      <li class="divider"></li>
+      <li {% if type == 'trash' %}class="active"{% endif %}>
+        <a href="{{ path('message', {type: 'trash'}) }}" data-type="trash" data-title="Trash" class="sbold uppercase"> Trash <span id="it-trash" class="badge badge-danger">{% if msg_total.trash > 0 %}{{ msg_total.trash }}{% endif %}</span></a>
+      </li>
+    </ul>
+  </div>
+</div>

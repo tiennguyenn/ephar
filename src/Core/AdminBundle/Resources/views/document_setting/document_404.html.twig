@@ -1,0 +1,32 @@
+{% extends '@Admin/layout.html.twig' %} 
+{% block classbody %} page-404-full-page{% endblock %}
+{% block body %}
+    
+   <div class="row">
+        <div class="col-md-12 page-404">
+            <div class="number font-red"> 404 </div>
+            <div class="details">
+                <h3>Oops! File not found.</h3>
+                <p> {{ documentName }} document file is not found or it still being generated. </p>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {% javascripts
+        '@AdminBundle/Resources/public/assets/global/scripts/app.min.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets
+        'bundles/admin/assets/pages/css/error.min.css'
+        filter='cssrewrite'
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}

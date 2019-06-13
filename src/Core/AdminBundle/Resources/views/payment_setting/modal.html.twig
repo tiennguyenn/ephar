@@ -1,0 +1,31 @@
+{% if modalType == 'productMargin' %}
+<div id="modal-pm-view-logs" class="modal fade modal-new" tabindex="-1" data-width="900" data-backdrop="static">
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+    <h4 class="modal-title">View Logs</h4>
+</div>
+<div class="modal-body">
+    <div class="portlet box white portlet-scroller">
+        <div class="portlet-title">
+            <div class="caption">
+                <span class="caption-subject uppercase sbold">Berjaya Pharmacy Product List Logs</span>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <div class="scroller" style="height:280px" data-always-visible="1" data-rail-visible="1" data-rail-color="white" data-handle-color="green">
+                <div class="table-scrollable table-scrollable-borderless">
+                    <table class="table table-hover table-light_">
+                        <thead>
+                            <tr><th>Date</th><th>User</th><th>Changes</th></tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" data-dismiss="modal">Close</a>
+</div>
+</div>
+{% endif %}

@@ -1,0 +1,25 @@
+<table class="table table-hover table-light_">
+    <thead>
+        <tr class="uppercase">
+            <th style="width: 140px">Date</th>
+            <th style="width: 140px">User</th>
+            <th>Changes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+            <tr>
+                <td>{{ log.createdOn|date('d M y') }}</td>
+                <td>{{ log.createdBy }}</td>
+                <td>
+                    {{ log.title }}
+                    <br />Old Value: {{ log.oldValue.scheduleDeclarationTime }}
+                    <br />New Value: {{ log.newValue.scheduleDeclarationTime }}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<input type='hidden' id='print_log_url' value="{{ printUrl }}" />
+<input type='hidden' id='breadcrumb_title' value="{{ breadcrumbTitle }}" />
+<input type='hidden' id='entity_id' value="{{ entityId }}" />

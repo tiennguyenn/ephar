@@ -1,0 +1,75 @@
+{% if userType in [1,2] %}
+<tr role="row" data-userid="{{ item.userId }}"  data-usertype="{{ item.userType }}" data-datepaid="{{ item.datePaid|date("M Y") }}">
+    <td>
+        <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+            <input type="checkbox" class="checkboxes" value="{{ item.userId }}|{{ item.userType }}|{{ item.datePaid|date("M Y") }}"{% if item.status == 1 %} disabled{% endif %} />
+            <span></span>
+        </label>
+    </td>
+    <td>{{ item.userCode }}</td>
+    <td>{{ item.name }}</td>
+    <td>{{ item.amountDue|number_format(2, '.', ',') }}</td>
+    <td>{% if item.amountPaid is not null %}{{ item.amountPaid|number_format(2, '.', ',') }}{% endif %}</td>
+    {% if item.status == 1 %}
+        <td class="status green">Paid</td>
+    {% else %}
+        <td class="status danger">Unpaid</td>
+    {% endif %}
+    <td>
+        {% if item.status == 1 %}
+            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase default disabled btn-xs btn-icon-right">Update <i class="fa fa-arrow-right"></i></a>
+        {% else %}
+            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right btn-modal-update-payment">Update <i class="fa fa-arrow-right"></i></a>
+        {% endif %}
+    </td>
+</tr>
+{% elseif userType == 3 %}
+<tr role="row" data-id="{{ item.id }}" data-usertype="{{ item.userType }}">
+    <td>
+        <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+            <input type="checkbox" class="checkboxes" value="{{ item.id }}"{% if item.status == 1 %} disabled{% endif %} />
+            <span></span>
+        </label>
+    </td>
+    <td>{{ item.name }}</td>
+    <td>{{ item.amount|number_format(2, '.', ',') }}</td>
+    <td>{% if item.amountPaid is not null %}{{ item.amountPaid|number_format(2, '.', ',') }}{% endif %}</td>
+    {% if item.status == 1 %}
+        <td class="status green">Paid</td>
+    {% else %}
+        <td class="status danger">Unpaid</td>
+    {% endif %}
+    <td>
+        {% if item.status == 1 %}
+            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase default disabled btn-xs btn-icon-right">Update <i class="fa fa-arrow-right"></i></a>
+        {% else %}
+            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right btn-modal-update-ps-pharmacy">Update <i class="fa fa-arrow-right"></i></a>
+        {% endif %}
+    </td>
+</tr>
+{% elseif userType == 4 %}
+    <tr role="row" data-id="{{ item.id }}" data-usertype="{{ item.userType }}">
+        <td>
+            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                <input type="checkbox" class="checkboxes" value="{{ item.id }}"{% if item.status == 1 %} disabled{% endif %} />
+                <span></span>
+            </label>
+        </td>
+        <td>{{ item.courierRateCode }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.amount|number_format(2, '.', ',') }}</td>
+        <td>{% if item.amountPaid is not null %}{{ item.amountPaid|number_format(2, '.', ',') }}{% endif %}</td>
+        {% if item.status == 1 %}
+            <td class="status green">Paid</td>
+        {% else %}
+            <td class="status danger">Unpaid</td>
+        {% endif %}
+        <td>
+            {% if item.status == 1 %}
+                <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase default disabled btn-xs btn-icon-right">Update <i class="fa fa-arrow-right"></i></a>
+            {% else %}
+                <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-icon-right btn-modal-update-ps-4">Update <i class="fa fa-arrow-right"></i></a>
+            {% endif %}
+        </td>
+    </tr>
+{% endif %}

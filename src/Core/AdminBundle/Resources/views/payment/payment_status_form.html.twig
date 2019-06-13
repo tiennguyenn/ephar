@@ -1,0 +1,62 @@
+{% if data %}
+{% for item in data %}
+{% set user_label = item.userType == 1? 'Dr': user_type_label(item.userType) %}
+<form action="" method="post">
+    <div class="msg-container"></div>
+    <div class="ps-container-detail">
+    {% if item.userType in [3,4] %}
+        {# pharmacy item#}
+        <ul class="update-info-detail">
+            <li><span class="text">{{ user_label }} Name:</span> {{ item.name }}</li>
+            <li><span class="text">Amount Due:</span> $<span class="amountDue">{{ item.amount|number_format(2, '.', ',') }}</span></li>
+        </ul>
+        <div class="update-info-form-wrap">
+            <div class="update-info-form">
+                <div class="form-group">
+                    <label for="inputName">Amount Paid:</label>
+                    <div class="input-group input-large">
+                        <span class="input-group-addon">$</span>
+                        <input type="text" name="amountPaid" class="form-control on-money-format" value="{{ item.amountPaid is not null ? item.amountPaid|number_format(2, '.', ',') : item.amount|number_format(2, '.', ',') }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="remark">Remarks:</label>
+                    <textarea name="remark" class="form-control" rows="3">{{ item.remark }}</textarea>
+                </div>
+            </div>
+            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-ps-update">Save</a>
+        </div>
+        <input type="hidden" name="id" value="{{ item.id }}"/>
+        <input type="hidden" name="userType" value="{{ item.userType }}"/>
+    {% else %}
+        <ul class="update-info-detail">
+            <li><span class="text">Month:</span> {{ item.datePaid|date("M Y") }} </li>
+            <li><span class="text">{{ user_label }} Code:</span> {{ item.userCode }}</li>
+            <li><span class="text">{{ user_label }} Name:</span> {{ item.name }}</li>
+            <li><span class="text">Amount Due:</span> $<span class="amountDue">{{ item.amountDue|number_format(2, '.', ',') }}</span></li>
+        </ul>
+        <div class="update-info-form-wrap">
+            <div class="update-info-form">
+                <div class="form-group">
+                    <label for="inputName">Amount Paid:</label>
+                    <div class="input-group input-large">
+                        <span class="input-group-addon">$</span>
+                        <input type="text" name="amountPaid" class="form-control on-money-format" value="{{ item.amountPaid is not null ? item.amountPaid|number_format(2, '.', ',') : item.amountDue|number_format(2, '.', ',') }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="remark">Remarks:</label>
+                    <textarea name="remark" class="form-control" rows="3">{{ item.remark }}</textarea>
+                </div>
+            </div>
+            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-ps-update">Save</a>
+        </div>
+        <input type="hidden" name="id" value="{{ item.id }}"/>
+        <input type="hidden" name="userType" value="{{ item.userType }}"/>
+        <input type="hidden" name="userId" value="{{ item.userId }}"/>
+        <input type="hidden" name="datePaid" value="{{ item.datePaid|date("M Y") }}"/>
+    {% endif %}
+    </div>
+</form>
+{% endfor %}
+{% endif %}

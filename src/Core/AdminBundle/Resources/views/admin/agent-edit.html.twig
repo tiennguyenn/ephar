@@ -1,0 +1,1265 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {% stylesheets
+        'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+        'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+        'bundles/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+        'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+        'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+        'bundles/admin/assets/global/plugins/ion.rangeslider/css/ion.rangeSlider.css'
+        'bundles/admin/assets/global/plugins/ion.rangeslider/css/ion.rangeSlider.skinFlat.css'
+        'bundles/admin/assets/global/plugins/bootstrap-markdown/css/bootstrap-markdown.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-summernote/summernote.css'
+        'bundles/admin/assets/global/plugins/bootstrap-wysihtml5/bootstrap-wysihtml5.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-editable/bootstrap-editable/css/bootstrap-editable.css'
+        'bundles/admin/assets/global/plugins/bootstrap-wysihtml5/bootstrap-wysihtml5.css'
+        'bundles/admin/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+        'bundles/admin/assets/global/plugins/icheck/skins/all.css'
+        filter='cssrewrite'
+        debug=false
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        <!-- do not move it into stylesheet block -->
+        <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts
+        '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/clockface/js/clockface.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/ion.rangeslider/js/ion.rangeSlider.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-markdown/lib/markdown.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-markdown/js/bootstrap-markdown.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-summernote/summernote.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5/wysihtml5-0.3.0.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5/bootstrap-wysihtml5.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery.mockjax.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/bootstrap-editable/js/bootstrap-editable.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/wysihtml5/wysihtml5.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/icheck/icheck.min.js'
+        '@AdminBundle/Resources/public/js/admin_agent_register.js'
+        debug=false
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+{% endblock %}
+
+
+{% block pageTitle %}
+    <h1>{{ title}}</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard')}}">Home</a> <i class="fa fa-circle"></i> </li>
+    {% if agentId > 0 %}
+        <li> <a href="{{ path('admin_agent')}}">List Agents</a><i class="fa fa-circle"></i> </li>
+    {% endif %}
+    <li> <span class="active">{{ title}}</span> </li>
+{% endblock %}
+{% block content %}
+    <div class="portlet light bordered" id="form_wizard_1" enctype="multipart/form-data"  >
+        <div class="portlet-body form">
+
+            <input type="hidden" value="{{path(ajaxDependent)}}" id="ajaxUrlDependent" />
+            <input type="hidden" value="{{ agentId }}" id="main-agent-id" />
+            <input type="hidden" value="{{app.request.getBaseURL()}}/" id="asset-url"/>
+            <input type="hidden" value="{{path(successUrl)}}" id="success-url"/>
+            <input type="hidden" value="{{path('admin_validate_email')}}" id="validate-email-url"/>
+            <input type="hidden" value="{{ constant('UtilBundle\\Utility\\Constant::ID_SINGAPORE') }}" id="singapore_id">
+            <input type="hidden" value="{{ constant('UtilBundle\\Utility\\Constant::ID_MALAYSIA') }}" id="malaysia_id">
+            <form class="form-horizontal" action="#" id="admin-register-agent" method="POST" enctype="multipart/form-data">
+                <input type='hidden' name='detect-changed' id='detect_changed_hf'/>
+                <div class="form-wizard">
+                    <div class="form-body">
+                        <div class="form-content">
+                            {#<div class="alert alert-danger display-none">
+                                <button class="close" data-dismiss="alert"></button> You have some form errors. Please check below. </div>
+                            <div class="alert alert-success display-none">
+                                <button class="close" data-dismiss="alert"></button> Your form validation is successful! </div>#}
+                            <h3 class="block">Master Agent Infomation</h3>
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+
+                                    <label>{{ form.site.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.site,{'attr':{'class':'form-control select2'} })}}
+
+
+                                </div>
+                            </div>
+
+                            <div class="panel panel-primary mb-10">
+                                <div class="panel-heading uppercase">
+                                    PRIMARY AGENT CUSTOM FEES
+                                </div>
+                            </div>
+
+                            <div class="font-red mb-15">Important Note: Agent fees are inherited from Global Settings. Configure this section if the fees are different from the global settings, as determined in the signed agent agreement. The fees impact the agent revenues. <u>Please modify with care.</u></div>
+
+                            <div class="well uppercase">CUSTOM ADMIN SERVICE FEE PER PRESCRIPTION FOR PRIMARY AGENTS</div>
+                            <div class="mb-15">Custom admin service fee per prescription is the flat fee charged by GMedes & Agent per prescription, and is added to the doctor's prescribing fee in the patient's invoice.</div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="panel panel-default custom-panel-grey">
+                                        <div class="panel-heading">
+                                            <div class="m-grid">
+                                                <div class="m-grid-row">
+                                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                                        Local Patients
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row form-margin-share mb-30">
+                                        <div class="form-group">
+                                            <label for="agentPercentage" class="col-md-4 control-label">Primary Agent Fee</label>
+                                            <div class="col-md-8">
+                                                <div class="input-medium-wrapper">
+                                                    <div class="input-medium-wrap">
+                                                        <div class="input-group input-small">
+                                                            {{ form_widget(form.feeServiceLocal, {'attr': {'class': 'form-control on-digit-percent', 'placeholder': '0.00'}}) }}
+                                                            <span class="input-group-addon">SGD</span>
+                                                        </div>
+                                                        <div class="current-data">
+                                                            {% if listAgentFee.feeServiceLocalAgent >= 0 %}
+                                                                <span id="" class="">Current value is {{ listAgentFee.feeServiceLocalAgent }}</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="platformPercentage" class="col-md-4 control-label">GMedes Fee</label>
+                                            <div class="col-md-8">
+                                                <div class="input-medium-wrapper">
+                                                    <div class="input-medium-wrap">
+                                                        <div class="input-group input-small">
+                                                            {{ form_widget(form.feePlatformServiceLocal, {'attr': {'class': 'form-control on-digit-percent', 'placeholder': '0.00' }}) }}
+                                                            <span class="input-group-addon">SGD</span>
+                                                        </div>
+                                                        <div class="current-data">
+                                                            {% if listAgentFee.feeServiceLocalPlatform >= 0 %}
+                                                                <span id="" class="">Current value is {{ listAgentFee.feeServiceLocalPlatform }}</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="takeEffectOn" class="col-md-4 control-label">Effective date</label>
+                                            <div class="col-md-8">
+                                                <div class="input-group date date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+                                                    {{ form_widget(form.feeServiceLocalDate, {'attr': {'class': 'form-control' }}) }}
+                                                    <span class="input-group-btn">
+                                                    <button class="btn default" type="button">
+                                                    <i class="fa fa-calendar"></i>
+                                                    </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="panel panel-default custom-panel-grey">
+                                        <div class="panel-heading">
+                                            <div class="m-grid">
+                                                <div class="m-grid-row">
+                                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                                        Overseas Patients
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row form-margin-share mb-30">
+                                        <div class="form-group">
+                                            <label for="agentPercentage" class="col-md-4 control-label">Primary Agent Fee</label>
+                                            <div class="col-md-8">
+                                                <div class="input-medium-wrapper">
+                                                    <div class="input-medium-wrap">
+                                                        <div class="input-group input-small">
+                                                            {{ form_widget(form.feeServiceOversea, {'attr': {'class': 'form-control on-digit-percent', 'placeholder': '0.00'}}) }}
+                                                            <span class="input-group-addon">SGD</span>
+                                                        </div>
+                                                        <div class="current-data">
+                                                            {% if listAgentFee.feeServiceOverseaAgent >= 0 %}
+                                                                <span id="" class="">Current value is {{ listAgentFee.feeServiceOverseaAgent }}</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="platformPercentage" class="col-md-4 control-label">GMedes Fee</label>
+                                            <div class="col-md-8">
+                                                <div class="input-medium-wrapper">
+                                                    <div class="input-medium-wrap">
+                                                        <div class="input-group input-small">
+                                                            {{ form_widget(form.feePlatformServiceOversea, {'attr': {'class': 'form-control on-digit-percent', 'placeholder': '0.00' }}) }}
+                                                            <span class="input-group-addon">SGD</span>
+                                                        </div>
+                                                        <div class="current-data">
+                                                            {% if listAgentFee.feeServiceOverseaPlatform >= 0 %}
+                                                                <span id="" class="">Current value is {{ listAgentFee.feeServiceOverseaPlatform }}</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="takeEffectOn" class="col-md-4 control-label">Effective date</label>
+                                            <div class="col-md-8">
+                                                <div class="input-group date date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+                                                    {{ form_widget(form.feeServiceOverseaDate, {'attr': {'class': 'form-control' }}) }}
+                                                    <span class="input-group-btn">
+                                                    <button class="btn default" type="button">
+                                                    <i class="fa fa-calendar"></i>
+                                                    </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="well uppercase">CUSTOM MARKETING SERVICE FEE FOR PRIMARY AGENTS (FIXED FEES ON MEDICINES)</div>
+                            <div class="mb-15">Custom Marketing Service Fees for Primary Agents are fees that are deducted from GMedes margins on medicines, and paid to Agents. GMedes margin is calculated as the (Total Medicine Cost to Clinic per RX) less (Total Pharmacy Cost per RX).</div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="panel panel-default custom-panel-grey">
+                                        <div class="panel-heading">
+                                            <div class="m-grid">
+                                                <div class="m-grid-row">
+                                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                                        Local Patients
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row form-margin-share mb-30">
+                                        <div class="form-group">
+                                            <label for="agentPercentage" class="col-md-4 control-label">Primary Agent Fee</label>
+                                            <div class="col-md-8">
+                                                <div class="input-medium-wrapper">
+                                                    <div class="input-medium-wrap">
+                                                        <div class="input-group input-small">
+                                                            {{ form_widget(form.feeMedicineLocal, {'attr': {'class': 'form-control on-digit-percent', 'placeholder': '0.00'}}) }}
+                                                            <span class="input-group-addon">SGD</span>
+                                                        </div>
+                                                        <div class="current-data">
+                                                            {% if listAgentFee.feeMedicineLocalAgent >= 0 %}
+                                                                <span id="" class="">Current value is {{ listAgentFee.feeMedicineLocalAgent }}</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="takeEffectOn" class="col-md-4 control-label">Effective date</label>
+                                            <div class="col-md-8">
+                                                <div class="input-group date date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+                                                    {{ form_widget(form.feeMedicineLocalDate, {'attr': {'class': 'form-control' }}) }}
+                                                    <span class="input-group-btn">
+                                                    <button class="btn default" type="button">
+                                                    <i class="fa fa-calendar"></i>
+                                                    </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="panel panel-default custom-panel-grey">
+                                        <div class="panel-heading">
+                                            <div class="m-grid">
+                                                <div class="m-grid-row">
+                                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                                        Overseas Patients
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row form-margin-share mb-30">
+                                        <div class="form-group">
+                                            <label for="agentPercentage" class="col-md-4 control-label">Primary Agent Fee</label>
+                                            <div class="col-md-8">
+                                                <div class="input-medium-wrapper">
+                                                    <div class="input-medium-wrap">
+                                                        <div class="input-group input-small">
+                                                            {{ form_widget(form.feeMedicineOversea, {'attr': {'class': 'form-control on-digit-percent', 'placeholder': '0.00'}}) }}
+                                                            <span class="input-group-addon">SGD</span>
+                                                        </div>
+                                                        <div class="current-data">
+                                                            {% if listAgentFee.feeMedicineOverseaAgent >= 0 %}
+                                                                <span id="" class="">Current value is {{ listAgentFee.feeMedicineOverseaAgent }}</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="takeEffectOn" class="col-md-4 control-label">Effective date</label>
+                                            <div class="col-md-8">
+                                                <div class="input-group date date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+                                                    {{ form_widget(form.feeMedicineOverseaDate, {'attr': {'class': 'form-control' }}) }}
+                                                    <span class="input-group-btn">
+                                                    <button class="btn default" type="button">
+                                                    <i class="fa fa-calendar"></i>
+                                                    </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="well uppercase">CUSTOM MINIMUM MEDICINE MARGINS FOR PAYOUT TO PRIMARY AGENTS</div>
+                            <div class="mb-15">Custom admin service fee per liveconsult is the flat fee charged by GMedes & Agent per liveconsult, and is added to the doctor's liveconsult fee in the patient's invoice. </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="bufferRate" class="col-md-4 control-label">Singapore (Local)</label>
+                                        <div class="col-md-8">
+                                            <div class="input-medium-wrapper">
+                                                <div class="input-medium-wrap">
+                                                    <div class="input-group input-small">
+                                                        {{ form_widget(form.minAgentFeePrimaryLocal, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                                        <span class="input-group-addon">SGD</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="bufferRate" class="col-md-4 control-label">East Malaysia</label>
+                                        <div class="col-md-8">
+                                            <div class="input-medium-wrapper">
+                                                <div class="input-medium-wrap">
+                                                    <div class="input-group input-small">
+                                                        {{ form_widget(form.minAgentFeePrimaryEastMalay, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                                        <span class="input-group-addon">SGD</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="bufferRate" class="col-md-4 control-label">West Malaysia</label>
+                                        <div class="col-md-8">
+                                            <div class="input-medium-wrapper">
+                                                <div class="input-medium-wrap">
+                                                    <div class="input-group input-small">
+                                                        {{ form_widget(form.minAgentFeePrimaryWestMalay, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                                        <span class="input-group-addon">SGD</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="bufferRate" class="col-md-4 control-label">Indonesia</label>
+                                        <div class="col-md-8">
+                                            <div class="input-medium-wrapper">
+                                                <div class="input-medium-wrap">
+                                                    <div class="input-group input-small">
+                                                        {{ form_widget(form.minAgentFeePrimaryIndo, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                                        <span class="input-group-addon">SGD</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="bufferRate" class="col-md-4 control-label">International</label>
+                                        <div class="col-md-8">
+                                            <div class="input-medium-wrapper">
+                                                <div class="input-medium-wrap">
+                                                    <div class="input-group input-small">
+                                                        {{ form_widget(form.minAgentFeePrimaryInternational, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                                        <span class="input-group-addon">SGD</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="well uppercase">CUSTOM ADMIN SERVICE FEE PER LIVECONSULT FOR PRIMARY AGENTS</div>
+                            <div class="mb-15">Custom admin service fee per liveconsult is the flat fee charged by GMedes & Agent per liveconsult, and is added to the doctor's liveconsult fee in the patient's invoice.</div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="panel panel-default custom-panel-grey">
+                                        <div class="panel-heading">
+                                            <div class="m-grid">
+                                                <div class="m-grid-row">
+                                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                                        Local Patients
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row form-margin-share mb-30">
+                                        <div class="form-group">
+                                            <label for="agentPercentage" class="col-md-4 control-label">Primary Agent Fee</label>
+                                            <div class="col-md-8">
+                                                <div class="input-medium-wrapper">
+                                                    <div class="input-medium-wrap">
+                                                        <div class="input-group input-small">
+                                                            {{ form_widget(form.feeConsultLocal, {'attr': {'class': 'form-control on-digit-percent', 'placeholder': '0.00'}}) }}
+                                                            <span class="input-group-addon">SGD</span>
+                                                        </div>
+                                                        <div class="current-data">
+                                                            {% if listAgentFee.feeConsultLocalAgent >= 0 %}
+                                                                <span id="" class="">Current value is {{ listAgentFee.feeConsultLocalAgent }}</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="platformPercentage" class="col-md-4 control-label">GMedes Fee</label>
+                                            <div class="col-md-8">
+                                                <div class="input-medium-wrapper">
+                                                    <div class="input-medium-wrap">
+                                                        <div class="input-group input-small">
+                                                            {{ form_widget(form.feePlatformConsultLocal, {'attr': {'class': 'form-control on-digit-percent', 'placeholder': '0.00' }}) }}
+                                                            <span class="input-group-addon">SGD</span>
+                                                        </div>
+                                                        <div class="current-data">
+                                                            {% if listAgentFee.feeConsultLocalPlatform >= 0 %}
+                                                                <span id="" class="">Current value is {{ listAgentFee.feeConsultLocalPlatform }}</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="takeEffectOn" class="col-md-4 control-label">Effective date</label>
+                                            <div class="col-md-8">
+                                                <div class="input-group date date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+                                                    {{ form_widget(form.feeConsultLocalDate, {'attr': {'class': 'form-control' }}) }}
+                                                    <span class="input-group-btn">
+                                                    <button class="btn default" type="button">
+                                                    <i class="fa fa-calendar"></i>
+                                                    </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="panel panel-default custom-panel-grey">
+                                        <div class="panel-heading">
+                                            <div class="m-grid">
+                                                <div class="m-grid-row">
+                                                    <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                                        Overseas Patients
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row form-margin-share mb-30">
+                                        <div class="form-group">
+                                            <label for="agentPercentage" class="col-md-4 control-label">Primary Agent Fee</label>
+                                            <div class="col-md-8">
+                                                <div class="input-medium-wrapper">
+                                                    <div class="input-medium-wrap">
+                                                        <div class="input-group input-small">
+                                                            {{ form_widget(form.feeConsultOversea, {'attr': {'class': 'form-control on-digit-percent', 'placeholder': '0.00'}}) }}
+                                                            <span class="input-group-addon">SGD</span>
+                                                        </div>
+                                                        <div class="current-data">
+                                                            {% if listAgentFee.feeConsultOverseaAgent >= 0 %}
+                                                                <span id="" class="">Current value is {{ listAgentFee.feeConsultOverseaAgent }}</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="platformPercentage" class="col-md-4 control-label">GMedes Fee</label>
+                                            <div class="col-md-8">
+                                                <div class="input-medium-wrapper">
+                                                    <div class="input-medium-wrap">
+                                                        <div class="input-group input-small">
+                                                            {{ form_widget(form.feePlatformConsultOversea, {'attr': {'class': 'form-control on-digit-percent', 'placeholder': '0.00' }}) }}
+                                                            <span class="input-group-addon">SGD</span>
+                                                        </div>
+                                                        <div class="current-data">
+                                                            {% if listAgentFee.feeConsultOverseaPlatform >= 0 %}
+                                                                <span id="" class="">Current value is {{ listAgentFee.feeConsultOverseaPlatform }}</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="takeEffectOn" class="col-md-4 control-label">Effective date</label>
+                                            <div class="col-md-8">
+                                                <div class="input-group date date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+                                                    {{ form_widget(form.feeConsultOverseaDate, {'attr': {'class': 'form-control' }}) }}
+                                                    <span class="input-group-btn">
+                                                    <button class="btn default" type="button">
+                                                    <i class="fa fa-calendar"></i>
+                                                    </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="pt-20 pb-20">
+                                {% set module = constant('UtilBundle\\Utility\\Constant::AGENT_MODULE_NAME') %}
+                                <a href="#modal-agent-fee-view-logs" id="view_logs_anchor_2"
+                                   data-toggle="modal"
+                                   data-module="agent_fee"
+                                   data-template-view="AdminBundle:admin\logs:agent_fee_log.html.twig"
+                                   data-template-print="AdminBundle:admin\logs:agent_fee_pdf.html.twig"
+                                   data-breadcrumb-title="Agents"
+                                   data-modal-title="Agent Fee"
+                                   data-file-name="Agent_Fee_Log"
+                                   data-entity-id ="{{ agentId }}"
+                                   class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm">View Log</a>
+                            </div>
+
+                            <div id="third-party-agent-fee-area">
+                                <div class="panel panel-primary mb-10">
+                                    <div class="panel-heading uppercase">
+                                        SECONDARY AGENT CUSTOM FEES
+                                    </div>
+                                </div>
+
+                                <div class="icheck-inline mb-20">
+                                    <label>
+                                        {{form_widget(form.check3rd,{'attr':{'class':'form-control icheck'}}) }}
+                                        {{form.check3rd.vars.label}}</label>
+                                </div>
+                                <div id="list-agent-third-party-fee" {% if not is3pa %} class="hidden" {% endif %}>
+                                    <div class="well uppercase">CUSTOM ADMIN SERVICE FEE PER PRESCRIPTION FOR SECONDARY AGENTS</div>
+                                    <div class="mb-15">Custom admin service fees per prescription for secondary agents are paid to agents for transactions by doctors under the Parkway accredited service. The fees are deducted from Custom GMedes Admin Service Fees per Prescription.</div>
+                                    <div class="row form-margin-share mb-30">
+                                        <div class="col-md-6">
+                                            <div class="panel custom-panel-grey">
+                                                <div class="panel-heading">
+                                                    <div class="m-grid">
+                                                        <div class="m-grid-row">
+                                                            <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                                                Local Patients
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="agentPercentage" class="col-md-4 control-label">Secondary Agent Fee</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-medium-wrapper">
+                                                        <div class="input-medium-wrap">
+                                                            <div class="input-group input-small">
+                                                                {{ form_widget(form.fee3rdLcPrescription,{'attr':{'class':'form-control on-digit-percent'} })}}
+                                                                <span class="input-group-addon">SGD</span>
+                                                            </div>
+                                                            <div class="current-data">
+                                                                {% if listAgentFee.fee3ardDescriptionLocalFee >= 0 %}
+                                                                    <span id="" class="">Current value is {{ listAgentFee.fee3ardDescriptionLocalFee }}</span>
+                                                                {% endif %}
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="takeEffectOn" class="col-md-4 control-label control-label-2lines">Effectice date</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-group date date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+                                                        {{ form_widget(form.date3rdLcPrescription,{'attr':{'class':'form-control'} })}}
+                                                        <span class="input-group-btn">
+                                                            <button class="btn default" type="button">
+                                                             <i class="fa fa-calendar"></i>
+                                                             </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="panel custom-panel-grey">
+                                                <div class="panel-heading">
+                                                    <div class="m-grid">
+                                                        <div class="m-grid-row">
+                                                            <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                                                Overseas Patients
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="agentPercentage" class="col-md-4 control-label">Secondary Agent Fee</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-medium-wrapper">
+                                                        <div class="input-medium-wrap">
+                                                            <div class="input-group input-small">
+                                                                {{ form_widget(form.fee3rdOsPrescription,{'attr':{'class':'form-control on-digit-percent'} })}}
+                                                                <span class="input-group-addon">SGD</span>
+                                                            </div>
+                                                            <div class="current-data">
+                                                                {% if listAgentFee.fee3ardDescriptionOverseaFee >= 0 %}
+                                                                    <span id="" class="">Current value is {{ listAgentFee.fee3ardDescriptionOverseaFee }}</span>
+                                                                {% endif %}
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="takeEffectOn" class="col-md-4 control-label control-label-2lines">Effect date</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-group date date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+                                                        {{ form_widget(form.date3rdOsPrescription,{'attr':{'class':'form-control'} })}}
+                                                        <span class="input-group-btn">
+                                                            <button class="btn default" type="button">
+                                                             <i class="fa fa-calendar"></i>
+                                                             </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="well uppercase">CUSTOM MARKETING SERVICE FEE FOR SECONDARY AGENTS (FIXED FEES ON MEDICINES)</div>
+                                    <div class="mb-15">Custom marketing service fees for secondary agents are fees that are paid to secondary agents for transactions by doctors under the Parkway accredited service. These fees are deducted from Custom GMedes marketing service fees if the minimum medicine margins for payout to secondary agents are met.</div>
+                                    <div class="row form-margin-share mb-30">
+                                        <div class="col-md-6">
+                                            <div class="panel custom-panel-grey">
+                                                <div class="panel-heading">
+                                                    <div class="m-grid">
+                                                        <div class="m-grid-row">
+                                                            <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                                                Local Patients
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="agentPercentage" class="col-md-4 control-label">Secondary Agent Fee</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-medium-wrapper">
+                                                        <div class="input-medium-wrap">
+                                                            <div class="input-group input-small">
+                                                                {{ form_widget(form.fee3rdLcMedicine,{'attr':{'class':'form-control on-digit-percent'} })}}
+                                                                <span class="input-group-addon">SGD</span>
+                                                            </div>
+                                                            <div class="current-data">
+                                                                {% if listAgentFee.fee3ardMedicineLocalFee >= 0 %}
+                                                                    <span id="" class="">Current value is {{ listAgentFee.fee3ardMedicineLocalFee }}</span>
+                                                                {% endif %}
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="takeEffectOn" class="col-md-4 control-label control-label-2lines">Effect date</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-group date date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+                                                        {{ form_widget(form.date3rdLcMedicine,{'attr':{'class':'form-control'} })}}
+                                                        <span class="input-group-btn">
+                                                            <button class="btn default" type="button">
+                                                             <i class="fa fa-calendar"></i>
+                                                             </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="panel custom-panel-grey">
+                                                <div class="panel-heading">
+                                                    <div class="m-grid">
+                                                        <div class="m-grid-row">
+                                                            <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                                                Overseas Patients
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="agentPercentage" class="col-md-4 control-label">Secondary Agent Fee</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-medium-wrapper">
+                                                        <div class="input-medium-wrap">
+                                                            <div class="input-group input-small">
+                                                                {{ form_widget(form.fee3rdOsMedicine,{'attr':{'class':'form-control on-digit-percent'} })}}
+                                                                <span class="input-group-addon">SGD</span>
+                                                            </div>
+                                                            <div class="current-data">
+                                                                {% if listAgentFee.fee3ardMedicineOverseaFee >= 0 %}
+                                                                    <span id="" class="">Current value is {{ listAgentFee.fee3ardMedicineOverseaFee }}</span>
+                                                                {% endif %}
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="takeEffectOn" class="col-md-4 control-label control-label-2lines">Effect date</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-group date date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+                                                        {{ form_widget(form.date3rdOsMedicine,{'attr':{'class':'form-control'} })}}
+                                                        <span class="input-group-btn">
+                                                            <button class="btn default" type="button">
+                                                             <i class="fa fa-calendar"></i>
+                                                             </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="well uppercase">CUSTOM MINIMUM MEDICINE MARGINS FOR PAYOUT TO SECONDARY AGENTS</div>
+                                    <div class="mb-15">Custom minimum medicine margins for payout to secondary agents determine the minimum GMedes margins that must be left after the Custom Marketing Service Fee for Primary Agents are settled. Marketing service fee for secondary agents are paid if the remaining GMedes margins (after payout to primary agents) are equal to or higher than the custom minimum medicine margins for payout to secondary agents.</div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="bufferRate" class="col-md-4 control-label">Singapore (Local)</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-medium-wrapper">
+                                                        <div class="input-medium-wrap">
+                                                            <div class="input-group input-small">
+                                                                {{ form_widget(form.minAgentFeeSecondaryLocal, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                                                <span class="input-group-addon">SGD</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="bufferRate" class="col-md-4 control-label">East Malaysia</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-medium-wrapper">
+                                                        <div class="input-medium-wrap">
+                                                            <div class="input-group input-small">
+                                                                {{ form_widget(form.minAgentFeeSecondaryEastMalay, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                                                <span class="input-group-addon">SGD</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="bufferRate" class="col-md-4 control-label">West Malaysia</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-medium-wrapper">
+                                                        <div class="input-medium-wrap">
+                                                            <div class="input-group input-small">
+                                                                {{ form_widget(form.minAgentFeeSecondaryWestMalay, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                                                <span class="input-group-addon">SGD</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="bufferRate" class="col-md-4 control-label">Indonesia</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-medium-wrapper">
+                                                        <div class="input-medium-wrap">
+                                                            <div class="input-group input-small">
+                                                                {{ form_widget(form.minAgentFeeSecondaryIndo, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                                                <span class="input-group-addon">SGD</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="bufferRate" class="col-md-4 control-label">International</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-medium-wrapper">
+                                                        <div class="input-medium-wrap">
+                                                            <div class="input-group input-small">
+                                                                {{ form_widget(form.minAgentFeeSecondaryInternational, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                                                <span class="input-group-addon">SGD</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="well uppercase">CUSTOM ADMIN SERVICE FEE PER LIVE CONSULT FOR SECONDARY AGENTS</div>
+                                    <div class="mb-15">Custom admin service fee per liveconsult for secondary agents are deducted from the GMedes admin service fee per liveconsult</div>
+                                    <div class="row form-margin-share mb-30">
+                                        <div class="col-md-6">
+                                            <div class="panel custom-panel-grey">
+                                                <div class="panel-heading">
+                                                    <div class="m-grid">
+                                                        <div class="m-grid-row">
+                                                            <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                                                Local Patients
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="agentPercentage" class="col-md-4 control-label">Secondary Agent Fee</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-medium-wrapper">
+                                                        <div class="input-medium-wrap">
+                                                            <div class="input-group input-small">
+                                                                {{ form_widget(form.fee3rdLcConsult,{'attr':{'class':'form-control on-digit-percent'} })}}
+                                                                <span class="input-group-addon">SGD</span>
+                                                            </div>
+                                                            <div class="current-data">
+                                                                {% if listAgentFee.fee3ardConsultLocalFee >= 0 %}
+                                                                    <span id="" class="">Current value is {{ listAgentFee.fee3ardConsultLocalFee }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="takeEffectOn" class="col-md-4 control-label control-label-2lines">Effective date</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-group date date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+                                                        {{ form_widget(form.date3rdLcConsult,{'attr':{'class':'form-control'} })}}
+                                                        <span class="input-group-btn">
+                                                            <button class="btn default" type="button">
+                                                             <i class="fa fa-calendar"></i>
+                                                             </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="panel custom-panel-grey">
+                                                <div class="panel-heading">
+                                                    <div class="m-grid">
+                                                        <div class="m-grid-row">
+                                                            <div class="m-grid-col m-grid-col-middle m-grid-col-left m-grid-col-md-12">
+                                                                Overseas Patients
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="agentPercentage" class="col-md-4 control-label">Secondary Agent Fee</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-medium-wrapper">
+                                                        <div class="input-medium-wrap">
+                                                            <div class="input-group input-small">
+                                                                {{ form_widget(form.fee3rdOsConsult,{'attr':{'class':'form-control on-digit-percent'} })}}
+                                                                <span class="input-group-addon">SGD</span>
+                                                            </div>
+                                                            <div class="current-data">
+                                                                {% if listAgentFee.fee3ardConsultOverseaFee >= 0 %}
+                                                                    <span id="" class="">Current value is {{ listAgentFee.fee3ardConsultOverseaFee }}</span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="takeEffectOn" class="col-md-4 control-label control-label-2lines">Effective date</label>
+                                                <div class="col-md-8">
+                                                    <div class="input-group date date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+                                                        {{ form_widget(form.date3rdOsConsult,{'attr':{'class':'form-control'} })}}
+                                                        <span class="input-group-btn">
+                                                            <button class="btn default" type="button">
+                                                             <i class="fa fa-calendar"></i>
+                                                             </button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="panel panel-primary mb-20">
+                                <div class="panel-heading uppercase">
+                                    Company Details
+                                </div>
+                            </div>
+                            {% if agentCode|length %}
+                                <h4 class="block">Agent Code : {{ agentCode }}</h4>
+                            {% endif %}
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+
+                                    <label>{{ form.comName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.comName,{'attr':{'class':'form-control'} })}}
+
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.registerNo.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.registerNo,{'attr':{'class':'form-control'} })}}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.comPhoneLocation.vars.label }} <span class="required" aria-required="true"> * </span></label>
+
+                                    <div class="form-float">
+                                        <div class="col-md-5">
+                                            {{form_widget(form.comPhoneLocation,{'attr':{'class':'form-control select2'} }) }}
+
+                                        </div>
+                                        <div class="col-md-7">
+                                            {{ form_widget(form.comPhone, {'attr':{'class':'form-control'}})}}
+                                        </div>
+                                    </div>
+                                    <div class="phone-company-error-notice">
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.comAddressLine1.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.comAddressLine1,{'attr':{'class':'form-control'} })}}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.comAddressLine2.vars.label }}</label>
+                                    {{form_widget(form.comAddressLine2,{'attr':{'class':'form-control '}}) }}
+
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.comAddressLine3.vars.label }}</label>
+                                    {{form_widget(form.comAddressLine3,{'attr':{'class':'form-control '}}) }}
+
+                                </div>
+                            </div>
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.comCountry.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.comCountry,{'attr':{'class':'form-control select2'} } ) }}
+
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.comState.vars.label }} </label>
+                                    {{ form_widget(form.comState,{'attr':{'class':'form-control select2'} } ) }}
+
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label>{{ form.comCity.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.comCity,{'attr':{'class':'form-control select2'} } ) }}
+                                </div>
+                            </div>
+
+
+
+                            <div class="form-group">
+                                <div class="col-md-4">
+                                    <label>{{ form.comZipCode.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.comZipCode,{'attr':{'class':'form-control '}}) }}
+                                </div>
+                            </div>
+
+                            <h4 class="block">Contact Person</h4>
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+
+                                    <label>{{ form.firstName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.firstName,{'attr':{'class':'form-control'} })}}
+
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.lastName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.lastName,{'attr':{'class':'form-control'} })}}
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mt-radio-inline mt-radio-inline-grid">
+                                        <label>{{ form.gender.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                        {{ form_widget(form.gender)}}
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.email.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.email,{'attr':{'class':'form-control'} })}}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.phoneLocation.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-float">
+                                                <div class="col-md-5">
+                                                    {{form_widget(form.phoneLocation,{'attr':{'class':'form-control select2'} }) }}
+
+                                                </div>
+                                                <div class="col-md-7">
+                                                    {{ form_widget(form.phone, {'attr':{'class':'form-control'}})}}
+                                                </div>
+                                            </div>
+                                            <div class="phone-error-notice">
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="icheck-list mt-10 mb-5">
+                                        <label>
+                                            {{form_widget(form.checkAddress,{'attr':{'class':'form-control icheck'}}) }}
+                                            {{form.checkAddress.vars.label}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.addressLine1.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.addressLine1,{'attr':{'class':'form-control'} })}}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.addressLine2.vars.label }}</label>
+                                    {{form_widget(form.addressLine2,{'attr':{'class':'form-control '}}) }}
+
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.addressLine3.vars.label }}</label>
+                                    {{form_widget(form.addressLine3,{'attr':{'class':'form-control '}}) }}
+
+                                </div>
+                            </div>
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.country.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.country,{'attr':{'class':'form-control select2'} } ) }}
+
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.state.vars.label }} </label>
+                                    {{ form_widget(form.state,{'attr':{'class':'form-control select2'} } ) }}
+
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label>{{ form.city.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.city,{'attr':{'class':'form-control select2'} } ) }}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+
+                                <div class="col-md-4">
+                                    <label>{{ form.zipCode.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.zipCode,{'attr':{'class':'form-control '}}) }}
+                                </div>
+                            </div>
+
+                            <h4 class="block">Identification</h4>
+
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.localIdPassport.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{form_widget(form.localIdPassport,{'attr':{'class':'form-control '}}) }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.localIdPassportCountry.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{form_widget(form.localIdPassportCountry,{'attr':{'class':'form-control select2','name': 'location'}}) }}
+                                </div>
+                            </div>
+                            <h4 class="block">Bank Details</h4>
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.bankCountryIssue.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.bankCountryIssue,{'attr':{'class':'form-control select2'} }) }}
+                                </div>
+
+                                <div class="col-md-4">
+                                    {% if form.vars.value.bankCountryIssue == constant('UtilBundle\\Utility\\Constant::ID_SINGAPORE') or form.vars.value.bankCountryIssue == constant('UtilBundle\\Utility\\Constant::ID_MALAYSIA') %}
+                                        {% set getBankFromCountry = true %}
+                                    {% else %}
+                                        {% set getBankFromCountry = false %}
+                                    {% endif %}
+                                    <label>{{ form.bankName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.bankName,{'attr':{'class':'form-control detect-change', 'style': getBankFromCountry ? 'display: none;' : 'display: block;'} }) }}
+                                    <select class="form-control" id="bank_name" name="bank_name" {% if getBankFromCountry %} style="display: block;" {% else %} style="display: none;" {% endif %}></select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label>{{ form.bankSwiftCode.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.bankSwiftCode,{'attr':{'class':'form-control'} }) }}
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.accountName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.accountName,{'attr':{'class':'form-control'} }) }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.accountNumber.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    {{ form_widget(form.accountNumber,{'attr':{'class':'form-control detect-change'} }) }}
+                                </div>
+                            </div>
+
+                            {# GST SETTING #}
+                            <h4 class="block">GST Settings</h4>
+
+                            <div class="form-group mb-grid">
+                                <div class="col-md-4">
+                                    <label>{{ form.gstSetting.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                                    <div class="mt-radio-inline mt-radio-inline-grid">
+                                        {{ form_widget(form.gstSetting)}}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label>{{ form.gstNo.vars.label }}</label>
+                                    {{ form_widget(form.gstNo,{'attr':{'class':'form-control'} })}}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>{{ form.gstEffectDate.vars.label }}
+
+                                    </label>
+                                    <div class="input-group date date-picker  bs-datetime" id="date-picker-gst">
+                                        {{ form_widget(form.gstEffectDate,{'attr':{'class':'form-control datepicker-min-valid'} }) }}
+                                        <span class="input-group-addon">
+                                            <button class="btn default date-set" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-md-4">
+                                    <h4 class="block">Photo <span class="required" aria-required="true"> * </span></h4>
+                                    <div class="fileinput fileinput-new" data-provides="fileinput" id='doctor-profile' >
+                                        <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                            {% if agent.profilePhotoUrl |length %}
+                                                <img src="{{ asset(agent.profilePhotoUrl) }}&{{ date().timestamp }}" alt="" />
+                                            {% else %}
+                                                <img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&amp;text=no+image" alt=""  />
+
+                                            {% endif %}
+                                        </div>
+                                        <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"> </div>
+                                        <div>
+                                            <span class="btn btn-outline blue btn-ahalf-circle btn-sm text-uppercase btn-file">
+                                                <span class="fileinput-new"> Select image </span>
+                                                <span class="fileinput-exists"> Change </span>
+                                                {% if agent.profilePhotoUrl |length %}
+                                                    {{ form_widget(form.logo,{'attr':{'value': asset(agent.profilePhotoUrl) } }) }}
+                                                {% else %}
+                                                    {{ form_widget(form.logo) }}
+                                                {% endif %}   
+                                            </span>
+                                            <a href="javascript:;" class="btn btn-outline red btn-ahalf-circle btn-sm text-uppercase fileinput-exists" data-dismiss="fileinput"> Remove </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <a href="{{path('admin_agent')}}" class="btn grey-dark btn-ahalf-circle text-uppercase btn-sm button-back">Cancel</a>
+                                    <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit" id="admin-register-agent-submit">Save</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="hidden">{{ form_rest(form) }}</div>
+            </form>
+            <div class="pt-20 pb-20">
+                {% set module = constant('UtilBundle\\Utility\\Constant::AGENT_MODULE_NAME') %}
+                <a href="#modal-agent-view-logs" id="view_logs_anchor"
+                   data-toggle="modal"
+                   data-module="{{ module }}"
+                   data-template-view="AdminBundle:admin\logs:agent_log.html.twig"
+                   data-template-print="AdminBundle:admin\logs:agent_pdf.html.twig"
+                   data-breadcrumb-title="Agents"
+                   data-modal-title="Agent"
+                   data-file-name="Agent_Log"
+                   data-entity-id ="{{ agentId }}"
+                   class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm">View Log</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

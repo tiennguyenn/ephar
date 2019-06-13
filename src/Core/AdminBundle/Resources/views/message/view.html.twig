@@ -1,0 +1,229 @@
+{% extends '@Admin/layout.html.twig' %}
+
+{% block stylesheets %}
+    {% stylesheets 
+        'bundles/admin/assets/global/plugins/fancybox/source/jquery.fancybox.css'
+        'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+        'bundles/admin/assets/global/plugins/jquery-file-upload/blueimp-gallery/blueimp-gallery.min.css'
+        'bundles/admin/assets/global/plugins/jquery-file-upload/css/jquery.fileupload.css'
+        'bundles/admin/assets/global/plugins/jquery-file-upload/css/jquery.fileupload-ui.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+        'bundles/admin/assets/apps/css/inbox.min.css'
+    filter='cssrewrite'  
+    debug=false
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    <!-- do not move it into stylesheet block -->
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block pageTitle %}<h1>Messages</h1>{% endblock %}
+
+{% block breadcrumb %}
+  <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+  <li> <span class="active">Messages</span> </li>
+{% endblock %}
+
+{% block content %}
+<!-- BEGIN PAGE BASE CONTENT -->
+<div class="inbox">
+  <div class="row">
+      {% include '@Admin/message/sidebar.html.twig' %}
+      <div class="col-lg-10 col-md-9">
+          <div class="inbox-body">
+          <div class="inbox-header">
+            <h1 class="pull-left"><a href="{{ path('message') }}">Inbox</a> - View Message</h1>
+          </div>
+          <div class="inbox-content">
+              <div class="inbox-header inbox-view-header">
+                <h4><strong>{{ data.subject }}</strong></h4>
+              </div>
+              
+              <div class="inbox-view-info">
+                  <div class="row">
+                      <div class="col-lg-10 col-md-9">
+                        {% if data.receiverEmail is not null %}
+                            {# <img src="../assets/pages/media/users/avatar1.jpg" class="inbox-author"> #}
+                            {% if data.senderEmail == currentEmail %}
+                              <span class="sbold">me</span>
+                            {% else %}
+                              <span class="sbold">{{ data.senderName }}</span> &#60;{{ data.senderEmail }}&#62;
+                            {% endif %}
+                            to
+                            {% if data.relevantReceiver %}
+                                {% set gr_admin = "" %}
+                                {% set gr_doctor = "" %}
+                                {% set gr_agent = "" %}
+                                {% set gr_customer_care = "" %}
+                                {% for r in data.relevantReceiver %}
+                                  {% if data.receiverEmail != r.receiverEmail %}
+                                      {% if r.receiverGroup != "" %}
+                                        {% if r.receiverGroup == 'gmedes_admin' and gr_admin == "" %}
+                                            {% set gr_admin = 1 %}
+                                            <span class="sbold">{{ r.receiverGroup|replace({'_': ' '})|title }}</span>, 
+                                        {% elseif r.receiverGroup == 'all_agents' and gr_agent == "" %}
+                                              {% set gr_agent = 1 %}
+                                            <span class="sbold">{{ r.receiverGroup|replace({'_': ' '})|title }}</span>, 
+                                        {% elseif r.receiverGroup == 'all_doctors' and gr_doctor == "" %}
+                                              {% set gr_doctor = 1 %}
+                                            <span class="sbold">{{ r.receiverGroup|replace({'_': ' '})|title }}</span>, 
+                                        {% elseif r.receiverGroup == 'customer_care' and gr_customer_care == "" %}
+                                              {% set gr_customer_care = 1 %}
+                                            <span class="sbold">{{ r.receiverGroup|replace({'_': ' '})|title }}</span>, 
+                                        {% endif %}
+                                      {% else %}
+                                        {% if r.receiverEmail == currentEmail %}
+                                          <span class="sbold">me</span>
+                                        {% else %}
+                                          <span class="sbold">{{ r.receiverName }}</span> &#60;{{ r.receiverEmail }}&#62;
+                                        {% endif %}
+                                      {% endif %}
+                                  {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                             on {{ data.sentDate|date('l g:i A, d M Y') }}
+                           {% endif %}
+                      </div>
+                      <div class="col-lg-2 col-md-3 inbox-info-btn">
+                        <div class="btn-group reply-btn">
+                          <a href="{{ path('message_compose', {type: 'reply', 'id': data.id}) }}" class="btn btn-info"><i class="fa fa-reply"></i> Reply</a>
+                          <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                              <i class="fa fa-angle-down"></i>
+                          </button>
+                          <ul class="dropdown-menu right" role="menu">
+                            <li><a href="{{ path('message_compose', {type: 'reply', 'id': data.id}) }}">REPLY</a></li>
+                            <li><a href="{{ path('message_compose', {type: 'replyall', 'id': data.id}) }}">REPLY ALL</a></li>
+                            <li><a href="{{ path('message_compose', {type: 'forward', 'id': data.id}) }}">FORWARD</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="inbox-view">
+                  {{ data.body|raw }}
+              </div>
+              {% if data.attachment %}
+                <hr>
+                {% set imageItems = "" %}
+                <div class="inbox-attached">
+                  <div class="margin-bottom-15 image-item">
+                    <span>attachments — </span>
+                    <a href="{{ path('message_download', {'id': data.id}) }}">Download all attachments </a>
+					{% if hasImage(data.attachment) %}
+                    <a href="javascipt:void(0);" class="view-all-images">View all images </a>
+                    {% endif %}
+                  </div>
+				  {% set index = 1 %}
+                  {% for f in data.attachment %}
+                      {% set arrUrl = f.urlAttachment|split('/') %}
+					  {% if isImage(f.urlAttachment) %}
+                      {% 	set imageItems = imageItems  ~ '<div class="gallerySlides">
+                          <img src="'~ f.urlAttachment ~'" class="img-responsive">
+                        </div>' %}
+                      <div class="margin-bottom-25 image-item">
+                        <img src="{{ f.urlAttachment }}" onclick="jsMessage.slide({{ index }}, 0)">
+                        <div>
+                            <strong>{{ arrUrl|last }}</strong>
+                            <a href="javascipt:void(0);" class="view-images">View </a>
+                            <a href="{{ f.urlAttachment }}" download>Download </a>
+                        </div>
+                      </div>
+					   {% 	set index = index + 1 %}
+					  {% else %}
+                      <div class="margin-bottom-25 image-item">
+                        <div>
+                            <strong>{{ arrUrl|last }}</strong>
+							<a href="{{ f.urlAttachment }}" target="_blank">View </a>
+                            <a href="{{ f.urlAttachment }}" download>Download </a>
+                        </div>
+                      </div>
+					  {% endif %}
+                  {% endfor %}
+                </div>
+                <div id="galleryModal" class="modal fade modal-gallery" >
+                    <button type="button" class="close" onclick="jsMessage.closeModal();"><i class="fa fa-remove"></i></button>
+                    <div class="gallery-wrap">
+                        {{ imageItems|raw }}
+                    </div>
+                    <a class="gallery-btn prev" onclick="jsMessage.slide(-1, 'prev')">&#10094;</a>
+                    <a class="gallery-btn next" onclick="jsMessage.slide(1, 'next')">&#10095;</a>
+                </div>
+              {% endif %}
+              {% if data.relevantParent %}
+                  <hr>
+                  <div class="inbox-view">
+                      <strong>From</strong>: <span class="sbold">{{ data.relevantParent.senderName }}</span> <span>&#60;{{ data.relevantParent.senderEmail }}&#62; </span><br>
+                      <strong>Sent</strong>: on {{ data.relevantParent.sentDate|date('l g:i A, d M Y') }}<br>
+                      <strong>To</strong>: <span class="sbold">{{ data.relevantParent.receiverName }}</span> &#60;{{ data.relevantParent.receiverEmail }}&#62;
+                      {% if data.relevantParent.relevantReceiver %}
+                          {% for pr in data.relevantParent.relevantReceiver %}
+                            {% if data.relevantParent.receiverEmail != pr.receiverEmail %}
+                              , <span class="sbold">{{ pr.receiverName }}</span> &#60;{{ pr.receiverEmail }}&#62;
+                            {% endif %}
+                          {% endfor %}
+                      {% endif %}<br>
+                      <strong>Subject</strong>: {{ data.relevantParent.subject }}<br>
+                  </div>
+                  <div class="inbox-view">
+                      {{ data.relevantParent.body|raw }}
+                  </div>
+                  <hr>
+                  {% if data.relevantParent.attachment %}
+                    <div class="inbox-attached">
+                      <div class="margin-bottom-15">
+                        <span>attachments — </span>
+                        <a href="{{ path('message_download', {'id': data.relevantParent.id}) }}">Download all attachments </a>
+                        <a  href="" rel="message_group2" class="view-images">View all images </a>
+                      </div>
+                      {% for pf in data.relevantParent.attachment %}
+                          {% set arrUrl = pf.urlAttachment|split('/') %}
+                          {# {% set imageItems = imageItems  ~ '<div class="gallerySlides">
+                            <img src="'~ pf.urlAttachment ~'" class="img-responsive">
+                          </div>' %} #}
+                          <div class="margin-bottom-25">
+                            <img src="{{ pf.urlAttachment }}">
+                            <div>
+                                <strong>{{ arrUrl|last }}</strong>
+                                <a href="javascipt:void(0);">View </a>
+                                <a href="{{ pf.urlAttachment }}" download>Download </a>
+                            </div>
+                          </div>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+              {% endif %}
+        </div>
+      </div>
+  </div>
+</div>
+<!-- END PAGE BASE CONTENT --> 
+{% endblock %}
+{% block javascripts %}
+  {{ parent () }}
+  {% javascripts  
+    '@AdminBundle/Resources/public/assets/global/plugins/fancybox/source/jquery.fancybox.pack.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/lib/js/wysihtml5-0.3.0.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/vendor/jquery.ui.widget.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/vendor/tmpl.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/vendor/load-image.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/vendor/canvas-to-blob.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/blueimp-gallery/jquery.blueimp-gallery.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.iframe-transport.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.fileupload.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-process.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-image.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-audio.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-video.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-validate.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-ui.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+    '@AdminBundle/Resources/public/js/message.js'
+     debug=false
+  %}  
+  <script type="text/javascript" src="{{ asset_url }}"></script>
+  {% endjavascripts %}
+{% endblock %}

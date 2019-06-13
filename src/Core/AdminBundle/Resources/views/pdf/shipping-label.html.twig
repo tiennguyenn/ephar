@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Thank you for your order</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta content="width=device-width, initial-scale=1" name="viewport" />
+	<meta content="Preview page of GMEDES Htmlfor blank page layout" name="description" />
+	<meta content="" name="author" />
+
+	<style>
+
+		body {
+			font-family: Arial, sans-serif;
+			font-size: 11px;
+			line-height: 1.42857;
+			color: #000;
+			padding: 0;
+			margin: 0;
+			font-weight: 700;
+		}
+
+		img {
+			display: block;
+		}
+
+		table {
+			border-collapse: collapse;
+			border: 0;
+			width: 100%;
+			table-layout: fixed;
+		}
+
+		table.table-data td{
+			padding: 0;
+		}
+
+		table.table-subdata td,
+		table.table-subdata th{
+			padding: 10px;
+		}
+
+		table.table-subdata td.no-border-right {
+			border-right: 0;
+		}
+		table.table-subdata td.no-padding-right {
+			padding-right: 0;
+		}
+		table.table-subdata td.padding-bottom-small {
+			padding-bottom: 3px;
+		}
+
+		table.table-subdata td.no-padding-bottom {
+			padding-bottom: 0;
+		}
+		table.table-subdata td.no-padding-top {
+			padding-top: 0;
+		}
+
+		table.table-subdata td.padding-top-medium {
+			padding-top: 5px;
+		}
+
+		table.table-subdata td.no-border-top {
+			border-top: 0;
+		}
+
+		table.table-subdata.table-special td {
+			padding-top: 0;
+			padding-bottom: 5px;
+		}
+
+		table.table-subdata .table-note {
+			border: 3px solid;
+			background: #ccc;
+		}
+
+		table.table-signature {
+			border: 1px solid #000;
+			width: 30%;
+			float: left;
+		}
+
+		p {
+			margin: 0;
+		}
+
+		.uppercase{text-transform: uppercase;}
+		.text-medium {font-size: 10px;}
+		.text-small {font-size: 7px;}
+		.text-big {font-size: 13px;}
+
+		.normal {
+			font-weight: 400;
+		}
+		.verificate-code .verificate-txt {
+			display: block;
+			margin-top: 5px;
+		}
+
+		.verificate-code img {
+			max-width: 100%;
+		}
+
+		.verificate-code .verificate-txt.size-big {
+			font-size: 18px;
+			line-height: 22px;
+		}
+
+		ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+		}
+		i.icon-square {
+			width: 16px;
+			height: 16px;
+			display: inline-block;
+			border: 1px solid #000;
+		}
+
+	</style>
+</head>
+<body>
+
+<div class="wrapper-content">
+	<table class="table-wrap" width="100%">
+		<tr>
+			<td width="50%" valign="top">
+				<table class="table-data">
+					<tbody>
+					<tr>
+						<td>
+							<table class="table-data table-subdata">
+								<tbody>
+								<tr>
+									<td width="60%" valign="top">
+										<h1>Thank you for your order.</h1>
+										<p class="text-big">Delivery Address:</p>
+										<p class="normal">{{ info.countryName }}<br>
+											{{ info.line1 }}<br>
+											{{ info.line2 }}<br>
+											{{ info.line3 }}<br>
+											{{ info.countryName }} {{ info.postalCode }}</p><br><br>
+										<p class="text-big">Contact Details:</p>
+										<p class="normal">+65 96437007</p>
+									</td>
+									<td width="40%" valign="top">
+										<table>
+											<tr>
+												<td>
+													<ul>
+														<li><i class="icon-square"></i> Customer's copy</li>
+														<li><i class="icon-square"></i> Curier's copy</li>
+													</ul>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<div class="verificate-code">
+														<div class="veificate-img"></div>
+														<span class="verificate-txt text-medium">ORDER ID: {{ info.orderPhysicalNumber }}</span>
+													</div>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<table class="table-data table-subdata">
+								<tbody>
+								<tr>
+									<td>
+										<table class="table-note">
+											<tbody>
+											<tr>
+												<td width="4%" class="no-border-right text-big" valign="top">{#<img src="img/icon-warning.png" alt="">#}</td>
+												<td width="96%" class="text-big uppercase">
+													IMPORTANT NOTE TO RECIPIENT<br><br>
+													OPEN IMMEDIATELY<br>
+													REFRIGERATE UPON ARRIVAL (2 - 8°C)<br>
+													DO NOT FREEZE<br>
+												</td>
+											</tr>
+											</tbody>
+										</table>
+									</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<table class="table-data table-subdata border-bottom">
+								<tbody>
+								<tr>
+									<td><span class="normal">For customer service assistance, please email</span> patienthelp@gmeds.com</td>
+								</tr>
+								<tr>
+									<td>
+										<table class="table-signature">
+											<tr>
+												<td>Received by:<br><br><br><br><br><hr></td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+					</tbody></table>
+			</td>
+		</tr>
+	</table>
+</div>
+</body>
+</html>

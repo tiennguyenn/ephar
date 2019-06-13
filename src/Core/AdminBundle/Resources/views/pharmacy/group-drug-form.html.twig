@@ -1,0 +1,93 @@
+{% if formType == 0 %}
+<form id="frm-group-drug" class="form-horizontal" method="post">
+  <div class="msg-container"></div>
+    <div class="form">
+    <div class="form-group">
+        <div class="col-md-12">
+          <label>Group Name <span class="required" aria-required="true"> * </span></label>
+          <input type="text" name="name" id="name" value="{{ data.name|default('') }}" class="form-control" maxlength="250">
+        </div>
+    </div>
+    <div class="form-group">
+      <div class="col-md-12">
+        <label>Group Description <span class="required" aria-required="true"> * </span></label>
+        <textarea name="description" id="description" class="form-control max-height">{{ data.description|default('') }}</textarea>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-md-6">
+        <label>G-MEDS Selling Price for Local Patients (%) <span class="required" aria-required="true"> * </span></label>
+        <input type="text" name="localPricePercentage" id="localPricePercentage" value="{{ data.localPricePercentage|default('') }}" class="form-control on-number-only">
+      </div>
+      <div class="col-md-6">
+        <label>G-MEDS Selling Price for Overseas Patients (%) <span class="required" aria-required="true"> * </span></label>
+        <input type="text" name="overseasPricePercentage" id="overseasPricePercentage" value="{{ data.overseasPricePercentage|default('') }}" class="form-control on-number-only">
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-md-12">
+          <label>Select Medicine</label>
+          <div class="multi-select-full">
+              <select multiple="multiple" class="multi-select" id="select_drugs" name="drugs[]" {% if data and data.id == 1 %} disabled {% endif %} >
+              {% if drugs %}
+                {% for drug in drugs %}
+                  <option value="{{ drug.id }}" {% if data.id is defined and drug.groupId == data.id %}selected{% endif %}>{{ drug.name }}</option>
+                {% endfor %}
+              {% endif %}
+              </select>
+          </div>
+      </div>    
+  </div>
+  </div>
+  <div class="modal-footer align-center">
+     <a href="javascript:;" class="btn grey-dark btn-ahalf-circle text-uppercase btn-sm button-back" data-dismiss="modal">Cancel</a>
+      <button class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right" type="submit">Submit</button>
+  </div>
+  <input type="hidden" name="id" value="{{ data.id|default('') }}">
+</form>
+{% elseif formType == 1 %}
+<form id="frm-gd-delete" class="form-horizontal" method="post" data-id="{{ data.id|default('') }}">
+  <div class="msg-container"></div>
+  <div class="mb-10 uppercase"><strong>Remove medicines from Group</strong></div>
+  <div class="list-medicines">
+    {% if drugs %}
+      {% for drug in drugs %}
+        <div class="each-medicines">{{ drug.name }} <a href="javascript:void(0);" class="txt-red underline drug-gd-delete" data-id="{{ drug.id }}">Remove</a></div>
+      {% endfor %}
+    {% endif %}
+  </div>
+  <div class="modal-footer align-center">
+      <a href="javascript:void(0);"  data-dismiss="modal" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm">Cancel</a>
+      <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase red btn-sm ml-10 btn-gd-delete">Delete</a>
+  </div>
+  </form>
+{% elseif formType == 2 %}
+<form id="frm-move-group" class="form-horizontal" action="#">
+  <div class="form">
+    <div class="form-group">
+      <label class="control-label col-md-4">Select Group</label>
+      <div class="col-md-8">
+        <select name="group" id="group" class="form-control select2">
+            <option value="">Select Group</option>
+            {% if groupList %}
+               {% for g in groupList %}
+               {% if g.id != data.id %}
+                  <option value="{{ g.id }}">{{ g.name }}</option>
+               {% endif %}
+               {% endfor %}
+            {% endif %}
+        </select>
+        {% if drugs %}
+          {% for d in drugs %}
+              <input type="hidden" name="drugs[]" value="{{ d }}">
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer align-center">
+     <a href="javascript:void(0);" class="btn grey-dark btn-ahalf-circle text-uppercase btn-sm button-back" data-dismiss="modal">Cancel</a>
+     <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit btn-move-group"> Move Group</a>
+  </div>
+</form>
+{% endif %}

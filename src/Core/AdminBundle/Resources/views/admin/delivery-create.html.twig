@@ -1,0 +1,240 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {% stylesheets
+        'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+        'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+        'bundles/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+        'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+        'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+        'bundles/admin/assets/global/plugins/ion.rangeslider/css/ion.rangeSlider.css'
+        'bundles/admin/assets/global/plugins/ion.rangeslider/css/ion.rangeSlider.skinFlat.css'
+        'bundles/admin/assets/global/plugins/bootstrap-markdown/css/bootstrap-markdown.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-summernote/summernote.css'
+        'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-editable/bootstrap-editable/css/bootstrap-editable.css'
+        'bundles/admin/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+    filter='cssrewrite'
+    debug=false
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    <!-- do not move it into stylesheet block -->
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts
+        '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/clockface/js/clockface.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/ion.rangeslider/js/ion.rangeSlider.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-markdown/lib/markdown.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-markdown/js/bootstrap-markdown.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-summernote/summernote.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/lib/js/wysihtml5-0.3.0.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery.mockjax.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/bootstrap-editable/js/bootstrap-editable.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/address/address.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-editable/inputs-ext/wysihtml5/wysihtml5.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-typeahead/bootstrap3-typeahead.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+        '@AdminBundle/Resources/public/js/admin_delivery_edit.js'
+        debug=false
+    %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+{% endblock %}
+
+
+{% block pageTitle %}
+    <h1>{{ title }}</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard')}}">Home</a> <i class="fa fa-circle"></i> </li>
+    {% if deliveryId > 0 %}
+    <li> <a href="{{ path('admin_delivery_partner')}}">List Delivery Partner </a><i class="fa fa-circle"></i></li>
+    {% endif %}
+    <li> <span class="active">{{ title }}</span> </li>
+{% endblock %}
+{% block content %}
+    <div class="portlet light">
+        <div class="portlet-title">
+            <div class="caption"> <span class="caption-subject font-dark sbold uppercase">{{ title }}</span> </div>
+        </div>
+
+        <div class="portlet-body form">
+            <form class="form-horizontal form-wizard" role="form" id="admin-register-delivery" method="POST">
+                <div class="form-content">
+                    {# <div class="alert alert-danger display-none_"><button class="close" data-dismiss="alert"></button> You have some form errors. Please check below.</div>
+                     <div class="alert alert-success display-none_"><button class="close" data-dismiss="alert"></button> Your form validation is successful!</div>
+                     #}
+                    <input type="hidden" value="{{path(ajaxDependent)}}" id="ajaxUrlDependent" />
+                    <input type="hidden" value="{{ constant('UtilBundle\\Utility\\Constant::ID_SINGAPORE') }}" id="singapore_id">
+                    <input type="hidden" value="{{ constant('UtilBundle\\Utility\\Constant::ID_MALAYSIA') }}" id="malaysia_id">
+                    <div class="form-group mb-grid">
+                        <div class="col-md-4">
+                            <label for="inputName">{{ form.deliveryName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.deliveryName,{'attr':{'class':'form-control'} }) }}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="inputBusinessNumber">{{ form.businessName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.businessName,{'attr':{'class':'form-control'} }) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-grid">
+                        <div class="col-md-4">
+                            <label>{{ form.gstSetting.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                            <div class="mt-radio-inline mt-radio-inline-grid">
+                                {{ form_widget(form.gstSetting)}}
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="inputGSTNumber">{{ form.gstNum.vars.label }}</label>
+                            {{ form_widget(form.gstNum,{'attr':{'class':'form-control'} })}}
+                        </div>
+
+                    </div>
+
+                    <div class="form-group mb-grid">
+                        <div class="col-md-4">
+                            <label for="inputEmail">{{ form.email.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.email,{'attr':{'class':'form-control'} })}}
+                        </div>
+                        <div class="col-md-4">
+                            <label>{{ form.phoneLocation.vars.label }}<span class="required" aria-required="true"> * </span></label>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-float">
+                                        <div class="col-md-5">
+                                            {{ form_widget(form.phoneLocation,{'attr':{'class':'form-control select2'} } ) }}
+                                        </div>
+                                        <div class="col-md-7">
+                                            {{ form_widget(form.phone,{'attr':{'class':'form-control phone-num'} } ) }}
+                                        </div>
+                                    </div>
+                                    <div class="phone-error-notice">
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-grid">
+                        <div class="col-md-4">
+                            <label for="inputAddress1">{{ form.addressLine1.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.addressLine1,{'attr':{'class':'form-control'} })}}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="inputAddress2">{{ form.addressLine2.vars.label }}</label>
+                            {{ form_widget(form.addressLine2,{'attr':{'class':'form-control'} })}}
+                        </div>
+                        <div class="col-md-4">
+                            <label for="inputAddress3">{{ form.addressLine2.vars.label }}</label>
+                            {{ form_widget(form.addressLine3,{'attr':{'class':'form-control'} })}}
+                        </div>
+                    </div>
+
+
+                    <div class="form-group mb-grid">
+                        <div class="col-md-4">
+                            <label>{{ form.country.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.country,{'attr':{'class':'form-control select2'} } ) }}
+
+                        </div>
+                        <div class="col-md-4">
+                            <label>{{ form.state.vars.label }}</label>
+                            {{ form_widget(form.state,{'attr':{'class':'form-control select2'} } ) }}
+
+                        </div>
+
+                        <div class="col-md-4">
+                            <label>{{ form.city.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.city,{'attr':{'class':'form-control select2'} } ) }}
+                        </div>
+                    </div>
+                    <h4 class="block">Bank Information</h4>
+
+                    <div class="form-group mb-grid">
+                        <div class="col-md-4">
+                            <label>{{ form.bankCountry.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.bankCountry,{'attr':{'class':'form-control select2'} }) }}
+                        </div>
+
+                        <div class="col-md-4">
+                            {% if form.vars.value.bankCountry == constant('UtilBundle\\Utility\\Constant::ID_SINGAPORE') or form.vars.value.bankCountry == constant('UtilBundle\\Utility\\Constant::ID_MALAYSIA') %}
+                                {% set getBankFromCountry = true %}
+                            {% else %}
+                                {% set getBankFromCountry = false %}
+                            {% endif %}
+                            <label>{{ form.bankName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.bankName,{'attr':{'class':'form-control', 'style': getBankFromCountry ? 'display: none;' : 'display: block;'} }) }}
+                            <select class="form-control" id="bank_name" name="bank_name" {% if getBankFromCountry %} style="display: block;" {% else %} style="display: none;" {% endif %}></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label>{{ form.bankSwiftCode.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.bankSwiftCode,{'attr':{'class':'form-control'} }) }}
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-grid">
+                        <div class="col-md-4">
+                            <label>{{ form.accountName.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.accountName,{'attr':{'class':'form-control'} }) }}
+                        </div>
+                        <div class="col-md-4">
+                            <label>{{ form.accountNumber.vars.label }} <span class="required" aria-required="true"> * </span></label>
+                            {{ form_widget(form.accountNumber,{'attr':{'class':'form-control'} }) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="{{path('admin_delivery_partner')}}" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" id="admin-register-delivery-cancel">Cancel</a>
+                    <button type="submit" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm ml-10" id="admin-register-delivery-submit" >Save</button>
+                </div>
+                {{ form_rest(form) }}
+            </form>
+        </div>
+        {% if deliveryId is defined and deliveryId != '' %}
+            <div class="pt-20 pb-20">
+                {% set module = constant('UtilBundle\\Utility\\Constant::DELIVERY_PARTNER_MODULE_NAME') %}
+                <a href="#" id="view_logs_anchor"
+                data-module="{{ module }}"
+                data-template-view="AdminBundle:admin\logs:delivery_partner_log.html.twig"
+                data-template-print="AdminBundle:admin\logs:delivery_partner_pdf.html.twig"
+                data-entity-id ="{{ deliveryId }}"
+                data-breadcrumb-title="DELIVERY PARTNER"
+                data-modal-title="DELIVERY PARTNER"
+                data-file-name="Delivery_Partner"
+                data-toggle="modal" class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen">View Log</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+

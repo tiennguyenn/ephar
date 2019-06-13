@@ -1,0 +1,39 @@
+<table class="table table-hover table-light_">
+    <thead>
+        <tr class="uppercase">
+            <th style="width: 100px">Date</th>
+            <th style="width: 140px">User</th>
+            <th>Changes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+            {% set new_log = log[0] %}
+            {% set type = new_log.areaType == 1 ? 'Local' : 'Overseas' %}
+            <tr>
+                <td>{{ new_log.createdOn|date('d M y') }}</td>
+                <td>{{ log.firstName }} {{ log.lastName }}</td>
+                {% if new_log.newAgentFee %}
+                    <td>
+                        {{ type }} Agent Fee Updated
+                        <br />Old Value: {{ new_log.oldAgentFee }}
+                        <br />New Value: {{ new_log.newAgentFee }}
+                        <br /><br />
+                    </td>
+                {% endif %}
+
+                {% if new_log.newEffectiveDate %}
+                    <td>
+                        {{ type }} Agent Fee Effective Date Updated
+                        <br />Old Value: {{ new_log.oldEffectiveDate|date('d M y') }}
+                        <br />New Value: {{ new_log.newEffectiveDate|date('d M y')}}
+                        <br /><br />
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<input type='hidden' id='print_log_url' value="{{ printUrl }}" />
+<input type='hidden' id='breadcrumb_title' value="{{ breadcrumbTitle }}" />
+<input type='hidden' id='entity_id' value="{{ entityId }}" />

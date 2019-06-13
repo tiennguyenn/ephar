@@ -1,0 +1,54 @@
+{% extends '@Admin/layout.html.twig' %}
+
+{% block pageTitle %}
+<h1>Patient's Welcome Notifications</h1>
+{% endblock %}
+
+{% block breadcrumb %}
+<li> <a href="">Home</a> <i class="fa fa-circle"></i> </li>
+<li> <span class="active">Patient's Welcome Notifications</span></li>
+{% endblock %}
+
+{% block content %}
+<div class="portlet light bordered">
+  <div class="portlet-body form">
+    <h4 class="block">Welcome Email</h4>
+    <form id="welcomeEmailForm" class="form-wizard" method="POST">
+      <div class="form-body">
+        <div class="form-group">
+          <label>Email Subject:</label>
+          <input name="emailSubject" class="form-control" type="text" value="{{ data.emailSubject }}" required>
+        </div>
+        <div class="form-group">
+          <label>Email Body:</label>
+          <textarea name="emailBody" class="form-control" rows="15" required>{{ data.emailBody }}</textarea>
+        </div>
+        <div class="form-actions">
+          <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen saveBtn">Save</a>
+        </div>
+      </div>
+    </form>
+    <h4 class="block">Welcome SMS</h4>
+    <form id="welcomesmsForm" class="form-wizard" method="POST">
+      <div class="form-body">
+        <div class="form-group">
+          <label>SMS Message:</label>
+          <input name="smsBody" class="form-control" type="text" value="{{ data.smsBody }}" required>
+        </div>
+        <div class="form-actions">
+          <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen saveBtn">Save</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{% javascripts
+'@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+'@AdminBundle/Resources/public/js/admin_welcome_patient.js'
+%}
+<script src="{{ asset_url }}"></script>
+{% endjavascripts %}
+{% endblock %}

@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title> {{ pharmacy is defined ? pharmacy.name : '' }} PRODUCT LIST LOGS</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1" name="viewport" />
+<meta content="Preview page of Metronic Admin Theme #4 for blank page layout" name="description" />
+<meta content="" name="author" />
+<style>
+body {
+    color: #333;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+}
+.portlet-title {
+    border-left: 1px solid #e7ecf1;
+    border-right: 1px solid #e7ecf1;
+    border-top: 1px solid #e7ecf1;
+    min-height: 41px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 18px;
+    padding: 10px;
+}
+table {
+    width: 100%;
+    border: 1px solid #e7ecf1;
+}
+th {
+    padding: 10px;
+    font-weight: 600;
+    vertical-align: bottom;
+}
+td {
+    border-top: 1px solid #e7ecf1;
+    padding: 10px;
+}
+</style>
+</head>
+<body>
+    <div class="portlet">
+      <div class="portlet-title">
+        <div class="caption">{{ pharmacy is defined ? pharmacy.name ~ ' Product' : 'Medicine' }} List Logs</div>
+      </div>
+      <div class="portlet-body">
+        <table class="table table-hover table-light_">
+          <thead>
+            <tr class="uppercase">
+              <th>Date</th>
+              <th>User</th>
+              <th>Changes</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for log in logs %}
+            <tr>
+              <td>{{ log.createdOn|date('d M y') }}</td>
+              <td>{{ log.user ? log.user.firstName ~ " " ~ log.user.lastName : '' }}</td>
+              <td>
+                {% if log.priceType == 'cost_price' %}
+                {{ log.drug.name }} GMEDES Cost Price updated
+                {% elseif log.priceType == 'list_price_domestic' %}
+                {%  if log.isPercent %}
+                GMEDES Local Percentage updated
+                {%  else %}
+                {{ log.drug.name }} GMEDES Local Selling Price updated
+                {%  endif %}
+                {% else %}
+                {%  if log.isPercent %}
+                GMEDES Oversea Percentage updated
+                {%  else %}
+                {{ log.drug.name }} GMEDES Overseas Selling Price updated
+                {%  endif %}
+                {% endif %}
+                <br />Old Value: {{ log.oldCostPrice }}{{ log.isPercent ? '%' : '' }}
+                <br />New Value: {{ log.newCostPrice }}{{ log.isPercent ? '%' : '' }}
+                <br />Effective Date: {{ log.takeEffectOn ? log.takeEffectOn|date('d M y') : '' }}
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,151 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {% stylesheets
+        'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+        'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+        filter='cssrewrite'
+        debug=false
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        <!-- do not move it into stylesheet block -->
+        <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block pageTitle %}
+    <h1>{{ title}}</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard')}}">Home</a> <i class="fa fa-circle"></i> </li>
+    <li> <span class="active">{{ title }}</span> </li>
+{% endblock %}
+{% block content %}
+    <div class="portlet light bordered">
+        <div class="portlet-title">
+            <div class="caption">
+                <h3 class="block mt-0">New Rx Orders</h3>
+            </div>
+            <div class="text-right">
+                <a id="logs_notification_setting" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">View Log</a>
+            </div>
+        </div>
+        <div class="portlet-body">
+            <input type="hidden" id="ajax-url-save" value="{{ path('admin_rx_order_ajax_save_notification_setting') }}" />
+            <form class="form-horizontal" action="#" id="rx-notification-setting" method="POST" enctype="multipart/form-data">
+                <div class="form-body pt-0">
+                    <div class="form-content">
+                        <p class="mb-10">Email &amp; SMS Notification sent from the date of prescription</p>
+                        <div class="form-group mb-grid">
+                            <div class="col-md-4">
+                                <label>Reminder Delay <span class="required" aria-required="true"> * </span></label>
+                                <div class="form-float">
+                                    <div class="col-md-6">
+                                        <input type="number" id="delay_time" name="delay_time" class="form-control" value="{{ rx_notification_setting.durationTime }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select id="delay_time_unit" name="delay_time_unit" class="form-control select2">
+                                            <option value="minute" {% if rx_notification_setting.timeUnit == 'minute' %}selected{% endif %}>Minutes</option>
+                                            <option value="hour" {% if rx_notification_setting.timeUnit == 'hour' %}selected{% endif %}>Hours</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-grid">
+                            <div class="col-md-12">
+                                <label>New Rx Email Subject Line <span class="required" aria-required="true"> * </span></label>
+                                <div class="form-float">
+                                    <div class="col-md-12">
+                                        <input type="text" id="email_subject" name="email_subject" class="form-control" value="{{ rx_notification_setting.templateSubjectEmail }}" autocomplete="off">
+                                    </div>
+                                    <span style="color: red; display: none" id="email-subject-error"><small>Email subject can't be blank</small></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-grid">
+                            <div class="col-md-12">
+                                <label>New Rx Email Message <span class="required" aria-required="true"> * </span></label>
+                                <textarea id="email_message" class="form-control wysihtml5" style="height: 300px">{{ rx_notification_setting.templateBodyEmail }}</textarea>
+                                <span style="color: red; display: none" id="email-message-error"><small>Email message can't be blank</small></span>
+                            </div>
+                        </div>
+                        <div class="form-group mb-grid">
+                            <div class="col-md-12">
+                                <label>New Rx SMS Message <span class="required" aria-required="true"> * </span></label>
+                                <textarea id="sms_message" class="form-control max-height wysihtml5">{{ rx_notification_setting.templateSms }}</textarea>
+                                <span style="color: red; display: none" id="sms-message-error"><small>SMS message can't be blank</small></span>
+                            </div>
+                        </div>
+                        <div class="form-group mb-grid">
+                            <div class="col-md-12 mt-10">
+                                <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-sm button-submit pull-right" id="rx-notification-setting-submit">Save</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="modal-rx-notification-setting" class="modal fade modal-new" data-backdrop="static" data-keyboard="false" tabindex="-1" data-width="500">
+        <div class="modal-header">
+            <h4 class="modal-title" id="rx-notification-setting-title"></h4>
+        </div>
+        <div class="modal-body">
+            <div class="text-center">
+                <p id="rx-notification-setting-information"></p>
+
+                <button type="button" data-dismiss="modal" aria-hidden="true" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm ml-10">Close</button>
+            </div>
+        </div>
+    </div>
+    <div id="modal-view-logs" class="modal fade modal-new" tabindex="-1" data-width="900">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+            <h4 class="modal-title">View Log</h4>
+        </div>
+        <div class="modal-body">
+            <div class="portlet box white portlet-scroller">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span class="caption-subject uppercase sbold" id="title"></span>
+                    </div>
+                    <div class="actions">
+                        <a href="{{ path('rx_order_notification_print_logs') }}" target="_blank" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-outline btn-sm btn-icon-right">Print<i class="fa fa-print"></i></a>
+                    </div>
+                </div>
+                <div class="portlet-body">
+                    <div class="scroller" style="height:280px" data-always-visible="1" data-rail-visible="1" data-rail-color="white" data-handle-color="green">
+                        <div class="table-scrollable table-scrollable-borderless" id="list-logs">
+                            <!-- logs -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a href="javascript:;" class="btn btn-ahalf-circle text-uppercase grey-dark btn-sm" data-dismiss="modal">Close</a>
+        </div>
+    </div>
+    <div class="blink-loader">
+        <div class="load1-wrap"><div class="load1"><div class="loader">Loading...</div></div></div>
+    </div>
+    <input type="hidden" id="logs_notification_url" value="{{ path('rx_order_notification_logs') }}"/>
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/lib/js/wysihtml5-0.3.0.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+        '@AdminBundle/Resources/public/js/rx_reminder_setting.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+        '@AdminBundle/Resources/public/js/admin_rx_order_setting.js'
+        debug=false
+    %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block javascripts %}
+  {{ parent () }}
+  {% javascripts
+    '@AdminBundle/Resources/public/js/dashboard.js'
+     debug=false
+  %}
+  <script type="text/javascript" src="{{ asset_url }}"></script>
+  {% endjavascripts %}
+{% endblock %}
+
+{% block content %}
+   <div class="portlet light">
+        <div class="portlet-title">
+          <div class="caption"> <span class="caption-subject font-dark sbold uppercase">HIGHLIGHTS</span> </div>
+        </div>
+        <div class="portlet-body">
+          <div class="row">
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                  <div class="dashboard-stat2 bordered">
+                      <div class="display">
+                          <div class="number">
+                              <small>TOTAL FEES SGD</small>
+                              <h3>
+                                  <span data-counter="counterup" data-value="{{totalFee|number_format(2,'.',',')}}">SGD <span id="totalFee">0.00</span></span>
+                              </h3>
+                        </div>
+                        <div class="actions">
+                          <a href="{{path('admin_report_transaction_history')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs"> View all transactions
+                              <i class="fa fa-arrow-right"></i>
+                          </a>
+                        </div>
+
+                      </div>
+
+                  </div>
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                  <div class="dashboard-stat2 bordered">
+                      <div class="display">
+                          <div class="number">
+                              <small>Doctors <i class="icon-doctor-sm"></i></small>
+                              <h3>
+                                  <span data-counter="counterup" data-value="{{totalDoctor}}">{{totalDoctor}}</span>
+                              </h3>
+                          </div>
+                        <div class="actions">
+                          <a href="{{path('admin_doctor_list')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs"> View all doctors
+                              <i class="fa fa-arrow-right"></i>
+                          </a>
+                        </div>
+
+                      </div>
+
+                  </div>
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                  <div class="dashboard-stat2 bordered">
+                      <div class="display">
+                          <div class="number">
+                              <small>agents <i class="icon-agent-sm"></i></small>
+                              <h3>
+                                  <span data-counter="counterup" data-value="{{totalAgent}}">{{totalAgent}}</span>
+                              </h3>
+                          </div>
+                        <div class="actions">
+                          <a href="{{path('admin_agent')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs"> View ALL agents
+                              <i class="fa fa-arrow-right"></i>
+                          </a>
+                        </div>
+
+                      </div>
+
+                  </div>
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                  <div class="dashboard-stat2 bordered">
+                      <div class="display">
+                          <div class="number">
+                              <small>MESSAGES <i class="fa fa-envelope"></i></small>
+                              <h3>
+                                  <span data-counter="counterup" data-value="{% if get_message_total(true) > 0 %}{{ get_message_total(true) }}{% endif %}">{% if get_message_total(true) > 0 %}{{ get_message_total(true) }}{% else %}0{% endif %}</span>
+                              </h3>
+                          </div>
+                        <div class="actions">
+                          <a href="{{path('message')}}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-icon-right btn-xs"> View inbox
+                              <i class="fa fa-arrow-right"></i>
+                          </a>
+                        </div>
+
+                      </div>
+
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BEGIN CHART PORTLET-->
+      <div class="portlet light">
+        <div class="portlet-title">
+          <div class="caption"> <span class="caption-subject font-dark sbold uppercase">RX TRANSACTION HISTORY</span> </div>
+        </div>
+        <div class="portlet-body">
+          <input type="hidden" id="ajax_data_chart_url" value="{{path('ajax_get_chart_data_admin')}}">
+          <div id="agent_chart" class="chart" style="height: 400px;"> </div>
+        </div>
+      </div>
+      <!-- END CHART PORTLET-->
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends '@Admin/layout.html.twig' %} 
+{% block classbody %} page-404-full-page{% endblock %}
+{% block body %}
+    
+   <div class="row">
+        <div class="col-md-12">
+            <div class="details ml-15 mr-15">
+                <p> We have detected that you are using Samsung's in-app browser. Your prescription is best viewed and confirmed in a supported browser.</p>
+                <p>Please <a href="googlechrome://navigate?url={{ url(name, {'orderNumber': orderNumber}) }}" class="btn red btn-outline">click here</a>, to view and confirm your prescription.</p>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    {% javascripts
+        '@AdminBundle/Resources/public/assets/global/scripts/app.min.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets
+        'bundles/admin/assets/pages/css/error.min.css'
+        filter='cssrewrite'
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}

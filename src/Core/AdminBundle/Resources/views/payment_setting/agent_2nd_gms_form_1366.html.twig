@@ -1,0 +1,37 @@
+{{ form_start(form, {'attr': {'id': formId,'class': 'form-horizontal form-margin-share form-agent-3rd-fee' }}) }}
+    <div class="form-group">
+        <label for="agentPercentage" class="col-md-4 control-label">Secondary Agent Fee</label>
+        <div class="col-md-8">
+            <div class="input-medium-wrapper">
+                <div class="input-medium-wrap">
+                    <div class="input-group input-small">
+                        {{ form_widget(form.id)}}
+                        {{ form_widget(form.value,{'attr':{'class':'form-control on-digit-percent', 'placeholder': '0.00', 'disabled': is_active? false: true} })}}
+                        <span class="input-group-addon">SGD</span>
+                    </div>
+                    <div class="current-data">
+                        {% if fee >= 0 %}
+                            <span id="" class="">Current value is {{ fee }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="takeEffectOn" class="col-md-4 control-label">Effective date</label>
+        <div class="col-md-8">
+            <div class="input-group date date-picker" data-date-format="dd M yyyy" data-date-start-date="+0d">
+                {{ form_widget(form.date,{'attr':{'class':'form-control', 'disabled': is_active? false: true} })}}
+                <span class="input-group-btn">
+                    <button class="btn default" type="button">
+                     <i class="fa fa-calendar"></i>
+                     </button>
+                </span>
+            </div>
+            <div class="btn-update-margin">
+                <input class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm" type="submit" value="Update">
+            </div>
+        </div>
+    </div>
+{{ form_end(form) }}

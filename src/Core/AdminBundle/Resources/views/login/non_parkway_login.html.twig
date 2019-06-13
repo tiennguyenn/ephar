@@ -1,0 +1,120 @@
+{% extends '@Admin/layout.html.twig' %} 
+{% block classbody %}login{% endblock %}
+{% block body %}
+
+    <!-- BEGIN LOGO -->
+    <div class="logo">
+        <a href="{{logoLink}}">
+            <img src="{{ asset('bundles/admin/assets/pages/img/logo.png')}}" alt="" /> </a>
+    </div>
+    <!-- END LOGO -->
+    <!-- BEGIN LOGIN -->
+    <div class="content">
+        <!-- BEGIN LOGIN FORM -->
+        <form class="login-form" action="{{ path("login_check") }}" method="post">
+            <input type="hidden" id="base_url" value="{{app.request.getBaseURL()}}">
+            <h3 class="form-title">Login to your account</h3>
+            {% for flashMessage in app.session.flashbag.get('msg') %}
+
+                {% if flashMessage.error is defined %}
+                <div class="alert alert-danger">
+                    <span> {{ flashMessage.error }} </span>
+                    <button class="close" data-close="alert"></button>
+                </div>
+                {% else %}
+                <div class="alert alert-success">
+                    <span> {{ flashMessage.success }} </span>
+                    <button class="close" data-close="alert"></button>
+                </div>
+                {% endif %}
+
+            {% endfor %}
+            <div class="alert alert-danger display-hide">
+                <button class="close" data-close="alert"></button>
+                <span> Enter any username and password. </span>
+            </div>
+            <div class="form-group">
+                <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+                <label class="control-label visible-ie8 visible-ie9">Username</label>
+                <div class="input-icon">
+                    <i class="fa fa-user"></i>
+                    <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Username" id="username" name="_username" value="" required="required" /> </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label visible-ie8 visible-ie9">Password</label>
+                <div class="input-icon">
+                    <i class="fa fa-lock"></i>
+                    <input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="Password" id="password" name="_password" required="required" /> </div>
+            </div>
+            <div class="form-actions">
+                <label class="rememberme mt-checkbox mt-checkbox-outline">
+                    <input type="checkbox" id="remember_me" name="_remember_me"/> Remember me
+                    <span></span>
+                </label>
+                <button type="submit" class="btn green pull-right"> Login </button>
+            </div>
+            <div class="forget-password">
+                <h4>Forgot your password ?</h4>
+                <p> no worries, click
+                    <a href="javascript:;" id="forget-password"> here </a> to reset your password. </p>
+            </div>
+            <input type="hidden" name="token" value="{{ csrf_token('core-login') }}" />
+        </form>
+        <!-- END LOGIN FORM -->
+        <!-- BEGIN FORGOT PASSWORD FORM -->
+        <form class="forget-form" action="{{path('forgot_password')}}" method="post">
+            <h3>Forget Password ?</h3>
+            <p> Enter your e-mail address below to reset your password. </p>
+            <div class="form-group">
+                <div class="input-icon">
+                    <i class="fa fa-envelope"></i>
+                    <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Email" name="email" /> </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" id="back-btn" class="btn red btn-outline">Back </button>
+                <button type="submit" class="btn green pull-right"> Submit </button>
+            </div>
+            <input type="hidden" name="token" value="{{ csrf_token('forgot-password') }}" />
+        </form>
+        <!-- END FORGOT PASSWORD FORM -->
+    </div>
+    <!-- END LOGIN -->
+
+    <!-- BROWSER DETECTION ALERT -->
+    {% include '@Admin/modals/browser-detect.html.twig' with { 'class': '' } %}
+{% endblock %}
+{% block javascripts %}
+    <script>
+        var background1 = "{{ asset('bundles/admin/assets/pages/media/bg/1.jpg') }}";
+        var background2 = "{{ asset('bundles/admin/assets/pages/media/bg/2.jpg') }}";
+        var background3 = "{{ asset('bundles/admin/assets/pages/media/bg/3.jpg') }}";
+        var background4 = "{{ asset('bundles/admin/assets/pages/media/bg/4.jpg') }}";
+    </script>
+    {% javascripts
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/backstretch/jquery.backstretch.min.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/login-4.js'
+        '@AdminBundle/Resources/public/js/browser_check.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script>
+        $(document).ready(function()
+        {
+            $('#clickmewow').click(function()
+            {
+                $('#radio1003').attr('checked', 'checked');
+            });
+        })
+    </script>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets
+        'bundles/admin/assets/pages/css/login-4.min.css'
+        filter='cssrewrite'
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}

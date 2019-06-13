@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title> Daily Purchase Order</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1" name="viewport" />
+<meta content="Daily Purchase Order" name="description" />
+<meta content="" name="author" />
+<style>
+    html { margin: 0px}
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        line-height: 1.42857;
+        color: #000;
+        padding: 0;
+        margin: 0;
+    }
+    .container {
+        padding: 0 20px;
+    }
+    .header {
+        background-color: #FFEFD5; /*#f2f9ff;*/
+
+    }
+    p {
+        margin: 0;
+    }
+    .title {
+        font-size: 24px;
+        text-transform: uppercase;
+        color: #555555;
+        margin: 0;
+        font-weight: 400;
+    }
+    .sub-title {
+        font-size: 18px;
+        text-transform: uppercase;
+        margin: 0;
+    }
+    .content {
+        margin-top: 0;
+        padding-left: 39px;
+        padding-right: 20px;
+    }
+    table {
+        border-collapse: collapse;
+        border: 0;
+        width: 100%;
+        table-layout: fixed;
+    }
+    table th,
+    table td {
+        padding: 3px 10px;
+    }
+    table th {
+        color: #555555;
+    }
+    table.table-subtitle table tr:first-child th,
+    table.table-subtitle table tr:first-child td{
+        padding-top: 0;
+    }
+    table.table-subtitle table tr:last-child th,
+    table.table-subtitle table tr:last-child td{
+        padding-bottom: 0;
+    }
+    table.table-title td {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    table.table-subtitle th,
+    table.table-subtitle td {
+        padding: 3px 0;
+    }
+    table.table-data .border-right {
+        border-right: 1px solid #9d9d9d;
+    }    table.table-data .border-bottom {
+        border-bottom: 1px solid #9d9d9d;
+    }
+    table.table-data td {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        background-color: #f5f5f5;
+    }
+    table.table-data tr.subtotal-every td {
+        background-color: #ffffff;
+    }
+    table.table-data tr.subtotal td {
+        background-color: #ffffff;
+        font-size: 14px;
+    }
+    table.table-data th {
+        border-bottom: 1px solid #9d9d9d;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .float-left {
+        float: left;
+    }
+    .float-right {
+        float: right;
+    }
+    .text-note {
+        margin: 10px 0;
+        text-align: center;
+    }
+    .text-footer {
+        text-align: center;
+        padding: 10px 0;
+        border-top: 1px solid #9d9d9d;
+        color: #555555;
+    }
+    .text-gray {
+        color: #555;
+    }
+
+    .text-light-gray {
+        color: #a1a1a1;
+    }
+
+    .title-light-gray {
+        color: #a1a1a1;
+        font-size:  18px;
+        font-weight: 700;
+    }
+    .cb{clear: both;}
+    .cb-items{padding: 130px 0;}
+    .page-break-auto{page-break-inside: avoid; height: 240px;}
+    footer { position: fixed; bottom: 20px; height: 240px;}
+    .breadcrumb{font-size: 11px; font-weight: bold; padding: 0 0 15px; list-style: none; margin: 30px;}
+</style>
+</head>
+<body>
+<div class="wrapper-content">
+<div class="header">
+    <div class="container">
+        <table class="table-title">
+            <tr>
+                <td width="50%" valign="top" align="left">
+                    <table>
+                        <tr><td valign="top"><img src="{{ logoUrl }}" alt="logo"></td></tr>
+                        <tr><td valign="top"><h2 class="sub-title">GMEDES Pte Ltd</h2></td></tr>
+                        <tr><td valign="top">
+                            <table class="table-subtitle">
+                                <tr><td>{{ pharmacy.contactFirstname}} {{ pharmacy.contactLastname}}</td></tr>
+                                <tr><td>{{ pharmacy.name }}</td></tr>
+                                <tr><td>{{ pharmacy.line1 }}, {{ pharmacy.line2 }}, {{ pharmacy.line3 }}</td></tr>
+                                <tr><td>{{ pharmacy.postalCode }}, {{ pharmacy.city }}, {% if pharmacy.state != "" %}{{ pharmacy.state }}{% endif %} {{ pharmacy.country }}</td></tr>
+                            </table>
+                        </td></tr>
+                    </table>
+                </td>
+                <td width="50%" valign="top" align="right">
+                    <table>
+                        <tr><td valign="top" align="right"><h1 class="title">Daily Purchase Order</h1></td></tr>
+                        <tr><td valign="top">
+                            <table class="table-subtitle">
+                                <tbody>
+                                <tr>
+                                    <th width="50%" class="text-gray"><strong>Purchase Order Date:</strong></th>
+                                    <td width="50%" align="right">{% if info %}{{ info.poDate|date("d M Y") }}{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-gray"><strong>Delivery Date:</strong></th>
+                                    <td align="right">{% if info %}{{ info.poDate|date("d M Y") }}{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-gray"><strong>Purchase Order Number:</strong></th>
+                                    <td align="right">{% if info %}{{ info.poNumber }}{% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-gray"><strong>Pharmacy Partner ID:</strong></th>
+                                    <td align="right">{{ pharmacy.pharmacyCode }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-gray"><strong>Page:</strong></th>
+                                    <td align="right"> </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td></tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="cb"></div>
+</div>
+
+<div class="content">
+    <table class="table-data">
+        <thead>
+        <tr>
+            <th align="left" width="4%">No</th>
+            <th align="left" width="6%">Sub No</th>
+            <th align="left" width="20%">Order ID/<br> Tracking No.</th>
+            <th align="left">Description</th>
+            <th align="left" width="6%">GST Code</th>
+            <th align="right" class="border-right" width="12%">Product Code</th>
+            <th align="right" class="border-right" width="8%">Qty</th>
+            <th align="right" class="border-right" width="12%">Unit Price <br> (SGD)</th>
+            <th align="right" class="border-right" width="10%">Unit Price with GST<br> (SGD)</th>
+            <th align="right" width="10%">Line Total <br> (SGD)</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if lists %}
+            {% set n1 = 0 %}
+            {% set n2 = 0 %}
+            {% set order_id = "" %}
+
+                
+            {% for item in lists %}
+                {% if order_id != item.id %}
+                    {% set n1 = n1 + 1 %}
+                    {% set n2 = 1 %}
+                    {% set order_id = item.id %}
+                {% else %}
+                    {% set n2 = n2 + 1 %}
+                {% endif %}
+
+                <tr>
+                    <td valign="top">{% if n2 == 1 %}{{ n1 }}{% endif %}</td>
+                    <td valign="top">{{ n1 ~ '.' ~ n2 }}</td>
+                    <td valign="top">{{ item.orderPhysicalNumber }} {% if item.trackingNumber and item.orderPhysicalNumber != item.trackingNumber %} / <br>{{ item.trackingNumber }}{% endif %}</td>
+                    <td valign="top">{{ item.name }}</td>
+                    <td valign="top">{% if item.gstCode == 'SRS' %}SRP
+                        {% elseif item.gstCode == 'ZRS' %}ZRP
+                        {% elseif item.gstCode == 'OOS' or item.gstCode == 'EXS' %}NGP
+                        {% else %}{{ item.gstCode }}{% endif %}
+                    </td>
+                    <td valign="top" align="right" class="border-right">{{ item.sku }}</td>
+                    <td valign="top" align="right" class="border-right">{{ item.quantity }}</td>
+                    <td valign="top" align="right" class="border-right"><span>{{ item.costPrice|number_format(5, '.', ',') }}</span></td>
+                    <td valign="top" align="right" class="border-right"><span>{{ item.gstPrice}}</span></td>
+                    <td valign="top" align="right"><span>{{ item.lineAmount|number_format(2, '.', ',')}}</span></td>
+                </tr>
+            {% endfor %}
+            <tr class="subtotal-every">
+                <td colspan="9" align="right" class="border-bottom border-right"><strong>Total</strong></td>
+                <td align="right" class="border-bottom">
+                    <div><strong>SGD</strong></div>
+                    <div><strong>{{ totalAmountGst }}</strong></div>
+                </td>
+            </tr>
+            <tr class="subtotal-every">
+                <td colspan="9" align="right" class="border-bottom border-right"><strong>GST</strong></td>
+                <td align="right" class="border-bottom">
+                    <div><strong>SGD</strong></div>
+                    <div><strong>{% if totalGst > 0 %}{{ totalGst }}{% else %}-{% endif %}</strong></div>
+                </td>
+            </tr>
+            <tr class="subtotal-every">
+                <td colspan="9" align="right" class="border-bottom border-right"><strong>Subtotal per order</strong></td>
+                <td align="right" class="border-bottom">
+                    <div><strong>SGD</strong></div>
+                     <div><strong>{{ totalAmount }}</strong></div>
+                 </td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+</div>
+<div class="content">
+    <div class="breadcrumb"></div>
+</div>
+<div class="page-break-auto">
+<footer>
+    <div class="content">
+        <table class="table-note" width="100%">
+            <tr>
+                <td colspan="2">
+                    <table valign="top">
+                        <tr><td>1. Please notify us within 24 hours if there are any discrepancies in the Purchase Order</td></tr>
+                        <tr><td>2. Please send all correspondence to:</td></tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td width="60%">
+                    <table valign="top">
+                        <tr><td>Finance Department</td></tr>
+                        <tr><td>GMedes Pte Ltd</td></tr>
+                        <tr><td>115 Eunos Ave 3</td></tr>
+                        <tr><td>#05-01</td></tr>
+                        <tr><td>Singapore 409839</td></tr>
+                    </table>
+                </td>
+                <td width="40%" valign="bottom">
+                    <p class="title-light-gray">GST Code</p>
+                    <table class="table-subdata">
+                        <tr>
+                            <td class="text-gray" width="20%"><strong>SRP</strong></td>
+                            <td width="80%">Standard-Rated Purchases </td>
+                        </tr>
+                        <tr>
+                            <td class="text-gray" width="20%"><strong>ZRP</strong></td>
+                            <td width="80%">Zero-Rated Purchases</td>
+                        </tr>
+                        <tr>
+                            <td class="text-gray" width="20%"><strong>NGP</strong></td>
+                            <td width="80%">No GST</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="content">
+        <div class="text-note"><i>This a Computer generated Purchase Order. No signature is required</i></div>
+        <div class="text-footer">
+            <p>GMedes Pte Ltd | 115 Eunos Ave 3, #05-01 Singapore 409839</p>
+        </div>
+    </div>
+</footer>
+</div>
+</div>
+</body>
+</html>

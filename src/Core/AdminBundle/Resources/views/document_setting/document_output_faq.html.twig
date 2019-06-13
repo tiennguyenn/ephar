@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ title }}</title>
+    {% stylesheets
+        'bundles/admin/assets/global/plugins/font-awesome/css/font-awesome.min.css'
+        debug=false
+        filter='cssrewrite'
+    %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Noto Sans", "Ubuntu", "Droid Sans", "Helvetica Neue", sans-serif;
+        }
+        .question {
+            cursor: pointer;
+            color: #3572b0;
+        }
+        .question:hover {
+            text-decoration: underline;
+        }
+        .answer {
+            margin-bottom: 20px;
+        }
+        .disclaimer {
+            border: 1px solid #cccccc;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .disclaimer > p {
+            margin-top: 0;
+        }
+        .customer-service {
+            border: 1px solid #ffeaae;
+            background: #fffdf6;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .customer-service > p {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="page-container">
+    {{ content|raw }}
+</div>
+<div class="printarea"></div>
+
+{% javascripts
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap/js/bootstrap.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery.blockui.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js'
+    '@AdminBundle/Resources/public/assets/global/scripts/app.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/js.cookie.min.js'
+
+    debug=false
+
+%}
+<script type="text/javascript" src="{{ asset_url }}"></script>
+{% endjavascripts %}
+<script type="text/javascript">
+    $('head').append('<style id="printarea">@media print{.page-container{display:none}.printarea{display:block}}</style>');
+
+    $("#doctor-terms-service").modal("show");
+
+    $('body').bind('cut copy paste', function (e) {
+        alert("You may not copy this document.");
+        e.preventDefault();
+    });
+
+    $("body").on("contextmenu",function(e){
+        alert("You may not copy this document.");
+        return false;
+    });
+
+    $('.answer').hide();
+    $('.question').prepend('<i class="fa fa-angle-right"></i>');
+    $('.disclaimer > p').prepend('<i class="fa fa-info-circle"></i> ');
+    $('.customer-service > p').prepend('<i class="fa fa-exclamation-triangle"></i> ');
+
+    $('.question').each(function (i, obj) {
+        $(obj).click(function () {
+            var answer = $(obj).next('.answer');
+            if (answer.css('display') === "none") {
+                answer.slideDown('fast');
+            } else {
+                answer.slideUp('fast');
+            }
+        });
+    });
+</script>
+</body>
+</html>

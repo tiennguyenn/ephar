@@ -1,0 +1,255 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {{ parent () }}
+    {% stylesheets
+    'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+    'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+    'bundles/admin/assets/global/plugins/ladda/ladda-themeless.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-select/css/bootstrap-select.css'
+    'bundles/admin/assets/global/plugins/jquery-multi-select/css/multi-select.css'
+    'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+    'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+    'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+    'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+    filter='cssrewrite'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block pageTitle %}
+    <h1>Other Fees</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+    <li> <span class="active">Other Fees</span> </li>
+{% endblock %}
+{% block content %}
+<div class="portlet light">
+    <div class="portlet-body form">
+        <div class="form-body">
+            {{ display_messages()|raw }}
+            <div class="mb-20"><strong>Others:</strong></div>
+            {{ form_start(form, {'attr': {'id': 'frm-others-fee','class': 'form-horizontal' }}) }}
+                <div class="form-group">
+                    <label for="bufferRate" class="col-md-3 control-label align-left">Currency Exchange Buffer</label>
+                    <div class="col-md-9">
+                        <div class="input-medium-wrapper">
+                            <div class="input-medium-wrap">
+                                <div class="input-group input-medium">
+                                    {{ form_widget(form.bufferRate, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                    {{ form_widget(form.operationsCountryId) }}
+                                    <span class="input-group-addon">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="type" value="1"/>
+                <input class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm" type="submit" value="update" />
+            {{ form_end(form) }}
+
+            <div class="mb-20 mt-20">
+                <strong>Default Minimum Fees for Agents - Primary Agents Only</strong> <br/>
+                <div>
+                    This is the configuration to allow G-MEDS to control the minimum fees that must be earned per prescription on medications, before the agent fees are paid for agents that are primary agents only. To ensure that enough money is earned from a prescription before fees are distributed to the relevant agent.
+                </div>
+            </div>
+            {{ form_start(minForm, {'attr': {'id': 'frm-others-fee-2','class': 'form-horizontal' }}) }}
+            <div class="form-group">
+                <label for="bufferRate" class="col-md-3 control-label align-left">Local RX Order</label>
+                <div class="col-md-9">
+                    <div class="input-medium-wrapper">
+                        <div class="input-medium-wrap">
+                            <div class="input-group input-medium">
+                                {{ form_widget(minForm.feeLocal, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                <span class="input-group-addon">SGD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="bufferRate" class="col-md-3 control-label align-left">Indonesia RX Order</label>
+                <div class="col-md-9">
+                    <div class="input-medium-wrapper">
+                        <div class="input-medium-wrap">
+                            <div class="input-group input-medium">
+                                {{ form_widget(minForm.feeIndo, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                <span class="input-group-addon">SGD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="bufferRate" class="col-md-3 control-label align-left">East Malaysia RX Order</label>
+                <div class="col-md-9">
+                    <div class="input-medium-wrapper">
+                        <div class="input-medium-wrap">
+                            <div class="input-group input-medium">
+                                {{ form_widget(minForm.feeEastMalay, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                <span class="input-group-addon">SGD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="bufferRate" class="col-md-3 control-label align-left">West Malaysia RX Order</label>
+                <div class="col-md-9">
+                    <div class="input-medium-wrapper">
+                        <div class="input-medium-wrap">
+                            <div class="input-group input-medium">
+                                {{ form_widget(minForm.feeWestMalay, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                <span class="input-group-addon">SGD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="bufferRate" class="col-md-3 control-label align-left">International RX Order</label>
+                <div class="col-md-9">
+                    <div class="input-medium-wrapper">
+                        <div class="input-medium-wrap">
+                            <div class="input-group input-medium">
+                                {{ form_widget(minForm.feeInternational, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                <span class="input-group-addon">SGD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" name="type" value="2"/>
+            <input class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm" type="submit" value="update" />
+            {{ form_end(minForm) }}
+
+            <div class="mb-20 mt-20">
+                <strong>Default Minimum Fees for Agents - Primary and Secondary Agent</strong> <br/>
+                <div>
+                    This is the configuration to allow G-MEDS to control the minimum fees that must be earned per prescription on medications, before the agent fees are paid for agents that are primary and secondary agents. To ensure that enough money is earned from a prescription before fees are distributed to the relevant agent.
+                </div>
+            </div>
+            {{ form_start(secondaryForm, {'attr': {'id': 'frm-others-fee-3','class': 'form-horizontal' }}) }}
+            <div class="form-group">
+                <label for="bufferRate" class="col-md-3 control-label align-left">Local RX Order</label>
+                <div class="col-md-9">
+                    <div class="input-medium-wrapper">
+                        <div class="input-medium-wrap">
+                            <div class="input-group input-medium">
+                                {{ form_widget(secondaryForm.feeLocal, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                <span class="input-group-addon">SGD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="bufferRate" class="col-md-3 control-label align-left">Indonesia RX Order</label>
+                <div class="col-md-9">
+                    <div class="input-medium-wrapper">
+                        <div class="input-medium-wrap">
+                            <div class="input-group input-medium">
+                                {{ form_widget(secondaryForm.feeIndo, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                <span class="input-group-addon">SGD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="bufferRate" class="col-md-3 control-label align-left">East Malaysia  RX Order</label>
+                <div class="col-md-9">
+                    <div class="input-medium-wrapper">
+                        <div class="input-medium-wrap">
+                            <div class="input-group input-medium">
+                                {{ form_widget(secondaryForm.feeEastMalay, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                <span class="input-group-addon">SGD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="bufferRate" class="col-md-3 control-label align-left">West Malaysia RX Order</label>
+                <div class="col-md-9">
+                    <div class="input-medium-wrapper">
+                        <div class="input-medium-wrap">
+                            <div class="input-group input-medium">
+                                {{ form_widget(secondaryForm.feeWestMalay, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                <span class="input-group-addon">SGD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="bufferRate" class="col-md-3 control-label align-left">International RX Order</label>
+                <div class="col-md-9">
+                    <div class="input-medium-wrapper">
+                        <div class="input-medium-wrap">
+                            <div class="input-group input-medium">
+                                {{ form_widget(secondaryForm.feeInternational, {'attr': {'class': 'form-control on-digit-percent on-number-only'}}) }}
+                                <span class="input-group-addon">SGD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" name="type" value="3"/>
+            <input class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm" type="submit" value="update" />
+            {{ form_end(secondaryForm) }}
+        </div>
+        <div class="form-actions">
+            {% set module = 'admin_others_fee' %}
+            <a href="#" id="view_logs_others_fee"
+            data-toggle="modal"
+            data-module="{{ module }}"
+            data-template-view="AdminBundle:admin\logs:others_fee_log.html.twig"
+            data-template-print="AdminBundle:admin\logs:others_fee_pdf.html.twig"
+            data-breadcrumb-title="Other Fees"
+            data-modal-title="Other Fees"
+            data-file-name="others_fee_log"
+            class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm">View Log</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/additional-methods.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/ladda/spin.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/ladda/ladda.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/ui-buttons-spinners.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/table-datatables-managed.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-select/js/bootstrap-select.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/clockface/js/clockface.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-select2.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-multi-select.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/form-icheck.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+    '@AdminBundle/Resources/public/js/admin_others_fee.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}

@@ -1,0 +1,257 @@
+{% extends '@Admin/layout.html.twig' %}
+
+{% block stylesheets %}
+    <style type="text/css">
+    #frm-messages .bootstrap-tagsinput{border: 0; padding: 0 12px;}
+    #frm-messages .bootstrap-tagsinput input{width: 100%; padding: 6px 0;}
+    #frm-messages .bootstrap-tagsinput .tt-hint, #frm-messages .bootstrap-tagsinput .tt-input{color: #979797;}
+    </style>
+    {% stylesheets 
+        'bundles/admin/assets/global/plugins/fancybox/source/jquery.fancybox.css'
+        'bundles/admin/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.css'
+        'bundles/admin/assets/global/plugins/jquery-file-upload/blueimp-gallery/blueimp-gallery.min.css'
+        'bundles/admin/assets/global/plugins/jquery-file-upload/css/jquery.fileupload.css'
+        'bundles/admin/assets/global/plugins/jquery-file-upload/css/jquery.fileupload-ui.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+        'bundles/admin/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css'
+        'bundles/admin/assets/apps/css/inbox.min.css'
+    filter='cssrewrite'  
+    debug=false
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    <!-- do not move it into stylesheet block -->
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block pageTitle %}<h1>Messages</h1>{% endblock %}
+
+{% block breadcrumb %}
+  <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+  <li> <span class="active">Messages</span> </li>
+{% endblock %}
+
+{% block content %}
+<!-- BEGIN PAGE BASE CONTENT -->
+<div class="inbox">
+  <div class="row">
+      {% include '@Admin/message/sidebar.html.twig' %}
+      <div class="col-lg-10 col-md-9">
+          <div class="inbox-body">
+            {{ display_messages()|raw }}
+            <div class="inbox-header">
+              <h1 class="pull-left">
+                {% if type == 'reply' %}
+                  <a href="{{ path('message') }}">Inbox</a>
+                - <a href="{{ path('message_view', {id: data.id}) }}">View Message</a> - Reply
+                {% elseif type == 'replyall' %}
+                  <a href="{{ path('message') }}">Inbox</a>
+                - <a href="{{ path('message_view', {id: data.id}) }}">View Message</a> - Reply all
+                {% elseif type == 'forward' %}
+                  <a href="{{ path('message') }}">Inbox</a>
+                - <a href="{{ path('message_view', {id: data.id}) }}">View Message</a> - Forward
+                {% else %}
+                    New Message
+                {% endif %}
+              </h1>
+            </div>
+            <div class="inbox-content">
+              {% if data %}
+                <div class="inbox-header inbox-view-header">
+                  <h4><strong>{{ data.subject }}</strong></h4>
+                </div>
+              {% endif %}
+              <div class="alert alert-danger hidden">
+                <button class="close" data-dismiss="alert"></button> 
+              </div>
+              {{ form_start(form) }}
+                <div class="inbox-compose-btn">
+                  <button class="btn text-uppercase btn-sm btn-info btn-send"><i class="fa fa-check"></i>Send</button>
+                  <button class="btn text-uppercase btn-sm default btn-discard">Discard</button>
+                  <button class="btn text-uppercase btn-sm default btn-draft">Draft</button>
+                </div>
+                <div class="inbox-form-group mail-to">
+                  <label class="control-label">To:</label>
+                  <div class="controls">
+                    {{ form_widget(form.to, {attr: {'class': 'form-control on-suggestion', 'autocomplete': 'off'}}) }}
+                    {# <span class="inbox-cc-bcc">
+                      <span class="inbox-cc " > Cc </span>
+                      <span class="inbox-bcc" > Bcc </span>
+                    </span> #}
+                  </div>
+                </div>
+                {# <div class="inbox-form-group input-cc display-hide">
+                  <a href="javascript:;" class="close"> </a>
+                  <label class="control-label">Cc:</label>
+                  <div class="controls controls-cc">
+                    {{ form_widget(form.cc, {attr: {'class': 'on-suggestion'}}) }}
+                  </div>
+                </div>
+                
+                <div class="inbox-form-group input-bcc display-hide">
+                  <a href="javascript:;" class="close"> </a>
+                  <label class="control-label">Bcc:</label>
+                  <div class="controls controls-bcc">
+                    {{ form_widget(form.bcc, {attr: {'class': 'on-suggestion'}}) }}
+                  </div>
+                </div> #}
+                <div class="inbox-form-group">
+                  <label class="control-label">Subject:</label>
+                  <div class="controls">
+                    {{ form_widget(form.subject) }}
+                  </div>
+                </div>
+                
+                <div class="inbox-form-group">
+                  <div class="controls-row">
+                    {{ form_widget(form.message) }}
+                    <div id="reply_email_content_body" class="hide">
+                    </div>
+                  </div>
+                </div>
+                <div id="fileupload" data-url="{{ path('message_upload') }}" >
+                    <div class="inbox-compose-attachment">
+                        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+                        <span class="btn btn-outline blue btn-ahalf-circle btn-sm text-uppercase btn-file fileinput-button">
+                          <i class="fa fa-plus"></i><span>Select files</span>
+                          <input type="file" name="files" multiple>
+                        </span>
+                        <!-- The table listing the files available for upload/download -->
+                        <table role="presentation" class="table table-striped margin-top-10">
+                          <tbody class="files">
+                              {% if type not in ['reply', 'replyall'] and data.attachment is defined %}
+                                  {% for f in data.attachment %}
+                                      <tr class="template-download fade in">
+                                        <td style="vertical-align: middle;">
+                                          <span class="preview">
+                                              <a href="{{ f.urlAttachment }}" title="{{ f.name|default('') }}" download="{{ f.name|default('') }}" data-gallery="">{{ f.name|default('') }}</a>
+                                              <strong class="error text-danger">  {{ f.error }}</strong>
+                                              <input type="hidden" name="messages[url_attachment][]" value="{{ f.urlAttachment }}">
+                                          </span>
+                                        </td>
+                                        <td align="right" style="vertical-align: middle;">
+                                            <button class="btn btn-warning cancel">
+                                                <i class="glyphicon glyphicon-ban-circle"></i>
+                                                <span>Cancel</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                  {% endfor %}
+                              {% endif %}
+                          </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="inbox-compose-btn">
+                  <button class="btn text-uppercase btn-sm btn-info btn-send"><i class="fa fa-check"></i>Send</button>
+                  <button class="btn text-uppercase btn-sm default btn-discard">Discard</button>
+                  <button class="btn text-uppercase btn-sm default btn-draft">Draft</button>
+                </div>
+                <input type="hidden" id="url_redirect" value="{{ path('message') }}">
+                <input type="hidden" id="url_message_suggestion" value="{{ path('message_suggestion') }}">
+              {{ form_end(form) }}
+              </div>
+        </div>
+      </div>
+  </div>
+</div>
+<!-- END PAGE BASE CONTENT --> 
+{% include '@Admin/message/modal.html.twig' %}
+{% verbatim %}
+  
+  <script id="template-upload" type="text/x-tmpl">
+  {% for (var i=0, file; file=o.files[i]; i++) { %}
+      <tr class="template-upload fade">
+          <td>
+              <p class="name">{%=file.name%}</p>
+              <strong class="error text-danger">  {%=file.error%}</strong>
+          </td>
+          <td align="right">
+              {% if (!i && !o.options.autoUpload) { %}
+                  <button class="btn btn-primary start" disabled>
+                      <i class="glyphicon glyphicon-upload"></i>
+                      <span>Start</span>
+                  </button>
+              {% } %}
+              {% if (!i) { %}
+                  <button class="btn btn-warning cancel">
+                      <i class="glyphicon glyphicon-ban-circle"></i>
+                      <span>Cancel</span>
+                  </button>
+              {% } %}
+          </td>
+      </tr>
+  {% } %}
+  </script>
+  <!-- The template to display files available for download -->
+  <script id="template-download" type="text/x-tmpl">
+  {% for (var i=0, file; file=o.files[i]; i++) { %}
+      {% if (file.url) { %}
+      <tr class="template-download fade">
+          <td style="vertical-align: middle;">
+            <span class="preview">
+                {% if (file.isImage) { %}
+                <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}" data-gallery><img src="{%=file.url%}" style="max-width: 120px;"></a>
+                {% } else { %}
+                <a href="{%=file.url%}" title="{%=file.name%}" download="{%=file.name%}">{%=file.name%}</a>
+                {% } %}
+                <strong class="error text-danger">  {%=file.error%}</strong>
+                <input type="hidden" name="messages[url_attachment][]" value="{%=file.url%}" />
+            </span>
+          </td>
+          <td align="right" style="vertical-align: middle;">
+          {% if (file.deleteUrl) { %}
+              <button class="btn btn-danger delete" data-type="{%=file.deleteType%}" data-url="{%=file.deleteUrl%}"{% if (file.deleteWithCredentials) { %} data-xhr-fields='{"withCredentials":true}'{% } %}>
+                  <i class="glyphicon glyphicon-trash"></i>
+                  <span>Delete</span>
+              </button>
+              <input type="checkbox" name="delete" value="1" class="toggle">
+          {% } else { %}
+              <button class="btn btn-warning cancel">
+                  <i class="glyphicon glyphicon-ban-circle"></i>
+                  <span>Cancel</span>
+              </button>
+          {% } %}
+          </td>
+      </tr>
+      {% } %}
+  {% } %}
+  </script>
+{% endverbatim %}
+{% endblock %}
+{% block javascripts %}
+  {{ parent () }}
+  <script type="text/javascript">
+    var wysiwygColorUrl = "{{ asset('bundles/admin/assets/global/plugins/bootstrap-wysihtml5/wysiwyg-color.css') }}";
+  </script>
+  {% javascripts  
+    '@AdminBundle/Resources/public/assets/global/plugins/typeahead/typeahead.bundle.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/typeahead/handlebars.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/fancybox/source/jquery.fancybox.pack.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/lib/js/wysihtml5-0.3.0.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-wysihtml5-new/bootstrap-wysihtml5.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/vendor/jquery.ui.widget.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/vendor/tmpl.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/vendor/load-image.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/vendor/canvas-to-blob.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/blueimp-gallery/jquery.blueimp-gallery.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.iframe-transport.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.fileupload.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-process.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-image.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-audio.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-video.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-validate.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-file-upload/js/jquery.fileupload-ui.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/form-fileupload.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js'
+    '@AdminBundle/Resources/public/js/message.js'
+     debug=false
+  %}  
+  <script type="text/javascript" src="{{ asset_url }}"></script>
+  {% endjavascripts %}
+{% endblock %}

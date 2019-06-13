@@ -1,0 +1,226 @@
+<div class="form-body form-repeat">
+                <div id="notification">
+                </div>
+                <div class="mb-20"><strong>MOLPay (Malaysia)</strong></div>
+                <p>Payment method: <span class="uppercase bold">Visa or mastercard</span></p>
+                <div class="row mb-20">
+                    <form class="form-horizontal form-margin-share" id='form-1'>
+                        {{ form_widget(form_vm_mdr.module) }}
+                        {{ form_widget(form_vm_mdr.title) }}
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-md-6 control-label control-label-2lines valign-middle"><span>Bank MDR</span></label>
+                                <div class="col-md-6">
+                                    <div class="input-medium-wrapper">
+                                        <div class="input-medium-wrap">
+                                            <div class="input-group input-small">
+                                                {{ form_widget(form_vm_mdr.id)}}  
+                                                {{ form_widget(form_vm_mdr.fee,{'attr':{'class':'form-control on-digit-percent'} })}}         
+                                                <span class="input-group-addon">%</span>
+                                            </div>
+                                            <div class="current-data">
+                                                {% if vm_mdr > 0 %}
+                                                    <span id="" class="">Current value is {{ vm_mdr }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-6 control-label control-label-2lines valign-middle"><span>Percentage change will take effect on:</span></label>
+                                <div class="col-md-6">
+                                    <div class="input-group date date-picker" data-date-format="dd-mm-yyyy" data-date-start-date="+0d">
+                                        {{ form_widget(form_vm_mdr.date,{'attr':{'class':'form-control'} })}}
+                                        <span class="input-group-btn">
+                                            <button class="btn default" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+
+                                    <div class="btn-update-margin"><a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm">Update</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <form class="form-horizontal form-margin-share" id='form-2'>
+                        {{ form_widget(form_vm_gst.module) }}
+                        {{ form_widget(form_vm_gst.title) }}
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-md-6 control-label control-label-2lines valign-middle"><span>Bank GST</span></label>
+                                <div class="col-md-6">
+                                    <div class="input-medium-wrapper">
+                                        <div class="input-medium-wrap">
+                                            <div class="input-group input-small">
+                                                {{ form_widget(form_vm_gst.id)}}  
+                                                {{ form_widget(form_vm_gst.fee,{'attr':{'class':'form-control on-digit-percent'} })}}         
+                                                <span class="input-group-addon">%</span>
+                                            </div>
+                                            <div class="current-data">
+                                                {% if vm_gst > 0 %}
+                                                    <span id="" class="">Current value is {{ vm_gst }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-6 control-label control-label-2lines valign-middle"><span>Percentage change will take effect on:</span></label>
+                                <div class="col-md-6">
+                                    <div class="input-group date date-picker" data-date-format="dd-mm-yyyy" data-date-start-date="+0d">
+                                        {{ form_widget(form_vm_gst.date,{'attr':{'class':'form-control'} })}}   
+                                        <span class="input-group-btn">
+                                            <button class="btn default" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+
+                                    <div class="btn-update-margin"><a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm">Update</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>                    
+                </div> 
+            </div>
+
+            <div class="form-body form-repeat">
+                <p class="mt-20">Payment method: <span class="uppercase bold">FPX/MyClear</span></p>
+                <div class="row mb-20">
+
+                    <form class="form-horizontal form-margin-share" id='form-3'>
+                        {{ form_widget(form_rf_fix.module) }}
+                        {{ form_widget(form_rf_fix.title) }}
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-md-6 control-label control-label-2lines valign-middle"><span>Fixed</span></label>
+                                <div class="col-md-6">
+                                    <div class="input-medium-wrapper">
+                                        <div class="input-medium-wrap">
+                                            <div class="input-group input-small">
+                                                <span class="input-group-addon">{{ getCurrencyCode() }}</span>
+                                                {{ form_widget(form_rf_fix.id)}} 
+                                                {{ form_widget(form_rf_fix.fee,{'attr':{'class':'form-control on-digit-percent'} })}} 
+                                            </div>
+                                            <div class="current-data">
+                                                {% if rf_fix > 0 %}
+                                                    <span id="" class="">Current value is {{ rf_fix }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-6 control-label control-label-2lines valign-middle"><span>Percentage change will take effect on:</span></label>
+                                <div class="col-md-6">
+                                    <div class="input-group date date-picker" data-date-format="dd-mm-yyyy" data-date-start-date="+0d">
+                                        {{ form_widget(form_rf_fix.date,{'attr':{'class':'form-control'} })}} 
+                                        <span class="input-group-btn">
+                                            <button class="btn default" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+
+                                    <div class="btn-update-margin"><a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm">Update</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <form class="form-horizontal form-margin-share" id='form-4'>
+                        {{ form_widget(form_rf_gst.module) }}
+                        {{ form_widget(form_rf_gst.title) }}
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-md-6 control-label control-label-2lines valign-middle"><span>GST on Fixed Fee</span></label>
+                                <div class="col-md-6">
+                                    <div class="input-medium-wrapper">
+                                        <div class="input-medium-wrap">
+                                            <div class="input-group input-small">
+                                                {{ form_widget(form_rf_gst.id)}} 
+                                                {{ form_widget(form_rf_gst.fee,{'attr':{'class':'form-control on-digit-percent'} })}} 
+                                                <span class="input-group-addon">%</span>
+                                            </div>
+                                            <div class="current-data">
+                                                {% if rf_gst > 0 %}
+                                                    <span id="" class="">Current value is {{ rf_gst }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-6 control-label control-label-2lines valign-middle"><span>Percentage change will take effect on:</span></label>
+                                <div class="col-md-6">
+                                    <div class="input-group date date-picker" data-date-format="dd-mm-yyyy" data-date-start-date="+0d">
+                                        {{ form_widget(form_rf_gst.date,{'attr':{'class':'form-control'} })}} 
+                                        <span class="input-group-btn">
+                                            <button class="btn default" type="button">
+                                                <i class="fa fa-calendar"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+
+                                    <div class="btn-update-margin"><a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm">Update</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div> 
+            </div>
+            <div class="form-body form-repeat">
+                <p class="mt-20 uppercase bold">Refund charge</p>
+                <div class="row mb-20">
+
+                    <form class="form-horizontal form-margin-share" id='form-9'>
+                        {{ form_widget(form_molpay.module) }}
+                        {{ form_widget(form_molpay.title) }}
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="col-md-6 control-label control-label-2lines valign-middle"><span>Fixed</span></label>
+                                <div class="col-md-6">
+                                    <div class="input-medium-wrapper">
+                                        <div class="input-medium-wrap">
+                                            <div class="input-group input-small">
+                                                <span class="input-group-addon">{{ getCurrencyCode() }}</span>
+                                                {{ form_widget(form_molpay.id)}}
+                                                {{ form_widget(form_molpay.fee,{'attr':{'class':'form-control on-digit-percent'} })}}
+                                            </div>
+                                            <div class="current-data">
+                                                {% if molpay_charge > 0 %}
+                                                    <span id="" class="">Current value is {{ molpay_charge }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-6 control-label control-label-2lines valign-middle"><span>Percentage change will take effect on:</span></label>
+                                <div class="col-md-6">
+                                    <div class="input-group date date-picker" data-date-format="dd-mm-yyyy" data-date-start-date="+0d">
+                                        {{ form_widget(form_molpay.date,{'attr':{'class':'form-control'} })}}
+                                        <span class="input-group-btn">
+                                                <button class="btn default" type="button">
+                                                    <i class="fa fa-calendar"></i>
+                                                </button>
+                                            </span>
+                                    </div>
+
+                                    <div class="btn-update-margin"><a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm">Update</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>

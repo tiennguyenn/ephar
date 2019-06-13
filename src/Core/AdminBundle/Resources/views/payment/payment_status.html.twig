@@ -1,0 +1,160 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {{ parent () }}
+    {% stylesheets
+    'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+    'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+    'bundles/admin/assets/global/plugins/ladda/ladda-themeless.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min.css'
+    'bundles/admin/assets/global/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css'
+    'bundles/admin/assets/global/plugins/clockface/css/clockface.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+    'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+    'bundles/admin/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.css'
+    filter='cssrewrite'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block pageTitle %}
+    <h1>Update Payment Status</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+    <li> <span class="active">Update Payment Status</span> </li>
+{% endblock %}
+{% block content %}
+    <div class="portlet light">
+        <div class="portlet-body">
+            <div class="tabbable-line blue">
+                <ul class="nav nav-tabs ">
+                    <li{% if userType == 1 %} class="active"{% endif %} ><a href="{{ path('payment_status', {userType: 1}) }}">Doctor</a></li>
+                    <li{% if userType == 2 %} class="active"{% endif %}><a href="{{ path('payment_status', {userType: 2}) }}">Agent</a></li>
+                    <li{% if userType == 3 %} class="active"{% endif %}><a href="{{ path('payment_status', {userType: 3}) }}">Pharmacy</a></li>
+                    <li{% if userType == 4 %} class="active"{% endif %}><a href="{{ path('payment_status', {userType: 4}) }}">Delivery</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="dataTables_wrapper no-footer">
+                        <form id="frm-ps-filter">
+                            {% if userType == 3 %}
+                                <div class="row show-grid mb-grid">
+                                    <div class="col-lg-8 col-md-9">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12">
+                                                <span class="filter-label">Filter by Week </span>
+                                                <select name="ps_filter[cycle]" id="ps_filter_cycle" class="form-control input-sm input-inline">
+                                                    {% for item in year_weeks() %}
+                                                        {% set w_cycle = item.cycle|split('.') %}
+                                                        <option value="{{ item.cycle }}">Week {{ w_cycle[1] }}: {{ item.start|date("M d") }} – {{ item.end|date("M d Y") }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% elseif userType == 4 %}
+                                <div class="row show-grid mb-grid">
+                                    <div class="col-lg-8 col-md-9">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12">
+                                                <span class="filter-label">Filter by Week </span>
+                                                <select name="ps_filter[cycle]" id="ps_filter_cycle" class="form-control input-sm input-inline">
+                                                    {% for item in year_weeks() %}
+                                                        {% set w_cycle = item.cycle|split('.') %}
+                                                        <option value="{{ item.cycle }}">Week {{ w_cycle[1] }}: {{ item.start|date("M d") }} – {{ item.end|date("M d Y") }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="row show-grid mb-grid">
+                                    <div class="col-lg-8 col-md-9">
+                                        <div class="row">
+                                            <div class="col-lg-5 col-md-6">
+                                                <div class="input-icon right"> <i class="icon-magnifier btn-ps-search"></i>
+                                                    <input type="text" class="form-control on-suggestion" name="ps_filter[term]" id="ps_filter_term" placeholder="Search {{ user_type_label(userType)|capitalize  }} Code/Name">
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 col-md-6">
+                                                <div class="input-group date bs-datetime ps-filter-date-picker">
+                                                    <input type="text" size="16" class="form-control readonly-normal" name="ps_filter[date]" id="ps_filter_date">
+                                                      <span class="input-group-addon">
+                                                        <button class="btn default date-set mr-0" type="button">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </button>
+                                                      </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 col-md-3">
+                                        <div class="text-right" id="sample_1_length">
+                                            <label>
+                                            <select name="ps_filter[perPage]" id="ps_filter_per_page" aria-controls="sample_1" class="form-control input-sm input-xsmall input-inline">
+                                                <option value="10">10</option>
+                                                <option value="20">20</option>
+                                                <option value="50">50</option>
+                                            </select>
+                                            entries</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row show-grid module-filter">
+                                    <div class="col-lg-6 col-md-9">
+                                        <div class="mod-filter">
+                                            <span class="filter-label">Filter by status</span>
+                                            <div class="entry filter-changing primary" id="ps_filter_status">
+                                                <a href="javascript:void(0);" class="active" data-value="all">All</a>
+                                                <a href="javascript:void(0);" data-value="1">Paid</a>
+                                                <a href="javascript:void(0);" data-value="0">Unpaid</a>
+                                                <input type="hidden" name="ps_filter[status]" value="all">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <div class="content-table ps-container">
+                                {{ render(controller( 'AdminBundle:Payment:ajaxPaymentStatus', {userType: userType} )) }}
+                            </div>
+                            <input type="hidden" name="ps_filter[sorting]" value="">
+                            <input type="hidden" name="ps_filter[userType]" value="{{ userType }}">
+                            <input type="hidden" id="url_payment_status_filter" value="{{ path('ajax_payment_status') }}">
+                            <input type="hidden" id="url_payment_status_detail" value="{{ path('payment_status_detail') }}">
+                            <input type="hidden" id="url_payment_status_update" value="{{ path('payment_status_update') }}">
+                            <input type="hidden" id="url_payment_status_suggestion" value="{{ path('payment_status_suggestion') }}">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+{% include '@Admin/payment/modal.html.twig' with {modalType: 'paymentStatus'} %}
+{% endblock %}
+{% block javascripts %}
+{{ parent() }}
+{% javascripts
+    '@AdminBundle/Resources/public/assets/global/plugins/typeahead/typeahead.bundle.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/typeahead/handlebars.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/additional-methods.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/ladda/spin.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/ladda/ladda.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/moment.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js'
+    '@AdminBundle/Resources/public/assets/pages/scripts/components-date-time-pickers.min.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/clockface/js/clockface.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+    '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js'
+    '@AdminBundle/Resources/public/js/payment.js' %}
+    <script src="{{ asset_url }}"></script>
+{% endjavascripts %}
+{% endblock %}

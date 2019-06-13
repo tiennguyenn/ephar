@@ -1,0 +1,57 @@
+<table class="table table-hover table-light_">
+    <thead>
+        <tr class="uppercase">
+            <th style="width: 20%">Date</th>
+            <th style="width: 20%">User</th>
+            <th>Changes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.createdOn|date('d M y') }}</td>
+            <td>{{ log.createdBy }}</td>
+            {% if log.title == 'new_patient_created' %}
+                <td><strong>{{ log.title|replace({'_': ' '})|title }}</strong></td>
+            {% else %}
+                <td>{{ item_log(log, 'title', 'Patient Title')|raw }}
+                    {{ item_log(log, 'firstName', 'Patient First Name')|raw }}
+                    {{ item_log(log, 'lastName', 'Patient Last Name')|raw }}
+                    {{ item_log(log, 'gender', 'Patient Gender')|raw }}
+                    {{ item_log(log, 'isAssessed', 'Patient Assessed')|raw }}
+                    {{ item_log(log, 'isEnrolled', 'Patient Enrolled')|raw }}
+                    {{ item_log(log, 'emailAddress', 'Patient Email')|raw }}
+                    {{ item_log(log, 'phones', 'Patient Phone')|raw }}
+                    {{ item_log(log, 'dateOfBirth', 'Patient Date of Birth')|raw }}
+                    {{ item_log(log, 'primaryResidenceCountry', 'Country of Residence / Delivery')|raw }}
+                    {{ item_log(log, 'passportNo', 'Passport No. or Identification No.')|raw }}
+                    {{ item_log(log, 'issueCountry', 'Country of Issue')|raw }}
+                    {{ item_log(log, 'nationality', 'Nationality')|raw }}
+                    {{ item_log(log, 'taxId', 'Tax ID')|raw }}
+                    {{ item_log(log, 'allergies', 'Patient Allergies')|raw }}
+                    {{ item_log(log, 'diagnosis', 'Patient Diagnosis')|raw }}
+                    {% if log.oldValue.useCaregiver is defined and log.oldValue.useCaregiver != log.newValue.useCaregiver %}
+                        Status Patient a Caregiver is changed
+                        <br />Old Value: {% if log.oldValue.useCaregiver == 1 %}YES{% else %}NO{% endif %}
+                        <br />New Value: {% if log.newValue.useCaregiver == 1 %}YES{% else %}NO{% endif %}
+                        <br /><br />
+                    {% endif %}
+
+                    {% if log.oldValue.useCaregiver == 1 or log.newValue.useCaregiver == 1 %}
+                        {{ item_log(log, 'isSendMailToCaregiver', 'Send Mail To Caregiver')|raw }}
+                        {{ item_log(log, 'caregiverRelationshipType', 'Caregiver Relationship')|raw }}
+                        {{ item_log(log, 'caregiverTitle', 'Caregiver Title')|raw }}
+                        {{ item_log(log, 'caregiverFirstName', 'Caregiver First Name')|raw }}
+                        {{ item_log(log, 'caregiverLastName', 'Caregiver Last Name')|raw }}
+                        {{ item_log(log, 'caregiverEmailAddress', 'Caregiver Email')|raw }}
+                        {{ item_log(log, 'caregiverPhone', 'Caregiver Phone')|raw }}
+                    {% endif %}
+                </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<input type='hidden' id='print_log_url' value="{{ printUrl|default('') }}" />
+<input type='hidden' id='breadcrumb_title' value="{{ breadcrumbTitle|default('') }}" />
+<input type='hidden' id='entity_id' value="{{ entityId|default('') }}" />

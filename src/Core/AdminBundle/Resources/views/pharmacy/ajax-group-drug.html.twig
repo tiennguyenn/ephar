@@ -1,0 +1,46 @@
+{% set arr_sorting = sorting|split('_') %}
+<div class="table-scrollable">
+  <table class="table table-striped table-bordered table-hover dataTable no-footer">
+    <thead>
+      <tr role="row">       
+        <th class="sorting {% if 'name' in arr_sorting|default([]) %}sorting_{{ arr_sorting[1]|default('') }}{% endif %}" data-colname="name"> Group Name </th>
+        <th class="sorting {% if 'description' in arr_sorting|default([]) %}sorting_{{ arr_sorting[1]|default('') }}{% endif %}" data-colname="description"> Group Description </th>
+        <th class="sorting {% if 'localPricePercentage' in arr_sorting|default([]) %}sorting_{{ arr_sorting[1]|default('') }}{% endif %}" data-colname="localPricePercentage">Local Patients Selling Price Markup</th>
+        <th class="sorting {% if 'overseasPricePercentage' in arr_sorting|default([]) %}sorting_{{ arr_sorting[1]|default('') }}{% endif %}" data-colname="overseasPricePercentage">Overseas Patients Selling Price Markup</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% if data %}
+        {% for item in data %}
+          <tr role="row" data-id="{{ item.id }}">
+            <td>{{ item.name }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.localPricePercentage }}%</td>
+            <td>{{ item.overseasPricePercentage }}%</td>
+            <td>
+              <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs btn-modal-gd-edit" data-gd="1">Edit</a> 
+              <a href="{{ path('pharmacy_products', {'id': item.id}) }}" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-xs">View Drugs</a>
+              {% if item.id > 1 %}<a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase btn-danger btn-xs btn-modal-gd-delete">Delete</a>{% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+        {% endif %}
+    </tbody>
+  </table>
+</div>
+{% if data|length > 0 %}
+{% set fromRecord = currentPage > 0? currentPage*perPage: currentPage %}
+{% set toRecored = fromRecord + perPage %}
+<div class="row">
+    <div class="col-md-5 col-sm-12">
+        <div class="dataTables_info" role="status" aria-live="polite">Showing {{ fromRecord + 1 }} to {{ toRecored < totalResult? toRecored: totalResult }} of {{ totalResult }} entries</div>
+    </div>
+    <div class="col-md-7 col-sm-12">
+        <div class="dataTables_paginate paging_bootstrap_number ajax_paging">
+            {{ paginationHTML|raw }}
+        </div>
+    </div>
+</div>
+<input type="hidden" name="p_filter[page]" value="{{ currentPage }}">
+{% endif %}

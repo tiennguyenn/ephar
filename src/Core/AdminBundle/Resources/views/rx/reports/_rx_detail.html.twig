@@ -1,0 +1,312 @@
+{% if data is not empty %}
+  <tr class="rowItemExpand sub-table rx-transaction-table">
+      <td colspan="8">
+          <div class="rx-transaction-info">
+              <dl class="list-item list-item-transaction">
+                  <dt>Invoice No:</dt>
+                  <dd>{{ data.info.invoiceNo }}</dd>
+              </dl>
+              <dl class="list-item list-item-transaction">
+                  <dt>Payment Method:</dt>
+                  <dd>{% if data.info.payMethod == 'CC' %}CC{% else %}FPX{% endif %}</dd>
+              </dl>
+              <dl class="list-item list-item-transaction">
+                  <dt>Destination:</dt>
+                  <dd>{{ data.info.destination }}</dd>
+              </dl>
+              <dl class="list-item list-item-transaction">
+                  <dt>Delivery Status:</dt>
+                  <dd>{{ data.info.status }}</dd>
+              </dl>
+              {% if refund is defined and refund %}
+              <dl class="list-item list-item-transaction">
+                  <dt>Payment Status:</dt>
+                  <dd>{{ data.info.paymentResult ? 'Success' : 'Failed' }}</dd>
+              </dl>
+              {% endif %}
+          </div>
+          {% if data.info.status not in ['Dead', 'Failed'] %}
+              <table class="table table-striped table-bordered table-hover dataTable">
+                  <thead>
+                  <tr>
+                      <th width="22%"></th>
+                      <th width="13%" class="text-right">Breakdown of Invoice Charged to Patient (SGD)</th>
+                      <th width="10%" class="text-right">Primary Agent Fees (SGD)</th>
+                      <th width="10%" class="text-right">Secondary Agent Fees (SGD)</th>
+                      <th width="10%" class="text-right">Doctor Fees (SGD)</th>
+                      <th width="10%" class="text-right">Pharmacy Costs (SGD)</th>
+                      <th width="10%" class="text-right">Shipping Costs (SGD)</th>
+                      <th width="10%" class="text-right">GMEDES Fees (SGD)</th>
+                      <th width="10%" class="text-right">Payment Gateway Charges</th>
+                  </tr>
+              </thead>
+              <tbody>
+                {% set totalPharmacyCost = 0 %}
+                {% set totalPGC = 0 %}
+                {% set totalGmedesFee = 0 %}
+                {% set totalDFee = 0 %}
+                {% set totalShipping = 0 %}
+                {% set totalPGC2 = 0 %}
+                {% set total3rdFee = 0 %}
+                {% for rxLine in data.rxLines %}
+                    {% set totalPharmacyCost = totalPharmacyCost + (rxLine.quantity * rxLine.originPrice) %}
+                      {% if rxLine.lineType == 1 %}
+                      <tr>
+                        <td class="pl-40">{{ rxLine.name }}</td>
+                        <td class="text-right">{% if rxLine.listPrice is not empty %}{{ rxLine.listPrice|number_format(2, '.', ',') }} {% endif %}</td>
+                        {% if platform_share_fee %}
+                        <td class="text-right"></td>
+                        {% else %}
+                        <td class="text-right">{% if rxLine.agentMedicineFee is not empty %}{{ rxLine.agentMedicineFee|number_format(2, '.', ',') }}{% endif %}</td>
+                        {% endif %}
+                          <td class="text-right"></td>
+                          <td class="text-right">{% if rxLine.doctorMedicineFee  is not empty %}{{ rxLine.doctorMedicineFee|number_format(2, '.', ',') }}{% endif %}</td>
+                          <td class="text-right">{{ (rxLine.quantity * rxLine.originPrice)|number_format(2, '.', ',') }}</td>
+                          <td class="text-right"></td>
+                          <td class="text-right">{{ rxLine.platformMedicineFee is not empty ? rxLine.platformMedicineFee|number_format(2, '.', ',') : "" }}</td>
+                          <td class="text-right"></td></tr>
+                        {% set totalGmedesFee = totalGmedesFee + rxLine.platformMedicineFee %}
+                        {% set totalDFee = totalDFee + rxLine.doctorMedicineFee %}
+                      {% else %}
+                      <tr>
+                        <td class="pl-40">Doctor Fees - Prescribing Fee</td>
+                        {% if platform_share_fee %}
+                        <td class="text-right">{{ rxLine.doctorServiceFee|number_format(2, '.', ',') }}</td>
+                        <td class="text-right"></td>
+                        {% else %}
+                        <td class="text-right">{{ rxLine.listPrice  is not empty ? rxLine.listPrice|number_format(2, '.', ',') : "" }}</td>
+                        <td class="text-right">{{ rxLine.agentServiceFee is not empty ? rxLine.agentServiceFee|number_format(2, '.', ',') : "" }}</td>
+                        {% endif %}
+                        <td class="text-right"></td>
+                        <td class="text-right">{{ rxLine.doctorServiceFee is not empty ? rxLine.doctorServiceFee|number_format(2, '.', ',') : "" }}</td>
+                        <td class="text-right"></td>
+                        <td class="text-right"></td>
+                        {% if platform_share_fee %}
+                        <td class="text-right"></td>
+                        {% else %}
+                        <td class="text-right">{{ rxLine.platformServiceFee is not empty ? rxLine.platformServiceFee|number_format(2, '.', ',') : "" }}</td>
+                        {% endif %}
+                        <td class="text-right"></td></tr>
+                        {% set totalGmedesFee = totalGmedesFee + rxLine.platformServiceFee %}
+                        {% set totalDFee = totalDFee + rxLine.doctorServiceFee %}
+                        {% if platform_share_fee %}
+                        <tr>
+                        <td class="pl-40">GMEDES Admin Service Fee Per Prescription</td>
+                          <td class="text-right">{{ (rxLine.agentServiceFee + rxLine.platformServiceFee)|number_format(2, '.', ',') }}</td>
+                          <td class="text-right">{{ rxLine.agentServiceFee is not empty ? rxLine.agentServiceFee|number_format(2, '.', ',') : "" }}</td>
+                          <td class="text-right">{{ data.info.agent3paServiceFee is not empty ? data.info.agent3paServiceFee|number_format(2, '.', ',') : "" }}</td>
+                          <td class="text-right"></td>
+                          <td class="text-right"></td>
+                          <td class="text-right"></td>
+                          <td class="text-right">{{ data.info.rxPSF is not empty ? data.info.rxPSF|number_format(2, '.', ',') : "" }}</td>
+                          <td class="text-right"></td>
+                        </tr>
+                            {% set totalGmedesFee = totalGmedesFee - data.info.agent3paServiceFee %}
+                            {% set total3rdFee = total3rdFee + data.info.agent3paServiceFee %}
+                        {% endif %}
+                      {% endif %}
+                  {% endfor %}
+                  {% set totalDoctorFee = data.info.shippingFee[0] - data.info.shippingFee[4] %}
+                  {% set totalGmedesFee = totalGmedesFee + totalDoctorFee %}
+                  {% set totalGmedesFee = totalGmedesFee + data.info.customsClearanceAdminFee[5] %}
+                  {% set totalDFee = totalDFee + data.info.gst[2] + data.info.customsTax[2] + data.info.customsClearanceAdminFee[2] %}
+                  {% set totalShipping = totalShipping + data.info.shippingFee[4] + data.info.gst[4] + data.info.customsTax[4] + data.info.sgigPermitFee[4] %}
+                  <tr>
+                      <td class="pl-40">Shipping and Handling</td>
+                      <td class="text-right">{{ data.info.shippingFee[0] is not empty ? data.info.shippingFee[0]|number_format(2, '.', ',') : "" }}</td>
+                      <td class="text-right"></td>
+                      <td class="text-right"></td>
+                      <td class="text-right"></td>
+                      <td class="text-right"></td>
+                      <td class="text-right">{{ data.info.shippingFee[4] is not empty ? data.info.shippingFee[4]|number_format(2, '.', ',') : "" }}</td>
+                      <td class="text-right">{{ totalDoctorFee is not empty ? totalDoctorFee|number_format(2, '.', ',') : "" }}</td>
+                      <td class="text-right"></td>
+                  </tr>
+                  <tr>
+                      <td class="pl-40">Patient GST</td>
+                      <td class="text-right">{{ data.info.gst[0] is not empty ? data.info.gst[0]|number_format(2, '.', ',') : "" }}</td>
+                      <td class="text-right"></td>
+                      <td class="text-right"></td>
+                      <td class="text-right">{{ data.info.gst[2] is not empty ? data.info.gst[2]|number_format(2, '.', ',') : "" }}</td>
+                      <td class="text-right"></td>
+                      <td class="text-right">{{ data.info.gst[4] is not empty ? data.info.gst[4]|number_format(2, '.', ',') : "" }}</td>
+                      <td class="text-right"></td>
+                      <td class="text-right"></td>
+                  </tr>
+                  {% if data.info.taxIncome is not null or data.info.taxIncomeWithoutTax is not null %}
+                    <tr>
+                        <td class="pl-40">BM - Import Duty</td>
+                        <td class="text-right">{{ data.info.importDuty }}</td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right"></td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right">0.00</td>
+                    </tr>
+                    <tr>
+                        <td class="pl-40">PPN - VAT</td>
+                        <td class="text-right">{{ data.info.taxVat }}</td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right"></td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right">0.00</td>
+                    </tr>
+                    {% if data.info.taxIncome is not null %}
+                      {% set label = 'PPH1 - Tax on Import (for individuals with TAX ID)' %}
+                      {% set pph = data.info.taxIncome %}
+                    {% else %}
+                      {% set label = 'PPH2 - Tax on Import (for individuals without TAX ID)' %}
+                        {% set pph = data.info.taxIncomeWithoutTax %}
+                    {% endif %}
+                    <tr>
+                        <td class="pl-40">{{ label }}</td>
+                        <td class="text-right">{{ pph }}</td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right"></td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right">0.00</td>
+                        <td class="text-right">0.00</td>
+                    </tr>
+                {% endif %}
+
+                  {#<tr>
+                      <td class="pl-40">Import Tax / VAT - {{ data.info.countryCode|country_code_format }}</td>
+                      <td class="text-right">{{ data.info.customsTax[0] is not empty ? data.info.customsTax[0]|number_format(2, '.', ',') : "" }}</td>
+                      <td class="text-right"></td>
+                      <td class="text-right">{{ data.info.customsTax[2] is not empty ? data.info.customsTax[2]|number_format(2, '.', ',') : "" }}</td>
+                      <td class="text-right"></td>
+                      <td class="text-right">{{ data.info.customsTax[4] is not empty ? data.info.customsTax[4]|number_format(2, '.', ',') : "" }}</td>
+                      <td class="text-right"></td>
+                      <td class="text-right"></td>
+                  </tr>#}
+                  <tr>
+                      <td class="pl-40">Custom Clearance Admin Fee</td>
+                      <td class="text-right">{{ data.info.customsClearanceAdminFee[0] is not empty ? data.info.customsClearanceAdminFee[0]|number_format(2, '.', ',') : "" }}</td>
+                      <td class="text-right"></td>
+                      <td class="text-right"></td>
+                      <td class="text-right">{{ data.info.customsClearanceAdminFee[2] is not empty ? data.info.customsClearanceAdminFee[2]|number_format(2, '.', ',') : "" }}</td>
+                      <td class="text-right"></td>
+                      <td class="text-right"></td>
+                      <td class="text-right">{{ data.info.customsClearanceAdminFee[5]  is not empty ? data.info.customsClearanceAdminFee[5]|number_format(2, '.', ',') : "" }}</td>
+                      <td class="text-right"></td>
+                  </tr>
+                  <tr>
+                      <td class="pl-40">SG IG Permit Fee</td>
+                      <td class="text-right">{% if data.info.sgigPermitFee[0] > 0 %}{{ data.info.sgigPermitFee[0]|number_format(2, '.', ',') }}{% endif %}</td>
+                      <td class="text-right"></td>
+                      <td class="text-right"></td>
+                      <td class="text-right"></td>
+                      <td class="text-right"></td>
+                      <td class="text-right">{% if data.info.sgigPermitFee[4] > 0 %}{{ data.info.sgigPermitFee[4]|number_format(2, '.', ',') }}{% endif %}</td>
+                      <td class="text-right"></td>
+                      <td class="text-right"></td>
+                  </tr>
+                  {% if data.info.payMethod == constant('UtilBundle\\Utility\\Constant::PAY_METHOD_VISA_MASTER') %}
+                      <tr>
+                          <td class="pl-40">Payment Gateway Variable</td>
+                          <td class="text-right"></td>
+                          <td class="text-right"></td>
+                          <td class="text-right"></td>
+                          <td class="text-right">- {{ data.info.paymentGatewayFeeVariable[2] is not empty ? data.info.paymentGatewayFeeVariable[2]|number_format(2, '.', ',') : "" }}</td>
+                          <td class="text-right"></td>
+                          <td class="text-right"></td>
+                          <td class="text-right"></td>
+                          <td class="text-right">{{ data.info.paymentGatewayFeeVariable[5] is not empty ? data.info.paymentGatewayFeeVariable[5]|number_format(2, '.', ',') : "" }}</td>
+                      </tr>
+                      <tr>
+                          {% if data.info.paymentGate == constant('UtilBundle\\Utility\\Constant::PAYMENT_GATE_REDDOT') %} <!-- REDDOT -->
+                              <td class="pl-40">Payment Gateway (Fixed Fee)</td>
+                              <td class="text-right"></td>
+                              <td class="text-right"></td>
+                              <td class="text-right"></td>
+                              <td class="text-right">{% if data.info.paymentGatewayFeeFixed[2] > 0 %}- {{ data.info.paymentGatewayFeeFixed[2]|number_format(2, '.', ',') }}{% endif %}</td>
+                              <td class="text-right"></td>
+                              <td class="text-right"></td>
+                              <td class="text-right"></td>
+                              <td class="text-right">{% if data.info.paymentGatewayFeeFixed[5] > 0 %}{{ data.info.paymentGatewayFeeFixed[5]|number_format(2, '.', ',') }}{% endif %}
+                              </td>
+                              {% set totalPGC = data.info.paymentGatewayFeeVariable[2] + data.info.paymentGatewayFeeFixed[2] %}
+                              {% set totalPGC2 = data.info.paymentGatewayFeeVariable[5] + data.info.paymentGatewayFeeFixed[5] %}
+                          {% else %}
+                              <td class="pl-40">Payment Gateway Fixed</td>
+                              <td class="text-right"></td>
+                              <td class="text-right"></td>
+                              <td class="text-right"></td>
+                              <td class="text-right">{% if data.info.paymentGatewayFeeGST[2] > 0 %}- {{ data.info.paymentGatewayFeeGST[2]|number_format(2, '.', ',') }}{% endif %}</td>
+                              <td class="text-right"></td>
+                              <td class="text-right"></td>
+                              <td class="text-right"></td>
+                              <td class="text-right">{% if data.info.paymentGatewayFeeGST[5] > 0 %}{{ data.info.paymentGatewayFeeGST[5]|number_format(2, '.', ',') }}{% endif %}
+                              </td>
+                              {% set totalPGC = data.info.paymentGatewayFeeMDR[2] + data.info.paymentGatewayFeeGST[2] %}
+                              {% set totalPGC2 = totalPGC %}
+                          {% endif %}
+                      </tr>
+
+                  {% elseif data.info.payMethod == 'REVPAY-FPX' %}
+                    <tr>
+                        <td class="pl-40">Payment Gateway Fee (Fixed - FPX)</td>
+                        <td class="text-right"></td>
+                        <td class="text-right"></td>
+                        <td class="text-right"></td>
+                        <td class="text-right">- {{ data.info.paymentGatewayFeeFixed[2]|number_format(2, '.', ',') }}</td>
+                        <td class="text-right"></td>
+                        <td class="text-right"></td>
+                        <td class="text-right"></td>
+                        <td class="text-right">{{ data.info.paymentGatewayFeeFixed[5]|number_format(2, '.', ',') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="pl-40">Payment Gateway Fee (Fixed - GST)</td>
+                        <td class="text-right"></td>
+                        <td class="text-right"></td>
+                        <td class="text-right"></td>
+                        <td class="text-right">- {{ data.info.paymentGatewayFeeFixedGST[2]|number_format(2, '.', ',') }}</td>
+                        <td class="text-right"></td>
+                        <td class="text-right"></td>
+                        <td class="text-right"></td>
+                        <td class="text-right">{{ data.info.paymentGatewayFeeFixedGST[5]|number_format(2, '.', ',') }}</td>
+                    </tr>
+                    {% set totalPGC = data.info.paymentGatewayFeeFixed[5] + data.info.paymentGatewayFeeFixedGST[5] %}
+                    {% set totalPGC2 = totalPGC %}
+                  {% endif %}
+                  {% if platform_share_fee %}
+                  <tr>
+                      <td class="pl-40">Agent's Marketing Service</td>
+                      <td class="text-right"></td>
+                      <td class="text-right">{{ data.info.rxAMF|number_format(2) }}</td>
+                      <td class="text-right">{{ data.info.agent3paMedicineFee|number_format(2) }}</td>
+                      <td class="text-right"></td>
+                      <td class="text-right"></td>
+                      <td class="text-right"></td>
+                      <td class="text-right">{% if data.info.rxAMF + data.info.agent3paMedicineFee %}-{% endif %}{{ (data.info.rxAMF + data.info.agent3paMedicineFee)|number_format(2) }}</td>
+                      <td class="text-right"></td>
+                  </tr>
+                  {% set totalGmedesFee = totalGmedesFee - data.info.rxAMF - data.info.agent3paMedicineFee %}
+                      {% set total3rdFee = total3rdFee + data.info.agent3paMedicineFee %}
+                  {% endif %}
+                  </tbody>
+                  <tfoot>
+                  <tr>
+                      <td class="pl-40"><strong>Sub total:</strong></td>
+                      <td class="text-right">{{ data.info.subTotal[0]|number_format(2, '.', ',') }}</td>
+                      <td class="text-right">{{ data.info.subTotal[1]|number_format(2, '.', ',') }}</td>
+                      <td class="text-right">{{ total3rdFee|number_format(2, '.', ',') }}</td>
+                      <td class="text-right">{{ (totalDFee - totalPGC)|number_format(2, '.', ',') }}</td>
+                      <td class="text-right">{{ totalPharmacyCost|number_format(2, '.', ',') }}</td>
+                      <td class="text-right">{{ totalShipping|number_format(2, '.', ',') }}</td>
+                      <td class="text-right">{{ totalGmedesFee|number_format(2, '.', ',') }}</td>
+                      <td class="text-right">{{ totalPGC2|number_format(2, '.', ',') }}</td>
+                  </tr>
+                  </tfoot>
+              </table>
+          {% endif %}
+      </td>
+  </tr>
+{% endif %}

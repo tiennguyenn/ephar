@@ -1,0 +1,140 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block body %}
+
+{% include '@Admin/header.html.twig' %}
+
+<div class="page-container">
+  {% include '@Admin/left-menu.html.twig' with { 'mainMenu': 'agents', 'subMenu': 'list-agents' } %}
+  <div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+      <!-- BEGIN PAGE HEAD-->
+      <div class="page-head">
+        <!-- BEGIN PAGE TITLE -->
+        <div class="page-title">
+          <h1>Agents</h1>
+        </div>
+        <!-- END PAGE TITLE -->
+      </div>
+      <!-- END PAGE HEAD--> 
+      <!-- BEGIN PAGE BREADCRUMB -->
+      <ul class="page-breadcrumb breadcrumb">
+        <li> <a href="index.html">Home</a> <i class="fa fa-circle"></i> </li>
+        <li> <span class="active">Agents Lists</span> </li>
+      </ul>
+      <!-- END PAGE BREADCRUMB -->
+
+      <!-- BEGIN PAGE BASE CONTENT -->
+      <div class="row">
+        <div class="col-md-12"> 
+          <!-- Begin: life time stats -->
+          <div class="portlet light">
+            <div class="portlet-title">
+              <div class="caption"> <span class="caption-subject font-dark sbold uppercase">Agents Lists</span> </div>
+            </div>
+            <div class="portlet-body">
+              <div id="sample_1_wrapper" class="dataTables_wrapper no-footer">
+                <div class="row">
+                  <div class="col-md-4 col-sm-12">
+                    <div id="sample_1_filter">
+                      <div class="input-icon right"> <i class="icon-magnifier"></i>
+                        <input type="text" class="form-control" placeholder="Search Agents Code / Name">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-8 col-sm-12">
+                    <div class="text-right" id="sample_1_length">
+                      <label>
+                        <select name="sample_1_length" aria-controls="sample_1" class="form-control input-sm input-xsmall input-inline">
+                          <option value="10">10</option>
+                          <option value="15">15</option>
+                          <option value="20">20</option>
+                          <option value="-1">All</option>
+                        </select>
+                        entries</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="advanced_search"></div>
+                  </div>
+                </div>
+                <div class="table-scrollable">
+                  <table class="table table-striped table-bordered table-hover dataTable no-footer dtr-inline" id="sample_1" role="grid" aria-describedby="sample_1_info" style="width: 1562px;">
+                    <thead>
+                      <tr role="row">
+                        <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="" style="width: 63px;">
+                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                <input type="checkbox" class="group-checkable" data-set="#sample_1 .checkboxes">
+                                <span></span>
+                            </label>
+                        </th>
+                        <th class="sorting_asc" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="0"aria-sort="ascending" aria-label=" Rendering engine : activate to sort column descending"> Code </th>
+                        <th class="sorting" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="1" aria-label=" Browser : activate to sort column ascending"> Agent Name </th>
+                        <th class="sorting" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="2" aria-label=" Platform(s) : activate to sort column ascending"> Register Date </th>
+                        <th class="sorting" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="3" aria-label=" Engine version : activate to sort column ascending"> Email Address </th>
+                        <th class="sorting" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="4" aria-label=" CSS grade : activate to sort column ascending"> Phone </th>
+                        <th class="sorting" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="5" aria-label=" CSS grade : activate to sort column ascending"> Country </th>
+                        <th class="sorting" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="6" aria-label=" CSS grade : activate to sort column ascending"> State </th>
+                        <th class="sorting" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="7" aria-label=" CSS grade : activate to sort column ascending"> Status </th>
+                        <th class="sorting" tabindex="0" aria-controls="sample_1" rowspan="1" colspan="1" data-column-index="8" aria-label=" CSS grade : activate to sort column ascending"> Action </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr role="row" class="odd">
+                        <td>
+                            <label class="mt-checkbox mt-checkbox-single mt-checkbox-outline">
+                                <input type="checkbox" class="checkboxes" value="1">
+                                <span></span>
+                            </label>
+                        </td>
+                        <td tabindex="0" class="sorting_1"> Gecko </td>
+                        <td> Firefox 1.0 </td>
+                        <td> Win 98+ / OSX.2+ </td>
+                        <td> 1.7 </td>
+                        <td> A </td>
+                        <td> Active </td>
+                        <td> Active </td>
+                        <td> 
+                          <div class="bootstrap-switch bootstrap-switch-wrapper bootstrap-switch-mini bootstrap-switch-animate bootstrap-switch-off">
+                            <div class="bootstrap-switch-container">
+                              <input type="checkbox" checked="" class="make-switch switch-large" data-label-icon="fa fa-fullscreen" data-on-color="success" data-on-text="<i class='fa fa-check'></i>" data-off-text="<i class='fa fa-times'></i>">
+                            </div>
+                          </div>
+                          <span class="status-label">Activate</span>
+                        </td>
+                        <td> <a href="javascript:;" class="btn btn-xs green">Edit <i class="fa fa-edit"></i> </a> </td>
+                      </tr>                    
+                    </tbody>
+                  </table>
+                </div>
+        
+                <div class="row">
+                  <div class="col-md-5 col-sm-12">
+                    <div class="dataTables_info" id="sample_1_info" role="status" aria-live="polite">Showing 1 to 10 of 43 entries</div>
+                  </div>
+                  <div class="col-md-7 col-sm-12">
+                    <div class="dataTables_paginate paging_bootstrap_number" id="sample_1_paginate">
+                      <ul class="pagination" style="visibility: visible;">
+                        <li class="prev disabled"><a href="#" title="Prev"><i class="fa fa-angle-left"></i></a></li>
+                        <li class="active"><a href="#">1</a></li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li><a href="#">4</a></li>
+                        <li><a href="#">5</a></li>
+                        <li class="next"><a href="#" title="Next"><i class="fa fa-angle-right"></i></a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END PAGE BASE CONTENT --> 
+    </div>
+  </div>
+</div>
+{% endblock %}

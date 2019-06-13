@@ -1,0 +1,101 @@
+{% extends '@Admin/layout.html.twig' %}
+{% block stylesheets %}
+    {{ parent () }}
+    {% stylesheets 
+        'bundles/admin/assets/global/plugins/datatables/datatables.min.css'
+        'bundles/admin/assets/global/plugins/datatables/plugins/bootstrap/datatables.bootstrap.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal-bs3patch.css'
+        'bundles/admin/assets/global/plugins/bootstrap-modal/css/bootstrap-modal.css'
+        'bundles/admin/assets/global/plugins/jquery-multi-select/css/multi-select.css'
+        'bundles/admin/assets/global/plugins/bootstrap-select/css/bootstrap-select.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2.min.css'
+        'bundles/admin/assets/global/plugins/select2/css/select2-bootstrap.min.css'
+    filter='cssrewrite'  
+    debug=false
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    <!-- do not move it into stylesheet block -->
+    <link href="{{ asset('bundles/admin/assets/global/plugins/icheck/skins/all.css') }}" rel="stylesheet" type="text/css" />
+    {% endstylesheets %}
+{% endblock %}
+{% block pageTitle %}
+    <h1>{{ pharmacy.name }}</h1>
+{% endblock %}
+{% block breadcrumb %}
+    <li> <a href="{{ path('admin_dashboard') }}">Home</a> <i class="fa fa-circle"></i> </li>
+    <li> <a href="{{ path('admin_pharmacy_list') }}">List Pharmacies</a> <i class="fa fa-circle"></i> </li>
+    <li> <span class="active">Product Groups</span> </li>
+{% endblock %}
+{% block content %} 
+<!-- Begin: life time stats -->
+<div class="portlet light">
+<div class="portlet-title">
+    <div class="caption"> <span class="caption-subject font-dark sbold uppercase">Product Groups</span> </div>
+</div>
+<div class="msg-page"></div>
+<div class="portlet-body">
+<div class="dataTables_wrapper no-footer">
+    <form id="frm-group-filter">
+        <div class="row show-grid mb-grid">
+          <div class="col-lg-4 col-md-8">
+            <div id="sample_1_filter">
+              <div class="input-icon right"> <i class="icon-magnifier"></i>
+                <input type="text" name="p_filter[term]" id="p_filter_term" class="form-control" placeholder="Search Group Name">
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-8 col-md-4">
+            <div class="text-right" id="sample_1_length">
+              <label>
+                <select name="p_filter[perPage]" id="p_filter_per_page" aria-controls="sample_1" class="form-control input-sm input-xsmall input-inline">
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                </select>
+                entries</label>
+            </div>
+          </div>
+        </div>                
+        <div class="row show-grid module-filter">                  
+          <div class="col-md-12 text-right">
+            <a href="#modal-group-view-logs" id="view_logs_anchor" 
+            data-toggle="modal" 
+            data-module="group_drug" 
+            data-template-view="AdminBundle:pharmacy\logs:group_log.html.twig"
+            data-template-print="AdminBundle:pharmacy\logs:group_pdf.html.twig"
+            data-breadcrumb-title="Product Groups" 
+            data-modal-title="PRODUCT GROUPS" 
+            data-file-name="product_group_log" 
+            class="btn btn-ahalf-circle btn-outline text-uppercase green-seagreen btn-sm">View Log</a>
+            <a href="javascript:void(0);" class="btn btn-ahalf-circle text-uppercase green-seagreen btn-sm btn-icon-right ml-10 btn-modal-gd-add" data-gd="0">Add Group</a>
+          </div>
+        </div>  
+        <div class="content-table gd-container">
+             {{ render(controller( 'AdminBundle:Pharmacy:ajaxGroupDrug' )) }}
+        </div>
+        <input type="hidden" name="p_filter[sorting]" value="">
+        <input type="hidden" id="url_admin_pharmacy_group_drug_filter" value="{{ path('admin_pharmacy_group_drug_list') }}">
+        <input type="hidden" id="url_admin_pharmacy_group_drug_form" value="{{ path('admin_pharmacy_group_drug_form') }}">
+        <input type="hidden" id="url_admin_pharmacy_group_drug_update" value="{{ path('admin_pharmacy_group_drug_update') }}">
+        <input type="hidden" id="url_admin_pharmacy_group_drug_delete" value="{{ path('admin_pharmacy_group_drug_delete') }}">
+        <input type="hidden" id="url_admin_pharmacy_group_check" value="{{ path('admin_pharmacy_group_check') }}">        
+    </form>
+  </div>
+</div>
+</div>
+{% include '@Admin/pharmacy/modal.html.twig' %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts 
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-multi-select/js/jquery.multi-select.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/select2/js/select2.full.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modalmanager.js' 
+        '@AdminBundle/Resources/public/assets/global/plugins/bootstrap-modal/js/bootstrap-modal.js'
+        '@AdminBundle/Resources/public/assets/pages/scripts/components-multi-select.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/jquery.validate.min.js'
+        '@AdminBundle/Resources/public/assets/global/plugins/jquery-validation/js/additional-methods.min.js'
+        '@AdminBundle/Resources/public/js/admin_pharmacy_group_drug.js' %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
